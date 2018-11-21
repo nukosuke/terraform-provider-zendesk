@@ -1,0 +1,18 @@
+### https://raw.github.com/github/gitignore/32c358b0afbd033111a869433b1cd41dc72e0a5a/Go.gitignore
+
+# Binaries for programs and plugins
+terraform-provider-zendesk
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# dep vendoring directory
+vendor
