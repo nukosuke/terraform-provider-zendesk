@@ -142,10 +142,15 @@ func resourceZendeskTicketField() *schema.Resource {
 
 func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
-	tf, err := zd.CreateTicketField(client.TicketField{
+	tf := client.TicketField{
 		Type:  d.Get("type").(string),
 		Title: d.Get("title").(string),
-	})
+	}
+	if d.Get("type") == "regexp" {
+		tf.RegexpForValidation = d.Get("regexp_for_validation").(string)
+	}
+
+	tf, err := zd.CreateTicketField(tf)
 	if err != nil {
 		return err
 	}
