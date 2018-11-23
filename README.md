@@ -4,6 +4,11 @@
 
 Terraform provider for Zendesk
 
+## Requirements
+
+- Go >= v1.11
+- Terraform >= v0.11.10
+
 ## Installation
 
 ```sh
