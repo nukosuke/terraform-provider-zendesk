@@ -34,7 +34,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:d19d0010720a37ba1efddfdc5967cb2bab821a9df9335b72017452b5d785be99"
+  digest = "1:9128d584328236cf18947c1130a7bef09b27ae0976640e25589cc0fe72fec9eb"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -72,8 +72,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "f557567ff83b93530a0498d4bdb0eb616af70bb3"
-  version = "v1.15.79"
+  revision = "66af558c91f83a793b4a0101f70742062982f611"
+  version = "v1.15.81"
 
 [[projects]]
   branch = "master"
@@ -257,7 +257,7 @@
   revision = "fa9f258a92500514cc8e9c67020487709df92432"
 
 [[projects]]
-  digest = "1:8ee6b299ec5e027376522696c4a2d236c5d4da19ccc23d8cc31a3530ce9cb26b"
+  digest = "1:55226d01af9764e7eb44603845b02dfac641b15489ab1b8a285cad577daef85f"
   name = "github.com/hashicorp/terraform"
   packages = [
     "config",
@@ -269,6 +269,8 @@
     "helper/hashcode",
     "helper/hilmapstructure",
     "helper/schema",
+    "helper/structure",
+    "helper/validation",
     "httpclient",
     "moduledeps",
     "plugin",
@@ -384,11 +386,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:dc5427f005e69029c793db0830e21d44e412fe40a120f3ff871af17b57045f0c"
+  digest = "1:ef90cf891fe550528634989f694dba6090edc0e7b300e1654c1d2a67f1111c56"
   name = "github.com/nukosuke/go-zendesk"
   packages = ["zendesk"]
   pruneopts = "UT"
-  revision = "47b8f74b6ca4748e6288faad20be5eeb8398c776"
+  revision = "212e59afe4c02fa790b3e9cdb3e6dba2c8b74e0d"
 
 [[projects]]
   digest = "1:9ec6cf1df5ad1d55cf41a43b6b1e7e118a91bade4f68ff4303379343e40c0e25"
@@ -478,11 +480,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:44010c69a8af2745fcdc6b4c57b126b4dd3de5cb01b6a5ba97a1781a24df0886"
+  digest = "1:225564f71149334315118db714e1ea87513e4a11cf4acb27e26bc7577cebfa0b"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "ec83556a53fe16b65c452a104ea9d1e86a671852"
+  revision = "62eef0e2fa9b2c385f7b2778e763486da6880d37"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -557,6 +559,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/hashicorp/terraform/helper/schema",
+    "github.com/hashicorp/terraform/helper/validation",
     "github.com/hashicorp/terraform/plugin",
     "github.com/hashicorp/terraform/terraform",
     "github.com/nukosuke/go-zendesk/zendesk",
