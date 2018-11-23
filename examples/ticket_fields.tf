@@ -29,6 +29,7 @@ resource "zendesk_ticket_field" "integer-field" {
 resource "zendesk_ticket_field" "regexp-field" {
   title = "Regexp Field"
   type = "regexp"
+  regexp_for_validation = "^[0-9]+-[0-9]+-[0-9]+$"
 }
 
 resource "zendesk_ticket_field" "tagger-field" {
