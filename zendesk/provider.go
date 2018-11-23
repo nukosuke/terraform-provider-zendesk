@@ -9,7 +9,7 @@ func Provider() *schema.Provider {
 	return &schema.Provider{
 		// https://developer.zendesk.com/rest_api/docs/support/introduction#security-and-authentication
 		Schema: map[string]*schema.Schema{
-			"url": {
+			"account": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
