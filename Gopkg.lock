@@ -152,7 +152,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ff91f36d00e6942621659bdceafa78b3708f1d15cf54d8f72c1ed5e0a73227f1"
+  digest = "1:bf0c2a9ef5f6f6d897168c571c395ff283fe526944ef05835e593dba4cf75d44"
   name = "github.com/hashicorp/go-getter"
   packages = [
     ".",
