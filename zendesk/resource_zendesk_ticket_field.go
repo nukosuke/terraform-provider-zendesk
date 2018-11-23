@@ -113,10 +113,20 @@ func resourceZendeskTicketField() *schema.Resource {
 				Computed: true,
 			},
 			// Required only for "tagger" type
-			"custom_field_options": {
+			// https://developer.zendesk.com/rest_api/docs/support/ticket_fields#updating-drop-down-field-options
+			"custom_field_option": {
 				Type: schema.TypeSet,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"value": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
 				},
 				Optional: true,
 				//TODO: empty is invalid form
