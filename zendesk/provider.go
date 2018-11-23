@@ -45,7 +45,7 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 
 	// Create & configure Zendesk API client
-	zd, err := client.NewClient(nil)
+	zd, err := client.NewClient(nil) // TODO: set UserAgent to terraform/version
 	if err != nil {
 		return nil, err
 	}
