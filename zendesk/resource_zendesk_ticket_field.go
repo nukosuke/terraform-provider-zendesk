@@ -1,7 +1,11 @@
 package zendesk
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
+	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
 // https://developer.zendesk.com/rest_api/docs/core/ticket_fields
@@ -23,8 +27,16 @@ func resourceZendeskTicketField() *schema.Resource {
 			"type": {
 				Type:     schema.TypeString,
 				Required: true,
-				//TODO: not empty and included in
-				// "checkbox", "date", "decimal", "integer", "regexp", "tagger", "text", or "textarea"
+				ValidateFunc: validation.StringInSlice([]string{
+					"checkbox",
+					"date",
+					"decimal",
+					"integer",
+					"regexp",
+					"tagger",
+					"text",
+					"textarea",
+				}, false),
 			},
 			"title": {
 				Type:     schema.TypeString,
@@ -33,7 +45,6 @@ func resourceZendeskTicketField() *schema.Resource {
 			"raw_title": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -42,24 +53,20 @@ func resourceZendeskTicketField() *schema.Resource {
 			"raw_description": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
 			},
 			"position": {
 				Type:     schema.TypeInt,
 				Optional: true,
-				//Computed?
 				// positions 0 to 7 are reserved for system fields
-				//TODO: Validation
+				ValidateFunc: validation.IntAtLeast(8),
 			},
 			"active": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				//Computed?
 			},
 			"required": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				//Computed?
 			},
 			"collapsed_for_agents": {
 				Type:     schema.TypeBool,
@@ -120,6 +127,7 @@ func resourceZendeskTicketField() *schema.Resource {
 				Optional: true,
 				//TODO: validation
 			},
+			//TODO: this is not necessary because it's only for system field
 			"removable": {
 				Type:     schema.TypeBool,
 				Computed: true,
@@ -133,9 +141,17 @@ func resourceZendeskTicketField() *schema.Resource {
 }
 
 func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) error {
-	//TODO: fetch client from meta
-	//client, _ := zd.NewClient(nil)
-	d.SetId("1")
+	zd := meta.(*client.Client)
+	tf, err := zd.CreateTicketField(client.TicketField{
+		Type:  d.Get("type").(string),
+		Title: d.Get("title").(string),
+	})
+	if err != nil {
+		return err
+	}
+
+	d.SetId(fmt.Sprintf("%d", tf.ID))
+	d.Set("url", tf.URL)
 	return resourceZendeskTicketFieldRead(d, meta)
 }
 
