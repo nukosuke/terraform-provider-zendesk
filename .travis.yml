@@ -6,12 +6,14 @@ go:
 
 before_install:
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  - go get github.com/mattn/goveralls # for profiling coverage
 
 install:
   - dep ensure
 
 script:
   - go test -v ./...
+  - goveralls -service=travis-ci
 
 deploy:
   provider: releases
