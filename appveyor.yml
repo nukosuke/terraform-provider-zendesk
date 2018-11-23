@@ -5,7 +5,7 @@ clone_folder: c:\gopath\src\github.com\nukosuke\terraform-provider-zendesk
 environment:
   GOPATH: c:\gopath
 
-stack: go 1.10
+stack: go 1.11
 
 install:
   - go get -u github.com/golang/dep/...
