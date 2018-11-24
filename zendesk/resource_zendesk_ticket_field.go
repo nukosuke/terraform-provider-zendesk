@@ -156,10 +156,24 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 		Type:  d.Get("type").(string),
 		Title: d.Get("title").(string),
 	}
-	if d.Get("type") == "regexp" {
+
+	// Handle type specific value
+	switch d.Get("type") {
+	case "regexp":
 		tf.RegexpForValidation = d.Get("regexp_for_validation").(string)
+	case "tagger":
+		options := d.Get("custom_field_option").(*schema.Set).List()
+		for _, option := range options {
+			tf.CustomFieldOptions = append(tf.CustomFieldOptions, client.TicketFieldCustomFieldOption{
+				Name:  option.(map[string]interface{})["name"].(string),
+				Value: option.(map[string]interface{})["value"].(string),
+			})
+		}
+	default:
+		// nop
 	}
 
+	// Actual API request
 	tf, err := zd.CreateTicketField(tf)
 	if err != nil {
 		return err
