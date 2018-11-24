@@ -1,6 +1,11 @@
 package zendesk
 
-import "github.com/hashicorp/terraform/helper/schema"
+import (
+	"fmt"
+
+	"github.com/hashicorp/terraform/helper/schema"
+	client "github.com/nukosuke/go-zendesk/zendesk"
+)
 
 // https://developer.zendesk.com/rest_api/docs/support/triggers
 func resourceZendeskTrigger() *schema.Resource {
@@ -21,6 +26,7 @@ func resourceZendeskTrigger() *schema.Resource {
 			"active": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  true,
 			},
 			"position": {
 				Type:     schema.TypeInt,
@@ -54,6 +60,48 @@ func resourceZendeskTrigger() *schema.Resource {
 }
 
 func resourceZendeskTriggerCreate(d *schema.ResourceData, meta interface{}) error {
+	zd := meta.(*client.Client)
+	trg := client.Trigger{
+		Title:       d.Get("title").(string),
+		Active:      d.Get("active").(bool),
+		Description: d.Get("description").(string),
+	}
+
+	// Conditions
+	alls := d.Get("all").(*schema.Set).List()
+	for _, all := range alls {
+		trg.Conditions.All = append(trg.Conditions.All, client.TriggerCondition{
+			Field:    all.(map[string]interface{})["field"].(string),
+			Operator: all.(map[string]interface{})["operator"].(string),
+			Value:    all.(map[string]interface{})["value"].(string),
+		})
+	}
+	anys := d.Get("any").(*schema.Set).List()
+	for _, any := range anys {
+		trg.Conditions.Any = append(trg.Conditions.Any, client.TriggerCondition{
+			Field:    any.(map[string]interface{})["field"].(string),
+			Operator: any.(map[string]interface{})["operator"].(string),
+			Value:    any.(map[string]interface{})["value"].(string),
+		})
+	}
+
+	// Actions
+	actions := d.Get("action").(*schema.Set).List()
+	for _, action := range actions {
+		trg.Actions = append(trg.Actions, client.TriggerAction{
+			Field: action.(map[string]interface{})["field"].(string),
+			Value: action.(map[string]interface{})["value"].(string),
+		})
+		// TODO: notification_user specific handling
+	}
+
+	// Actual API request
+	trg, err := zd.CreateTrigger(trg)
+	if err != nil {
+		return err
+	}
+
+	d.SetId(fmt.Sprintf("%d", trg.ID))
 	return nil
 }
 
