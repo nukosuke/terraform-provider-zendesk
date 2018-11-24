@@ -9,8 +9,12 @@
 #
 # (C) 2018 nukosuke <nukosuke@lavabit.com>
 
+variable "ZENDESK_ACCOUNT" { type = "string" }
+variable "ZENDESK_EMAIL"   { type = "string" }
+variable "ZENDESK_TOKEN"   { type = "string" }
+
 provider "zendesk" {
-  url   = ""
-  email = ""
-  token = ""
+  account = "${var.ZENDESK_ACCOUNT}"
+  email   = "${var.ZENDESK_EMAIL}"
+  token   = "${var.ZENDESK_TOKEN}"
 }
