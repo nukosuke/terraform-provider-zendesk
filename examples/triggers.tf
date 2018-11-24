@@ -7,5 +7,37 @@
 # (C) 2018 nukosuke <nukosuke@lavabit.com>
 
 resource "zendesk_trigger" "auto-reply-trigger" {
-  title = "Auto Reply Trigger"
+  title  = "Auto Reply Trigger"
+  active = true
+
+  conditions {
+    all {
+      field    = "role"
+      operator = "is"
+      value    = "end_user"
+    }
+
+    all {
+      field    = "update_type"
+      operator = "is"
+      value    = "Create"
+    }
+
+    all {
+      field    = "status"
+      operator = "is_not"
+      value    = "solved"
+    }
+  }
+
+  action {
+    field = "notification_user"
+    value = <<ENVELOPE
+    [
+      "requester_id",
+      "Dear my customer",
+      "Hi. This message was configured by terraform-provider-zendesk."
+    ]
+    ENVELOPE
+  }
 }
