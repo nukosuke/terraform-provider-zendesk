@@ -1,6 +1,11 @@
 package zendesk
 
-import "github.com/hashicorp/terraform/helper/schema"
+import (
+	"fmt"
+
+	"github.com/hashicorp/terraform/helper/schema"
+	client "github.com/nukosuke/go-zendesk/zendesk"
+)
 
 // https://developer.zendesk.com/rest_api/docs/support/ticket_forms
 func resourceZendeskTicketForm() *schema.Resource {
@@ -25,7 +30,6 @@ func resourceZendeskTicketForm() *schema.Resource {
 			"raw_name": {
 				Type:     schema.TypeString,
 				Optional: true,
-				//computed?
 			},
 			"display_name": {
 				Type:     schema.TypeString,
@@ -74,6 +78,24 @@ func resourceZendeskTicketForm() *schema.Resource {
 }
 
 func resourceZendeskTicketFormCreate(d *schema.ResourceData, meta interface{}) error {
+	zd := meta.(*client.Client)
+	tf := client.TicketForm{
+		Name: d.Get("name").(string),
+	}
+
+	ticketFieldIDs := d.Get("ticket_field_ids").(*schema.Set).List()
+	for _, ticketFieldID := range ticketFieldIDs {
+		tf.TicketFieldIDs = append(tf.TicketFieldIDs, int64(ticketFieldID.(int)))
+	}
+
+	// Actual API request
+	tf, err := zd.CreateTicketForm(tf)
+	if err != nil {
+		return err
+	}
+
+	// Patch from created resource
+	d.SetId(fmt.Sprintf("%d", tf.ID))
 	return nil
 }
 
