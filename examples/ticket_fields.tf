@@ -35,7 +35,16 @@ resource "zendesk_ticket_field" "regexp-field" {
 resource "zendesk_ticket_field" "tagger-field" {
   title = "Tagger Field"
   type = "tagger"
-  custom_field_options = []
+
+  custom_field_option {
+    name  = "Option 1"
+    value = "opt1"
+  }
+
+  custom_field_option {
+    name  = "Option 2"
+    value = "opt2"
+  }
 }
 
 resource "zendesk_ticket_field" "text-field" {
