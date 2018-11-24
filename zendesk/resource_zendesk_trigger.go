@@ -26,12 +26,40 @@ func resourceZendeskTrigger() *schema.Resource {
 				Type:     schema.TypeInt,
 				Optional: true,
 			},
-			//"conditions": {
-			// Type:
-			//},
-			//"actions": {
-			// Type:
-			//},
+			"conditions": {
+				Type: schema.TypeSet,
+				Elem: schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"all": {
+							Type:     schema.TypeSet,
+							Elem:     schema.Resource{Schema: triggerConditionSchema()},
+							Optional: true,
+						},
+						"any": {
+							Type:     schema.TypeSet,
+							Elem:     schema.Resource{Schema: triggerConditionSchema()},
+							Optional: true,
+						},
+					},
+				},
+				Required: true,
+			},
+			"actions": {
+				Type: schema.TypeSet,
+				Elem: schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"field": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"value": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+				Required: true,
+			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -54,4 +82,21 @@ func resourceZendeskTriggerUpdate(d *schema.ResourceData, meta interface{}) erro
 
 func resourceZendeskTriggerDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
+}
+
+func triggerConditionSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"field": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"operator": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"value": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+	}
 }
