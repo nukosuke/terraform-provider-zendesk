@@ -2,11 +2,12 @@ package zendesk
 
 import (
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/terraform"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
 // Provider returns provider instance for Zendesk
-func Provider() *schema.Provider {
+func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		// https://developer.zendesk.com/rest_api/docs/support/introduction#security-and-authentication
 		Schema: map[string]*schema.Schema{
