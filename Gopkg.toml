@@ -34,5 +34,5 @@
   unused-packages = true
 
 [[constraint]]
-  branch = "master"
   name = "github.com/nukosuke/go-zendesk"
+  version = "0.0.0"
