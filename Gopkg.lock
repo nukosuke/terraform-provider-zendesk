@@ -34,7 +34,7 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:9128d584328236cf18947c1130a7bef09b27ae0976640e25589cc0fe72fec9eb"
+  digest = "1:63e83502d1cd29c41dd4107d8484b1b19fe416d7822fccde53f752e7af112f00"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -72,8 +72,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "66af558c91f83a793b4a0101f70742062982f611"
-  version = "v1.15.81"
+  revision = "936c5266940725e6a728ea4b7241ede3f1616096"
+  version = "v1.15.82"
 
 [[projects]]
   branch = "master"
@@ -152,7 +152,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:bf0c2a9ef5f6f6d897168c571c395ff283fe526944ef05835e593dba4cf75d44"
+  digest = "1:ff91f36d00e6942621659bdceafa78b3708f1d15cf54d8f72c1ed5e0a73227f1"
   name = "github.com/hashicorp/go-getter"
   packages = [
     ".",
@@ -229,7 +229,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f8c6767a030eb9038b4c8c58616ea7055cd2f00526608695b4a03fe4a5b6f770"
+  digest = "1:1b207419426be948bb2d18912d3f154a297723725a6eade23a7f8ceaaea4a1c6"
   name = "github.com/hashicorp/hcl2"
   packages = [
     "gohcl",
@@ -241,7 +241,7 @@
     "hclwrite",
   ]
   pruneopts = "UT"
-  revision = "0467c0c38ca2d4197a5180c45fc29baf80dad0a0"
+  revision = "67424e43b1841759fe3f4f83013c58707d7027f0"
 
 [[projects]]
   branch = "master"
@@ -386,11 +386,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ef90cf891fe550528634989f694dba6090edc0e7b300e1654c1d2a67f1111c56"
+  digest = "1:a69815842f16fc1a2ac7f8987103692892d976e5abe39e0e1ebf511d56513387"
   name = "github.com/nukosuke/go-zendesk"
   packages = ["zendesk"]
   pruneopts = "UT"
-  revision = "212e59afe4c02fa790b3e9cdb3e6dba2c8b74e0d"
+  revision = "6ea2c28076934a674d5c9e39739116a3601c355c"
 
 [[projects]]
   digest = "1:9ec6cf1df5ad1d55cf41a43b6b1e7e118a91bade4f68ff4303379343e40c0e25"
@@ -458,7 +458,7 @@
     "openpgp/s2k",
   ]
   pruneopts = "UT"
-  revision = "3d3f9f413869b949e48070b5bc593aa22cc2b8f2"
+  revision = "e657309f52e71501f9934566ac06dc5c2f7f11a1"
 
 [[projects]]
   branch = "master"
