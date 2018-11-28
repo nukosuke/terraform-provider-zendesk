@@ -21,6 +21,7 @@ before_deploy:
   - |
       for os in linux darwin windows; do
         for arch in 386 amd64; do
+          cp README.md LICENSE terraform-provider-zendesk-$os-$arch
           zip -r terraform-provider-zendesk-$os-$arch.zip terraform-provider-zendesk-$os-$arch
         done
       done
@@ -32,6 +33,5 @@ deploy:
   file: terraform-provider-zendesk-*-*.zip
   skip_cleanup: true
   on:
-  #  tags: true
-    branch: travis-release
+    tags: true
     go: "1.11.x"
