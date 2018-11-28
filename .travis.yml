@@ -19,12 +19,11 @@ before_deploy:
   - go get github.com/mitchellh/gox
   - gox -os="linux darwin windows" -arch="386 amd64" -output="{{.Dir}}-{{.OS}}-{{.Arch}}/{{.Dir}}"
   - |
-      for os in linux darwin windows; do \
+      for os in linux darwin windows; do
         for arch in 386 amd64; do
           zip -r terraform-provider-zendesk-$os-$arch.zip terraform-provider-zendesk-$os-$arch
         done
       done
-
 
 deploy:
   provider: releases
@@ -32,5 +31,7 @@ deploy:
   file_glob: true
   file: terraform-provider-zendesk-*-*.zip
   skip_cleanup: true
-  #on:
+  on:
   #  tags: true
+    branch: travis-release
+    go: "1.11.x"
