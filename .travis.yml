@@ -15,12 +15,22 @@ script:
   - go test -v ./...
   - goveralls -service=travis-ci
 
+before_deploy:
+  - go get github.com/mitchellh/gox
+  - gox -os="linux darwin windows" -arch="386 amd64" -output="{{.Dir}}-{{.OS}}-{{.Arch}}/{{.Dir}}"
+  - |
+      for os in linux darwin windows; do \
+        for arch in 386 amd64; do
+          zip -r terraform-provider-zendesk-$os-$arch.zip terraform-provider-zendesk-$os-$arch
+        done
+      done
+
+
 deploy:
   provider: releases
-  api_key:
-    secure: $GITHUB_TOKEN
+  api_key: $GITHUB_TOKEN
   file_glob: true
-  file: terraform-provider-zendesk-*.tar.gz
+  file: terraform-provider-zendesk-*-*.zip
   skip_cleanup: true
-  on:
-    tags: true
+  #on:
+  #  tags: true
