@@ -35,3 +35,6 @@ deploy:
   on:
     tags: true
     go: "1.11.x"
+
+notifications:
+  email: false
