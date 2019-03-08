@@ -46,20 +46,24 @@ func resourceZendeskTicketField() *schema.Resource {
 			"raw_title": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"raw_description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"position": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				// positions 0 to 7 are reserved for system fields
 				ValidateFunc: validation.IntAtLeast(8),
+				Computed:     true,
 			},
 			"active": {
 				Type:     schema.TypeBool,
@@ -83,13 +87,12 @@ func resourceZendeskTicketField() *schema.Resource {
 			"title_in_portal": {
 				Type:     schema.TypeString,
 				Optional: true,
-				// The title of the ticket field is mandatory when it's visible to end users
-				//TODO: validation
+				Computed: true,
 			},
 			"raw_title_in_portal": {
 				Type:     schema.TypeString,
 				Optional: true,
-				//TODO: same to title_in_portal
+				Computed: true,
 			},
 			"visible_in_portal": {
 				Type:     schema.TypeBool,
