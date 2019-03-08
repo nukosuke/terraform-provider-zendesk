@@ -2,6 +2,7 @@ package zendesk
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
@@ -63,6 +64,7 @@ func resourceZendeskTicketField() *schema.Resource {
 			"active": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  true,
 			},
 			"required": {
 				Type:     schema.TypeBool,
@@ -163,8 +165,9 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 		tf.RegexpForValidation = d.Get("regexp_for_validation").(string)
 	case "tagger":
 		options := d.Get("custom_field_option").(*schema.Set).List()
+
 		for _, option := range options {
-			tf.CustomFieldOptions = append(tf.CustomFieldOptions, client.TicketFieldCustomFieldOption{
+			tf.CustomFieldOptions = append(tf.CustomFieldOptions, client.CustomFieldOption{
 				Name:  option.(map[string]interface{})["name"].(string),
 				Value: option.(map[string]interface{})["value"].(string),
 			})
@@ -184,7 +187,59 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 	return resourceZendeskTicketFieldRead(d, meta)
 }
 
+func setSchemaFields(d *schema.ResourceData, m map[string]interface{}) error {
+	for k, v := range m {
+		err := d.Set(k, v)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
+	zd := meta.(*client.Client)
+	id, err := strconv.ParseInt(d.Id(), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	field, err := zd.GetTicketField(id)
+	if err != nil {
+		return err
+	}
+
+	fields := map[string]interface{}{
+		"url":                   field.URL,
+		"type":                  field.Type,
+		"title":                 field.Title,
+		"raw_title":             field.RawTitle,
+		"description":           field.Description,
+		"raw_description":       field.RawDescription,
+		"position":              field.Position,
+		"active":                field.Active,
+		"required":              field.Required,
+		"collapsed_for_agents":  field.CollapsedForAgents,
+		"regexp_for_validation": field.RegexpForValidation,
+		"title_in_portal":       field.TitleInPortal,
+		"raw_title_in_portal":   field.RawTitleInPortal,
+		"visible_in_portal":     field.VisibleInPortal,
+		"editable_in_portal":    field.EditableInPortal,
+		"required_in_portal":    field.Required,
+		"tag":                   field.Tag,
+		"system_field_options":  field.SystemFieldOptions,
+		"custom_field_option":   field.CustomFieldOptions,
+		"sub_type_id":           field.SubTypeID,
+		"removable":             field.Removable,
+		"agent_description":     field.AgentDescription,
+	}
+
+	err = setSchemaFields(d, fields)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
