@@ -16,3 +16,7 @@ terraform-provider-zendesk
 
 # dep vendoring directory
 vendor
+
+.idea
+*.iml
+.pre-commit-config.yaml
