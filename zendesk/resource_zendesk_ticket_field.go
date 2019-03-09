@@ -163,8 +163,9 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 		tf.RegexpForValidation = d.Get("regexp_for_validation").(string)
 	case "tagger":
 		options := d.Get("custom_field_option").(*schema.Set).List()
+
 		for _, option := range options {
-			tf.CustomFieldOptions = append(tf.CustomFieldOptions, client.TicketFieldCustomFieldOption{
+			tf.CustomFieldOptions = append(tf.CustomFieldOptions, client.CustomFieldOption{
 				Name:  option.(map[string]interface{})["name"].(string),
 				Value: option.(map[string]interface{})["value"].(string),
 			})
