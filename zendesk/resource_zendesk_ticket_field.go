@@ -190,17 +190,6 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 	return resourceZendeskTicketFieldRead(d, meta)
 }
 
-func setSchemaFields(d *schema.ResourceData, m map[string]interface{}) error {
-	for k, v := range m {
-		err := d.Set(k, v)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
 	id, err := strconv.ParseInt(d.Id(), 10, 64)
