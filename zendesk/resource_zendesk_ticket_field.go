@@ -2,6 +2,7 @@ package zendesk
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
@@ -45,24 +46,29 @@ func resourceZendeskTicketField() *schema.Resource {
 			"raw_title": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"raw_description": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"position": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				// positions 0 to 7 are reserved for system fields
 				ValidateFunc: validation.IntAtLeast(8),
+				Computed:     true,
 			},
 			"active": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  true,
 			},
 			"required": {
 				Type:     schema.TypeBool,
@@ -81,13 +87,12 @@ func resourceZendeskTicketField() *schema.Resource {
 			"title_in_portal": {
 				Type:     schema.TypeString,
 				Optional: true,
-				// The title of the ticket field is mandatory when it's visible to end users
-				//TODO: validation
+				Computed: true,
 			},
 			"raw_title_in_portal": {
 				Type:     schema.TypeString,
 				Optional: true,
-				//TODO: same to title_in_portal
+				Computed: true,
 			},
 			"visible_in_portal": {
 				Type:     schema.TypeBool,
@@ -186,6 +191,47 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
+	zd := meta.(*client.Client)
+	id, err := strconv.ParseInt(d.Id(), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	field, err := zd.GetTicketField(id)
+	if err != nil {
+		return err
+	}
+
+	fields := map[string]interface{}{
+		"url":                   field.URL,
+		"type":                  field.Type,
+		"title":                 field.Title,
+		"raw_title":             field.RawTitle,
+		"description":           field.Description,
+		"raw_description":       field.RawDescription,
+		"position":              field.Position,
+		"active":                field.Active,
+		"required":              field.Required,
+		"collapsed_for_agents":  field.CollapsedForAgents,
+		"regexp_for_validation": field.RegexpForValidation,
+		"title_in_portal":       field.TitleInPortal,
+		"raw_title_in_portal":   field.RawTitleInPortal,
+		"visible_in_portal":     field.VisibleInPortal,
+		"editable_in_portal":    field.EditableInPortal,
+		"required_in_portal":    field.Required,
+		"tag":                   field.Tag,
+		"system_field_options":  field.SystemFieldOptions,
+		"custom_field_option":   field.CustomFieldOptions,
+		"sub_type_id":           field.SubTypeID,
+		"removable":             field.Removable,
+		"agent_description":     field.AgentDescription,
+	}
+
+	err = setSchemaFields(d, fields)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
