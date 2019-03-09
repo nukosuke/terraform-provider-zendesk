@@ -25,7 +25,7 @@ $ go build
 
 ## Available resources
 
-Look the [examples](./examples).
+Look the [wiki](https://github.com/nukosuke/terraform-provider-zendesk/wiki).
 
 ## License
 
