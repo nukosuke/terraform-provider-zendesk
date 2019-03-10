@@ -5,6 +5,8 @@
 
 Terraform provider for Zendesk
 
+- [Available resources](https://github.com/nukosuke/terraform-provider-zendesk/wiki)
+
 ## Requirements
 
 - Go >= v1.11
@@ -12,14 +14,19 @@ Terraform provider for Zendesk
 
 ## Installation
 
+Download latest version from [release page](https://github.com/nukosuke/terraform-provider-zendesk/releases)
+and locate the binary `terraform-provider-zendesk(.exe)` to executable path of your system.
+
+### Build from source
+
 ```sh
 $ git clone git@github.com:nukosuke/terraform-provider-zendesk.git
 $ cd terraform-provider-zendesk
 $ go build
 ```
 
-And copy the binary to executable path.
-
 ## License
 
-MIT
+MIT License
+
+See the file [LICENSE](./LICENSE) for details.

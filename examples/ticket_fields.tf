@@ -3,8 +3,6 @@
 #
 # API reference:
 #   https://developer.zendesk.com/rest_api/docs/support/ticket_fields
-#
-# (C) 2018 nukosuke <nukosuke@lavabit.com>
 
 resource "zendesk_ticket_field" "checkbox-field" {
   title = "Checkbox Field"

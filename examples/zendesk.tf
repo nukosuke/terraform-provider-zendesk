@@ -6,8 +6,6 @@
 #
 # NOTE:
 #   v0.0.0 supports only token authentication
-#
-# (C) 2018 nukosuke <nukosuke@lavabit.com>
 
 variable "ZENDESK_ACCOUNT" { type = "string" }
 variable "ZENDESK_EMAIL"   { type = "string" }
