@@ -5,6 +5,8 @@
 
 Terraform provider for Zendesk
 
+- [Available resources](https://github.com/nukosuke/terraform-provider-zendesk/wiki)
+
 ## Requirements
 
 - Go >= v1.11
@@ -22,10 +24,6 @@ $ git clone git@github.com:nukosuke/terraform-provider-zendesk.git
 $ cd terraform-provider-zendesk
 $ go build
 ```
-
-## Available resources
-
-Look the [wiki](https://github.com/nukosuke/terraform-provider-zendesk/wiki).
 
 ## License
 
