@@ -218,7 +218,7 @@ func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) er
 		"raw_title_in_portal":   field.RawTitleInPortal,
 		"visible_in_portal":     field.VisibleInPortal,
 		"editable_in_portal":    field.EditableInPortal,
-		"required_in_portal":    field.Required,
+		"required_in_portal":    field.RequiredInPortal,
 		"tag":                   field.Tag,
 		"system_field_options":  field.SystemFieldOptions,
 		"custom_field_option":   field.CustomFieldOptions,
