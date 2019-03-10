@@ -192,6 +192,10 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
+	return readTicketField(d, zd)
+}
+
+func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
 	id, err := strconv.ParseInt(d.Id(), 10, 64)
 	if err != nil {
 		return err
@@ -220,8 +224,6 @@ func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) er
 		"editable_in_portal":    field.EditableInPortal,
 		"required_in_portal":    field.RequiredInPortal,
 		"tag":                   field.Tag,
-		"system_field_options":  field.SystemFieldOptions,
-		"custom_field_option":   field.CustomFieldOptions,
 		"sub_type_id":           field.SubTypeID,
 		"removable":             field.Removable,
 		"agent_description":     field.AgentDescription,
