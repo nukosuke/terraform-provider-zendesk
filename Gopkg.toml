@@ -35,4 +35,4 @@
 
 [[constraint]]
   name = "github.com/nukosuke/go-zendesk"
-  version = "0.1.1"
+  version = "0.1.2"
