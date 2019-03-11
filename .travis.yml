@@ -2,14 +2,17 @@ language: go
 
 go:
   - "1.11.x"
+  - "1.12.x"
   - master
 
+env:
+  - GO111MODULE=on
+
 before_install:
-  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
   - go get github.com/mattn/goveralls # for profiling coverage
 
 install:
-  - dep ensure
+  - go mod download
 
 script:
   - go test -v ./...
