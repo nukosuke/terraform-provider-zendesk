@@ -49,7 +49,7 @@ func TestReadTicketField(t *testing.T) {
 		//TODO: add SystemFieldOptions, CustomFieldOptions
 	}
 
-	m.EXPECT().GetTicketField(gomock.Any()).Return(field, nil).AnyTimes()
+	m.EXPECT().GetTicketField(gomock.Any()).Return(field, nil)
 	if err := readTicketField(gs, m); err != nil {
 		t.Fatal("readTicketField returned an error")
 	}
