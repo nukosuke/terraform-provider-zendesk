@@ -46,7 +46,15 @@ func TestReadTicketField(t *testing.T) {
 		SubTypeID:           int64(12345),
 		Removable:           true,
 		AgentDescription:    "foo",
-		//TODO: add SystemFieldOptions, CustomFieldOptions
+		SystemFieldOptions: []zendesk.TicketFieldSystemFieldOption{{
+			Name:  "Open",
+			Value: "open",
+		}},
+		CustomFieldOptions: []zendesk.CustomFieldOption{{
+			ID:    360013088874,
+			Name:  "Option 1",
+			Value: "opt1",
+		}},
 	}
 
 	m.EXPECT().GetTicketField(gomock.Any()).Return(field, nil)
