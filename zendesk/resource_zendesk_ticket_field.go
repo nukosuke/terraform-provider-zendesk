@@ -112,8 +112,17 @@ func resourceZendeskTicketField() *schema.Resource {
 			},
 			"system_field_options": {
 				Type: schema.TypeSet,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"value": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
 				},
 				Computed: true,
 			},
@@ -129,6 +138,10 @@ func resourceZendeskTicketField() *schema.Resource {
 						},
 						"value": {
 							Type:     schema.TypeString,
+							Required: true,
+						},
+						"id": {
+							Type:     schema.TypeInt,
 							Required: true,
 						},
 					},
@@ -192,6 +205,10 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
+	return readTicketField(d, zd)
+}
+
+func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
 	id, err := strconv.ParseInt(d.Id(), 10, 64)
 	if err != nil {
 		return err
@@ -220,12 +237,35 @@ func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) er
 		"editable_in_portal":    field.EditableInPortal,
 		"required_in_portal":    field.RequiredInPortal,
 		"tag":                   field.Tag,
-		"system_field_options":  field.SystemFieldOptions,
-		"custom_field_option":   field.CustomFieldOptions,
 		"sub_type_id":           field.SubTypeID,
 		"removable":             field.Removable,
 		"agent_description":     field.AgentDescription,
 	}
+
+	// set system field options
+	systemFieldOptions := make([]map[string]interface{}, len(field.SystemFieldOptions))
+	for _, v := range field.SystemFieldOptions {
+		m := map[string]interface{}{
+			"name":  v.Name,
+			"value": v.Value,
+		}
+		systemFieldOptions = append(systemFieldOptions, m)
+	}
+
+	fields["system_field_options"] = systemFieldOptions
+
+	// Set custom field options
+	customFieldOptions := make([]map[string]interface{}, len(field.CustomFieldOptions))
+	for _, v := range field.CustomFieldOptions {
+		m := map[string]interface{}{
+			"name":  v.Name,
+			"value": v.Value,
+			"id":    v.ID,
+		}
+		customFieldOptions = append(customFieldOptions, m)
+	}
+
+	fields["custom_field_options"] = customFieldOptions
 
 	err = setSchemaFields(d, fields)
 	if err != nil {
