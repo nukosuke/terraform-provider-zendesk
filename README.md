@@ -22,6 +22,7 @@ and locate the binary `terraform-provider-zendesk(.exe)` to executable path of y
 ```sh
 $ git clone git@github.com:nukosuke/terraform-provider-zendesk.git
 $ cd terraform-provider-zendesk
+$ GO111MODULE=on go mod download
 $ go build
 ```
 
