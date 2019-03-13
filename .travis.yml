@@ -8,6 +8,11 @@ go:
 env:
   - GO111MODULE=on
 
+cache:
+  directories:
+    - $HOME/.cache/go-build
+    - $HOME/gopath/pkg/mod
+
 before_install:
   - go get github.com/mattn/goveralls # for profiling coverage
 
