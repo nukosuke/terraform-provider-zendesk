@@ -6,6 +6,10 @@ environment:
   GOPATH: c:\gopath
   GO111MODULE: on
 
+cache:
+  - '%LocalAppData%\go-build'
+  - '%GOPATH%\pkg\mod'
+
 stack: go 1.11
 
 install:
