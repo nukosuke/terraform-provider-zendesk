@@ -4,7 +4,7 @@ require (
 	github.com/agext/levenshtein v1.2.2 // indirect
 	github.com/apparentlymart/go-cidr v1.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.17.14 // indirect
+	github.com/aws/aws-sdk-go v1.18.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/golang/protobuf v1.3.0 // indirect
 	github.com/hashicorp/go-getter v1.2.0 // indirect
