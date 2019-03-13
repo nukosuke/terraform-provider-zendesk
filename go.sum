@@ -167,6 +167,7 @@ github.com/hashicorp/memberlist v0.0.0-20170208211506-23ad4b7d7b38/go.mod h1:ncd
 github.com/hashicorp/serf v0.8.2-0.20171022020050-c20a0b1b1ea9/go.mod h1:h/Ru6tmZazX7WO/GDmwdpS975F019L4t5ng5IgwbNrE=
 github.com/hashicorp/terraform v0.11.12 h1:PKpaYfs8MgHyntSnEVdqhb2J0/+BQC6bV5B3/76OYjo=
 github.com/hashicorp/terraform v0.11.12/go.mod h1:aSdr9xVNED8nCdH3naa31VNUaWo63itXzRBe4f1q5HM=
+github.com/hashicorp/terraform v0.11.13/go.mod h1:aSdr9xVNED8nCdH3naa31VNUaWo63itXzRBe4f1q5HM=
 github.com/hashicorp/vault v0.0.0-20161029210149-9a60bf2a50e4/go.mod h1:KfSyffbKxoVyspOdlaGVjIuwLobi07qD1bAbosPMpP0=
 github.com/hashicorp/yamux v0.0.0-20160720233140-d1caa6c97c9f/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
