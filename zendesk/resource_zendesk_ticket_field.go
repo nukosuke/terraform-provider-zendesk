@@ -48,11 +48,6 @@ func resourceZendeskTicketField() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
-			"raw_description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
 			"position": {
 				Type:     schema.TypeInt,
 				Optional: true,
@@ -80,11 +75,6 @@ func resourceZendeskTicketField() *schema.Resource {
 				//TODO: validation
 			},
 			"title_in_portal": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-			"raw_title_in_portal": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
@@ -348,9 +338,6 @@ func marshalTicketField(d identifiableGetterSetter) (client.TicketField, error) 
 
 	if v, ok := d.GetOk("description"); ok {
 		tf.Description = v.(string)
-	}
-
-	if v, ok := d.GetOk("raw_description"); ok {
 		tf.RawDescription = v.(string)
 	}
 
@@ -372,9 +359,6 @@ func marshalTicketField(d identifiableGetterSetter) (client.TicketField, error) 
 
 	if v, ok := d.GetOk("title_in_portal"); ok {
 		tf.TitleInPortal = v.(string)
-	}
-
-	if v, ok := d.GetOk("raw_title_in_portal"); ok {
 		tf.RawTitleInPortal = v.(string)
 	}
 
@@ -452,14 +436,12 @@ func unmarshalTicketField(field client.TicketField, d identifiableGetterSetter) 
 		"type":                  field.Type,
 		"title":                 field.Title,
 		"description":           field.Description,
-		"raw_description":       field.RawDescription,
 		"position":              field.Position,
 		"active":                field.Active,
 		"required":              field.Required,
 		"collapsed_for_agents":  field.CollapsedForAgents,
 		"regexp_for_validation": field.RegexpForValidation,
 		"title_in_portal":       field.TitleInPortal,
-		"raw_title_in_portal":   field.RawTitleInPortal,
 		"visible_in_portal":     field.VisibleInPortal,
 		"editable_in_portal":    field.EditableInPortal,
 		"required_in_portal":    field.RequiredInPortal,
