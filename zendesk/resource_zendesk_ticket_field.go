@@ -508,7 +508,28 @@ func serializeResourceData(d identifiableGetterSetter) (client.TicketField, erro
 }
 
 func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	zd := meta.(*client.Client)
+	return updateTicketField(d, zd)
+}
+
+func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
+	tf, err := serializeResourceData(d)
+	if err != nil {
+		return err
+	}
+
+	id, err := strconv.ParseInt(d.Id(), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	// Actual API request
+	_, err = zd.UpdateTicketField(id, tf)
+	if err != nil {
+		return err
+	}
+
+	return readTicketField(d, zd)
 }
 
 func resourceZendeskTicketFieldDelete(d *schema.ResourceData, meta interface{}) error {
