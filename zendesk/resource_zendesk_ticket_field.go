@@ -414,7 +414,7 @@ func marshalTicketField(d identifiableGetterSetter) (client.TicketField, error) 
 		tf.AgentDescription = v.(string)
 	}
 
-	if v, ok := d.GetOk("custom_field_options"); ok {
+	if v, ok := d.GetOk("custom_field_option"); ok {
 		options := v.(*schema.Set).List()
 		customFieldOptions := make([]client.CustomFieldOption, len(options))
 		for _, o := range options {
@@ -501,7 +501,7 @@ func unmarshalTicketField(field client.TicketField, d identifiableGetterSetter) 
 		customFieldOptions = append(customFieldOptions, m)
 	}
 
-	fields["custom_field_options"] = customFieldOptions
+	fields["custom_field_option"] = customFieldOptions
 
 	err := setSchemaFields(d, fields)
 	if err != nil {
