@@ -67,10 +67,25 @@ func TestReadTicketField(t *testing.T) {
 	}
 
 	if v := gs.mapGetterSetter["type"]; v != field.Type {
-		t.Fatalf("type field %v does not have expected value %v", v, field.URL)
+		t.Fatalf("type field %v does not have expected value %v", v, field.Type)
 	}
 
 	if v := gs.mapGetterSetter["title"]; v != field.Title {
-		t.Fatalf("type field %v does not have expected value %v", v, field.URL)
+		t.Fatalf("type field %v does not have expected value %v", v, field.Title)
+	}
+}
+
+func TestDeleteTicketField(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := identifiableMapGetterSetter{
+		id: "12345",
+	}
+
+	m.EXPECT().DeleteTicketField(gomock.Eq(int64(12345))).Return(nil)
+	if err := deleteTicketField(i, m); err != nil {
+		t.Fatal("readTicketField returned an error")
 	}
 }
