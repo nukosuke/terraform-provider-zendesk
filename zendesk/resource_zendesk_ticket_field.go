@@ -289,37 +289,23 @@ func unmarshalTicketField(d identifiableGetterSetter) (client.TicketField, error
 
 func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
-	tf := client.TicketField{
-		Type:  d.Get("type").(string),
-		Title: d.Get("title").(string),
-	}
+	return createTicketField(d, zd)
+}
 
-	// Handle type specific value
-	switch d.Get("type") {
-	case "regexp":
-		tf.RegexpForValidation = d.Get("regexp_for_validation").(string)
-	case "tagger":
-		options := d.Get("custom_field_option").(*schema.Set).List()
-
-		for _, option := range options {
-			tf.CustomFieldOptions = append(tf.CustomFieldOptions, client.CustomFieldOption{
-				Name:  option.(map[string]interface{})["name"].(string),
-				Value: option.(map[string]interface{})["value"].(string),
-			})
-		}
-	default:
-		// nop
+func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
+	tf, err := serializeResourceData(d)
+	if err != nil {
+		return err
 	}
 
 	// Actual API request
-	tf, err := zd.CreateTicketField(tf)
+	tf, err = zd.CreateTicketField(tf)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(fmt.Sprintf("%d", tf.ID))
-	d.Set("url", tf.URL)
-	return resourceZendeskTicketFieldRead(d, meta)
+	return readTicketField(d, zd)
 }
 
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
