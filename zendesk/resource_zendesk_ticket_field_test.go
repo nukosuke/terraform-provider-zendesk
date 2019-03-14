@@ -110,6 +110,7 @@ func TestMarshalTicketField(t *testing.T) {
 			"tag":                   "tag",
 			"removable":             false,
 			"agent_description":     "hey agents",
+			"sub_type_id":           0,
 		},
 	}
 
@@ -120,6 +121,10 @@ func TestMarshalTicketField(t *testing.T) {
 
 	if v := m.Get("url"); tf.URL != v {
 		t.Fatalf("ticket had url value %v. shouldhave been %v", tf.URL, v)
+	}
+
+	if v := m.Get("title"); tf.Title != v && tf.RawTitle != v {
+		t.Fatalf("ticket had incorrect title value %v or raw title %v. should have been %v", tf.Title, tf.RawTitle, v)
 	}
 
 }
