@@ -127,4 +127,12 @@ func TestMarshalTicketField(t *testing.T) {
 		t.Fatalf("ticket had incorrect title value %v or raw title %v. should have been %v", tf.Title, tf.RawTitle, v)
 	}
 
+	if v := m.Get("description"); tf.Description != v && tf.RawDescription != v {
+		t.Fatalf("ticket had incorrect description value %v or raw description %v. should have been %v", tf.Description, tf.RawDescription, v)
+	}
+
+	if v := m.Get("title_in_portal"); tf.TitleInPortal != v && tf.RawTitleInPortal != v {
+		t.Fatalf("ticket had incorrect title in portal value %v or raw title in portal %v. should have been %v", tf.Description, tf.RawDescription, v)
+	}
+
 }
