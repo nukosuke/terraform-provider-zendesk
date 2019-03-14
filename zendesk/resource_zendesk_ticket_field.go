@@ -494,10 +494,29 @@ func serializeResourceData(d identifiableGetterSetter) (client.TicketField, erro
 			customFieldOptions = append(customFieldOptions, client.CustomFieldOption{
 				Name:  option["name"].(string),
 				Value: option["value"].(string),
+				ID:    int64(option["id"].(int)),
 			})
 		}
 
 		tf.CustomFieldOptions = customFieldOptions
+	}
+
+	if v, ok := d.GetOk("system_field_options"); ok {
+		options := v.(*schema.Set).List()
+		systemFieldOptions := make([]client.TicketFieldSystemFieldOption, len(options))
+		for _, o := range options {
+			option, ok := o.(map[string]interface{})
+			if !ok {
+				return tf, fmt.Errorf("could not parse system options for field %v", tf)
+			}
+
+			systemFieldOptions = append(systemFieldOptions, client.TicketFieldSystemFieldOption{
+				Name:  option["name"].(string),
+				Value: option["value"].(string),
+			})
+		}
+
+		tf.SystemFieldOptions = systemFieldOptions
 	}
 
 	return tf, nil
