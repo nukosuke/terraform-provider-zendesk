@@ -293,7 +293,7 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	tf, err := serializeResourceData(d)
+	tf, err := unmarshalResourceData(d)
 	if err != nil {
 		return err
 	}
@@ -380,7 +380,7 @@ func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error
 	return nil
 }
 
-func serializeResourceData(d identifiableGetterSetter) (client.TicketField, error) {
+func unmarshalResourceData(d identifiableGetterSetter) (client.TicketField, error) {
 	tf := client.TicketField{}
 
 	if v := d.Id(); v != "" {
@@ -513,7 +513,7 @@ func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	tf, err := serializeResourceData(d)
+	tf, err := unmarshalResourceData(d)
 	if err != nil {
 		return err
 	}
