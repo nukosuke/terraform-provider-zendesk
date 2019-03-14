@@ -43,11 +43,6 @@ func resourceZendeskTicketField() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"raw_title": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
 			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -348,9 +343,6 @@ func marshalTicketField(d identifiableGetterSetter) (client.TicketField, error) 
 
 	if v, ok := d.GetOk("title"); ok {
 		tf.Title = v.(string)
-	}
-
-	if v, ok := d.GetOk("raw_title"); ok {
 		tf.RawTitle = v.(string)
 	}
 
@@ -459,7 +451,6 @@ func unmarshalTicketField(field client.TicketField, d identifiableGetterSetter) 
 		"url":                   field.URL,
 		"type":                  field.Type,
 		"title":                 field.Title,
-		"raw_title":             field.RawTitle,
 		"description":           field.Description,
 		"raw_description":       field.RawDescription,
 		"position":              field.Position,
