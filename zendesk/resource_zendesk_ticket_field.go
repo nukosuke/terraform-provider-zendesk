@@ -293,7 +293,7 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	tf, err := marshalResourceData(d)
+	tf, err := marshalTicketField(d)
 	if err != nil {
 		return err
 	}
@@ -305,7 +305,7 @@ func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) err
 	}
 
 	d.SetId(fmt.Sprintf("%d", tf.ID))
-	return readTicketField(d, zd)
+	return unmarshalTicketField(tf, d)
 }
 
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
@@ -324,10 +324,10 @@ func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error
 		return err
 	}
 
-	return unmarshalResourceData(field, d)
+	return unmarshalTicketField(field, d)
 }
 
-func marshalResourceData(d identifiableGetterSetter) (client.TicketField, error) {
+func marshalTicketField(d identifiableGetterSetter) (client.TicketField, error) {
 	tf := client.TicketField{}
 
 	if v := d.Id(); v != "" {
@@ -454,7 +454,7 @@ func marshalResourceData(d identifiableGetterSetter) (client.TicketField, error)
 	return tf, nil
 }
 
-func unmarshalResourceData(field client.TicketField, d identifiableGetterSetter) error {
+func unmarshalTicketField(field client.TicketField, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
 		"url":                   field.URL,
 		"type":                  field.Type,
@@ -517,7 +517,7 @@ func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	tf, err := marshalResourceData(d)
+	tf, err := marshalTicketField(d)
 	if err != nil {
 		return err
 	}
@@ -528,12 +528,12 @@ func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) err
 	}
 
 	// Actual API request
-	_, err = zd.UpdateTicketField(id, tf)
+	tf, err = zd.UpdateTicketField(id, tf)
 	if err != nil {
 		return err
 	}
 
-	return readTicketField(d, zd)
+	return unmarshalTicketField(tf, d)
 }
 
 func resourceZendeskTicketFieldDelete(d *schema.ResourceData, meta interface{}) error {
