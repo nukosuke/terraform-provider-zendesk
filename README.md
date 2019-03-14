@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/nukosuke/terraform-provider-zendesk.svg?branch=master)](https://travis-ci.org/nukosuke/terraform-provider-zendesk)
 [![Build status](https://ci.appveyor.com/api/projects/status/ti5il35v6a6ankcq/branch/master?svg=true)](https://ci.appveyor.com/project/nukosuke/terraform-provider-zendesk/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/nukosuke/terraform-provider-zendesk/badge.svg?branch=master)](https://coveralls.io/github/nukosuke/terraform-provider-zendesk?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/nukosuke/terraform-provider-zendesk)](https://goreportcard.com/report/github.com/nukosuke/terraform-provider-zendesk)
 
 Terraform provider for Zendesk
 
@@ -9,8 +10,8 @@ Terraform provider for Zendesk
 
 ## Requirements
 
-- Go >= v1.11
 - Terraform >= v0.11.10
+- Go >= v1.11 (only for build)
 
 ## Installation
 
@@ -22,7 +23,8 @@ and locate the binary `terraform-provider-zendesk(.exe)` to executable path of y
 ```sh
 $ git clone git@github.com:nukosuke/terraform-provider-zendesk.git
 $ cd terraform-provider-zendesk
-$ GO111MODULE=on go mod download
+$ export GO111MODULE=on
+$ go mod download
 $ go build
 ```
 
