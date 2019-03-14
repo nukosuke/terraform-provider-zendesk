@@ -467,7 +467,6 @@ func serializeResourceData(d identifiableGetterSetter) (client.TicketField, erro
 		tf.AgentDescription = v.(string)
 	}
 
-	// TODO: add system and custom field options
 	if v, ok := d.GetOk("custom_field_options"); ok {
 		options := v.(*schema.Set).List()
 		customFieldOptions := make([]client.CustomFieldOption, len(options))
