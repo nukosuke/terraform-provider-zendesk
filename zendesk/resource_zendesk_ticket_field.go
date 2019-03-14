@@ -293,7 +293,7 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	tf, err := unmarshalResourceData(d)
+	tf, err := marshalResourceData(d)
 	if err != nil {
 		return err
 	}
@@ -324,63 +324,10 @@ func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error
 		return err
 	}
 
-	fields := map[string]interface{}{
-		"url":                   field.URL,
-		"type":                  field.Type,
-		"title":                 field.Title,
-		"raw_title":             field.RawTitle,
-		"description":           field.Description,
-		"raw_description":       field.RawDescription,
-		"position":              field.Position,
-		"active":                field.Active,
-		"required":              field.Required,
-		"collapsed_for_agents":  field.CollapsedForAgents,
-		"regexp_for_validation": field.RegexpForValidation,
-		"title_in_portal":       field.TitleInPortal,
-		"raw_title_in_portal":   field.RawTitleInPortal,
-		"visible_in_portal":     field.VisibleInPortal,
-		"editable_in_portal":    field.EditableInPortal,
-		"required_in_portal":    field.RequiredInPortal,
-		"tag":                   field.Tag,
-		"sub_type_id":           field.SubTypeID,
-		"removable":             field.Removable,
-		"agent_description":     field.AgentDescription,
-	}
-
-	// set system field options
-	systemFieldOptions := make([]map[string]interface{}, len(field.SystemFieldOptions))
-	for _, v := range field.SystemFieldOptions {
-		m := map[string]interface{}{
-			"name":  v.Name,
-			"value": v.Value,
-		}
-		systemFieldOptions = append(systemFieldOptions, m)
-	}
-
-	fields["system_field_options"] = systemFieldOptions
-
-	// Set custom field options
-	customFieldOptions := make([]map[string]interface{}, len(field.CustomFieldOptions))
-	for _, v := range field.CustomFieldOptions {
-		m := map[string]interface{}{
-			"name":  v.Name,
-			"value": v.Value,
-			"id":    v.ID,
-		}
-		customFieldOptions = append(customFieldOptions, m)
-	}
-
-	fields["custom_field_options"] = customFieldOptions
-
-	err = setSchemaFields(d, fields)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return unmarshalResourceData(field, d)
 }
 
-func unmarshalResourceData(d identifiableGetterSetter) (client.TicketField, error) {
+func marshalResourceData(d identifiableGetterSetter) (client.TicketField, error) {
 	tf := client.TicketField{}
 
 	if v := d.Id(); v != "" {
@@ -507,13 +454,70 @@ func unmarshalResourceData(d identifiableGetterSetter) (client.TicketField, erro
 	return tf, nil
 }
 
+func unmarshalResourceData(field client.TicketField, d identifiableGetterSetter) error {
+	fields := map[string]interface{}{
+		"url":                   field.URL,
+		"type":                  field.Type,
+		"title":                 field.Title,
+		"raw_title":             field.RawTitle,
+		"description":           field.Description,
+		"raw_description":       field.RawDescription,
+		"position":              field.Position,
+		"active":                field.Active,
+		"required":              field.Required,
+		"collapsed_for_agents":  field.CollapsedForAgents,
+		"regexp_for_validation": field.RegexpForValidation,
+		"title_in_portal":       field.TitleInPortal,
+		"raw_title_in_portal":   field.RawTitleInPortal,
+		"visible_in_portal":     field.VisibleInPortal,
+		"editable_in_portal":    field.EditableInPortal,
+		"required_in_portal":    field.RequiredInPortal,
+		"tag":                   field.Tag,
+		"sub_type_id":           field.SubTypeID,
+		"removable":             field.Removable,
+		"agent_description":     field.AgentDescription,
+	}
+
+	// set system field options
+	systemFieldOptions := make([]map[string]interface{}, len(field.SystemFieldOptions))
+	for _, v := range field.SystemFieldOptions {
+		m := map[string]interface{}{
+			"name":  v.Name,
+			"value": v.Value,
+		}
+		systemFieldOptions = append(systemFieldOptions, m)
+	}
+
+	fields["system_field_options"] = systemFieldOptions
+
+	// Set custom field options
+	customFieldOptions := make([]map[string]interface{}, len(field.CustomFieldOptions))
+	for _, v := range field.CustomFieldOptions {
+		m := map[string]interface{}{
+			"name":  v.Name,
+			"value": v.Value,
+			"id":    v.ID,
+		}
+		customFieldOptions = append(customFieldOptions, m)
+	}
+
+	fields["custom_field_options"] = customFieldOptions
+
+	err := setSchemaFields(d, fields)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
 	return updateTicketField(d, zd)
 }
 
 func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	tf, err := unmarshalResourceData(d)
+	tf, err := marshalResourceData(d)
 	if err != nil {
 		return err
 	}
