@@ -1,5 +1,7 @@
 package zendesk
 
+import "github.com/hashicorp/terraform/helper/schema"
+
 type getter interface {
 	Get(string) interface{}
 }
@@ -53,3 +55,5 @@ func setSchemaFields(d setter, m map[string]interface{}) error {
 
 	return nil
 }
+
+var _ identifiableGetterSetter = (*schema.ResourceData)(nil)
