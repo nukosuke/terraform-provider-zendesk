@@ -394,6 +394,98 @@ func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error
 	return nil
 }
 
+func serializeResourceData(d identifiableGetterSetter) (client.TicketField, error) {
+	tf := client.TicketField{}
+
+	if v := d.Id(); v != "" {
+		id, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			return tf, fmt.Errorf("could not parse ticket field id %s: %v", v, err)
+		}
+		tf.ID = id
+	}
+
+	if v, ok := d.GetOk("url"); ok {
+		tf.URL = v.(string)
+	}
+
+	if v, ok := d.GetOk("type"); ok {
+		tf.Type = v.(string)
+	}
+
+	if v, ok := d.GetOk("title"); ok {
+		tf.Title = v.(string)
+	}
+
+	if v, ok := d.GetOk("raw_title"); ok {
+		tf.RawTitle = v.(string)
+	}
+
+	if v, ok := d.GetOk("description"); ok {
+		tf.Description = v.(string)
+	}
+
+	if v, ok := d.GetOk("raw_description"); ok {
+		tf.RawDescription = v.(string)
+	}
+
+	if v, ok := d.GetOk("position"); ok {
+		tf.Position = int64(v.(int))
+	}
+
+	if v, ok := d.GetOk("active"); ok {
+		tf.Active = v.(bool)
+	}
+
+	if v, ok := d.GetOk("required"); ok {
+		tf.Required = v.(bool)
+	}
+
+	if v, ok := d.GetOk("regexp_for_validation"); ok {
+		tf.RegexpForValidation = v.(string)
+	}
+
+	if v, ok := d.GetOk("title_in_portal"); ok {
+		tf.TitleInPortal = v.(string)
+	}
+
+	if v, ok := d.GetOk("raw_title_in_portal"); ok {
+		tf.RawTitleInPortal = v.(string)
+	}
+
+	if v, ok := d.GetOk("visible_in_portal"); ok {
+		tf.VisibleInPortal = v.(bool)
+	}
+
+	if v, ok := d.GetOk("editable_in_portal"); ok {
+		tf.EditableInPortal = v.(bool)
+	}
+
+	if v, ok := d.GetOk("required_in_portal"); ok {
+		tf.RequiredInPortal = v.(bool)
+	}
+
+	if v, ok := d.GetOk("tag"); ok {
+		tf.Tag = v.(string)
+	}
+
+	if v, ok := d.GetOk("sub_type_id"); ok {
+		tf.SubTypeID = int64(v.(int))
+	}
+
+	if v, ok := d.GetOk("removable"); ok {
+		tf.Removable = v.(bool)
+	}
+
+	if v, ok := d.GetOk("agent_description"); ok {
+		tf.AgentDescription = v.(string)
+	}
+
+	// TODO: add system and custom field options
+
+	return tf, nil
+}
+
 func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
