@@ -89,3 +89,37 @@ func TestDeleteTicketField(t *testing.T) {
 		t.Fatal("readTicketField returned an error")
 	}
 }
+
+func TestMarshalTicketField(t *testing.T) {
+	m := identifiableMapGetterSetter{
+		id: "1234",
+		mapGetterSetter: mapGetterSetter{
+			"url":                   "https://example.zendesk.com/api/v2/ticket_fields/360011737434.json",
+			"type":                  "subject",
+			"title":                 "title",
+			"description":           "description",
+			"position":              1,
+			"active":                true,
+			"required":              false,
+			"collapsed_for_agents":  false,
+			"regexp_for_validation": "+w{2}",
+			"title_in_portal":       "portal",
+			"visible_in_portal":     true,
+			"editable_in_portal":    true,
+			"required_in_portal":    true,
+			"tag":                   "tag",
+			"removable":             false,
+			"agent_description":     "hey agents",
+		},
+	}
+
+	tf, err := marshalTicketField(m)
+	if err != nil {
+		t.Fatalf("Could marshal map %v", err)
+	}
+
+	if v := m.Get("url"); tf.URL != v {
+		t.Fatalf("ticket had url value %v. shouldhave been %v", tf.URL, v)
+	}
+
+}
