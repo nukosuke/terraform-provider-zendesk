@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go v1.18.2 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/golang/mock v1.2.0
-	github.com/golang/protobuf v1.3.0 // indirect
+	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/hashicorp/go-getter v1.2.0 // indirect
 	github.com/hashicorp/go-hclog v0.8.0 // indirect
 	github.com/hashicorp/go-plugin v0.0.0-20190220160451-3f118e8ee104 // indirect
