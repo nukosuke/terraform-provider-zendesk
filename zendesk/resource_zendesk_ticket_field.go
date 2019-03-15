@@ -280,5 +280,15 @@ func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func resourceZendeskTicketFieldDelete(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	zd := meta.(*client.Client)
+	return deleteTicketField(d, zd)
+}
+
+func deleteTicketField(d identifiable, zd client.TicketFieldAPI) error {
+	id, err := strconv.ParseInt(d.Id(), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	return zd.DeleteTicketField(id)
 }
