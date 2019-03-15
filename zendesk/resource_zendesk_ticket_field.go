@@ -153,6 +153,61 @@ func resourceZendeskTicketField() *schema.Resource {
 	}
 }
 
+// marshalTicketField encodes the provided ticket field into the provided resource data
+func marshalTicketField(field client.TicketField, d identifiableGetterSetter) error {
+	fields := map[string]interface{}{
+		"url":                   field.URL,
+		"type":                  field.Type,
+		"title":                 field.Title,
+		"description":           field.Description,
+		"position":              field.Position,
+		"active":                field.Active,
+		"required":              field.Required,
+		"collapsed_for_agents":  field.CollapsedForAgents,
+		"regexp_for_validation": field.RegexpForValidation,
+		"title_in_portal":       field.TitleInPortal,
+		"visible_in_portal":     field.VisibleInPortal,
+		"editable_in_portal":    field.EditableInPortal,
+		"required_in_portal":    field.RequiredInPortal,
+		"tag":                   field.Tag,
+		"sub_type_id":           field.SubTypeID,
+		"removable":             field.Removable,
+		"agent_description":     field.AgentDescription,
+	}
+
+	// set system field options
+	systemFieldOptions := make([]map[string]interface{}, len(field.SystemFieldOptions))
+	for _, v := range field.SystemFieldOptions {
+		m := map[string]interface{}{
+			"name":  v.Name,
+			"value": v.Value,
+		}
+		systemFieldOptions = append(systemFieldOptions, m)
+	}
+
+	fields["system_field_options"] = systemFieldOptions
+
+	// Set custom field options
+	customFieldOptions := make([]map[string]interface{}, len(field.CustomFieldOptions))
+	for _, v := range field.CustomFieldOptions {
+		m := map[string]interface{}{
+			"name":  v.Name,
+			"value": v.Value,
+			"id":    v.ID,
+		}
+		customFieldOptions = append(customFieldOptions, m)
+	}
+
+	fields["custom_field_option"] = customFieldOptions
+
+	err := setSchemaFields(d, fields)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // unmarshalTicketField parses the provided ResourceData and returns a ticket field
 func unmarshalTicketField(d identifiableGetterSetter) (client.TicketField, error) {
 	tf := client.TicketField{}
@@ -278,7 +333,7 @@ func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) 
 }
 
 func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	tf, err := marshalTicketField(d)
+	tf, err := unmarshalTicketField(d)
 	if err != nil {
 		return err
 	}
@@ -290,7 +345,7 @@ func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) err
 	}
 
 	d.SetId(fmt.Sprintf("%d", tf.ID))
-	return unmarshalTicketField(tf, d)
+	return marshalTicketField(tf, d)
 }
 
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
@@ -309,179 +364,7 @@ func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error
 		return err
 	}
 
-	return unmarshalTicketField(field, d)
-}
-
-func marshalTicketField(d identifiableGetterSetter) (client.TicketField, error) {
-	tf := client.TicketField{}
-
-	if v := d.Id(); v != "" {
-		id, err := strconv.ParseInt(v, 10, 64)
-		if err != nil {
-			return tf, fmt.Errorf("could not parse ticket field id %s: %v", v, err)
-		}
-		tf.ID = id
-	}
-
-	if v, ok := d.GetOk("url"); ok {
-		tf.URL = v.(string)
-	}
-
-	if v, ok := d.GetOk("type"); ok {
-		tf.Type = v.(string)
-	}
-
-	if v, ok := d.GetOk("title"); ok {
-		tf.Title = v.(string)
-		tf.RawTitle = v.(string)
-	}
-
-	if v, ok := d.GetOk("description"); ok {
-		tf.Description = v.(string)
-		tf.RawDescription = v.(string)
-	}
-
-	if v, ok := d.GetOk("position"); ok {
-		tf.Position = int64(v.(int))
-	}
-
-	if v, ok := d.GetOk("active"); ok {
-		tf.Active = v.(bool)
-	}
-
-	if v, ok := d.GetOk("required"); ok {
-		tf.Required = v.(bool)
-	}
-
-	if v, ok := d.GetOk("regexp_for_validation"); ok {
-		tf.RegexpForValidation = v.(string)
-	}
-
-	if v, ok := d.GetOk("title_in_portal"); ok {
-		tf.TitleInPortal = v.(string)
-		tf.RawTitleInPortal = v.(string)
-	}
-
-	if v, ok := d.GetOk("visible_in_portal"); ok {
-		tf.VisibleInPortal = v.(bool)
-	}
-
-	if v, ok := d.GetOk("editable_in_portal"); ok {
-		tf.EditableInPortal = v.(bool)
-	}
-
-	if v, ok := d.GetOk("required_in_portal"); ok {
-		tf.RequiredInPortal = v.(bool)
-	}
-
-	if v, ok := d.GetOk("tag"); ok {
-		tf.Tag = v.(string)
-	}
-
-	if v, ok := d.GetOk("sub_type_id"); ok {
-		tf.SubTypeID = int64(v.(int))
-	}
-
-	if v, ok := d.GetOk("removable"); ok {
-		tf.Removable = v.(bool)
-	}
-
-	if v, ok := d.GetOk("agent_description"); ok {
-		tf.AgentDescription = v.(string)
-	}
-
-	if v, ok := d.GetOk("custom_field_option"); ok {
-		options := v.(*schema.Set).List()
-		customFieldOptions := make([]client.CustomFieldOption, len(options))
-		for _, o := range options {
-			option, ok := o.(map[string]interface{})
-			if !ok {
-				return tf, fmt.Errorf("could not parse custom options for field %v", tf)
-			}
-
-			customFieldOptions = append(customFieldOptions, client.CustomFieldOption{
-				Name:  option["name"].(string),
-				Value: option["value"].(string),
-				ID:    int64(option["id"].(int)),
-			})
-		}
-
-		tf.CustomFieldOptions = customFieldOptions
-	}
-
-	if v, ok := d.GetOk("system_field_options"); ok {
-		options := v.(*schema.Set).List()
-		systemFieldOptions := make([]client.TicketFieldSystemFieldOption, len(options))
-		for _, o := range options {
-			option, ok := o.(map[string]interface{})
-			if !ok {
-				return tf, fmt.Errorf("could not parse system options for field %v", tf)
-			}
-
-			systemFieldOptions = append(systemFieldOptions, client.TicketFieldSystemFieldOption{
-				Name:  option["name"].(string),
-				Value: option["value"].(string),
-			})
-		}
-
-		tf.SystemFieldOptions = systemFieldOptions
-	}
-
-	return tf, nil
-}
-
-func unmarshalTicketField(field client.TicketField, d identifiableGetterSetter) error {
-	fields := map[string]interface{}{
-		"url":                   field.URL,
-		"type":                  field.Type,
-		"title":                 field.Title,
-		"description":           field.Description,
-		"position":              field.Position,
-		"active":                field.Active,
-		"required":              field.Required,
-		"collapsed_for_agents":  field.CollapsedForAgents,
-		"regexp_for_validation": field.RegexpForValidation,
-		"title_in_portal":       field.TitleInPortal,
-		"visible_in_portal":     field.VisibleInPortal,
-		"editable_in_portal":    field.EditableInPortal,
-		"required_in_portal":    field.RequiredInPortal,
-		"tag":                   field.Tag,
-		"sub_type_id":           field.SubTypeID,
-		"removable":             field.Removable,
-		"agent_description":     field.AgentDescription,
-	}
-
-	// set system field options
-	systemFieldOptions := make([]map[string]interface{}, len(field.SystemFieldOptions))
-	for _, v := range field.SystemFieldOptions {
-		m := map[string]interface{}{
-			"name":  v.Name,
-			"value": v.Value,
-		}
-		systemFieldOptions = append(systemFieldOptions, m)
-	}
-
-	fields["system_field_options"] = systemFieldOptions
-
-	// Set custom field options
-	customFieldOptions := make([]map[string]interface{}, len(field.CustomFieldOptions))
-	for _, v := range field.CustomFieldOptions {
-		m := map[string]interface{}{
-			"name":  v.Name,
-			"value": v.Value,
-			"id":    v.ID,
-		}
-		customFieldOptions = append(customFieldOptions, m)
-	}
-
-	fields["custom_field_option"] = customFieldOptions
-
-	err := setSchemaFields(d, fields)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return marshalTicketField(field, d)
 }
 
 func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -490,7 +373,7 @@ func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) 
 }
 
 func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	tf, err := marshalTicketField(d)
+	tf, err := unmarshalTicketField(d)
 	if err != nil {
 		return err
 	}
@@ -506,7 +389,7 @@ func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) err
 		return err
 	}
 
-	return unmarshalTicketField(tf, d)
+	return marshalTicketField(tf, d)
 }
 
 func resourceZendeskTicketFieldDelete(d *schema.ResourceData, meta interface{}) error {
