@@ -168,7 +168,8 @@ func resourceZendeskTicketField() *schema.Resource {
 	}
 }
 
-func marshalTicketField(d identifiableGetterSetter) (client.TicketField, error) {
+// unmarshalTicketField parses the provided ResourceData and returns a ticket field
+func unmarshalTicketField(d identifiableGetterSetter) (client.TicketField, error) {
 	tf := client.TicketField{}
 
 	if v := d.Id(); v != "" {

@@ -114,7 +114,7 @@ func TestMarshalTicketField(t *testing.T) {
 		},
 	}
 
-	tf, err := marshalTicketField(m)
+	tf, err := unmarshalTicketField(m)
 	if err != nil {
 		t.Fatalf("Could marshal map %v", err)
 	}
