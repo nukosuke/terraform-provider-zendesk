@@ -89,3 +89,50 @@ func TestDeleteTicketField(t *testing.T) {
 		t.Fatal("readTicketField returned an error")
 	}
 }
+
+func TestMarshalTicketField(t *testing.T) {
+	m := identifiableMapGetterSetter{
+		id: "1234",
+		mapGetterSetter: mapGetterSetter{
+			"url":                   "https://example.zendesk.com/api/v2/ticket_fields/360011737434.json",
+			"type":                  "subject",
+			"title":                 "title",
+			"description":           "description",
+			"position":              1,
+			"active":                true,
+			"required":              false,
+			"collapsed_for_agents":  false,
+			"regexp_for_validation": "+w{2}",
+			"title_in_portal":       "portal",
+			"visible_in_portal":     true,
+			"editable_in_portal":    true,
+			"required_in_portal":    true,
+			"tag":                   "tag",
+			"removable":             false,
+			"agent_description":     "hey agents",
+			"sub_type_id":           0,
+		},
+	}
+
+	tf, err := unmarshalTicketField(m)
+	if err != nil {
+		t.Fatalf("Could marshal map %v", err)
+	}
+
+	if v := m.Get("url"); tf.URL != v {
+		t.Fatalf("ticket had url value %v. shouldhave been %v", tf.URL, v)
+	}
+
+	if v := m.Get("title"); tf.Title != v && tf.RawTitle != v {
+		t.Fatalf("ticket had incorrect title value %v or raw title %v. should have been %v", tf.Title, tf.RawTitle, v)
+	}
+
+	if v := m.Get("description"); tf.Description != v && tf.RawDescription != v {
+		t.Fatalf("ticket had incorrect description value %v or raw description %v. should have been %v", tf.Description, tf.RawDescription, v)
+	}
+
+	if v := m.Get("title_in_portal"); tf.TitleInPortal != v && tf.RawTitleInPortal != v {
+		t.Fatalf("ticket had incorrect title in portal value %v or raw title in portal %v. should have been %v", tf.Description, tf.RawDescription, v)
+	}
+
+}

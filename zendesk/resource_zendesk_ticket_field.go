@@ -168,6 +168,125 @@ func resourceZendeskTicketField() *schema.Resource {
 	}
 }
 
+// unmarshalTicketField parses the provided ResourceData and returns a ticket field
+func unmarshalTicketField(d identifiableGetterSetter) (client.TicketField, error) {
+	tf := client.TicketField{}
+
+	if v := d.Id(); v != "" {
+		id, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			return tf, fmt.Errorf("could not parse ticket field id %s: %v", v, err)
+		}
+		tf.ID = id
+	}
+
+	if v, ok := d.GetOk("url"); ok {
+		tf.URL = v.(string)
+	}
+
+	if v, ok := d.GetOk("type"); ok {
+		tf.Type = v.(string)
+	}
+
+	if v, ok := d.GetOk("title"); ok {
+		tf.Title = v.(string)
+		tf.RawTitle = v.(string)
+	}
+
+	if v, ok := d.GetOk("description"); ok {
+		tf.Description = v.(string)
+		tf.RawDescription = v.(string)
+	}
+
+	if v, ok := d.GetOk("position"); ok {
+		tf.Position = int64(v.(int))
+	}
+
+	if v, ok := d.GetOk("active"); ok {
+		tf.Active = v.(bool)
+	}
+
+	if v, ok := d.GetOk("required"); ok {
+		tf.Required = v.(bool)
+	}
+
+	if v, ok := d.GetOk("regexp_for_validation"); ok {
+		tf.RegexpForValidation = v.(string)
+	}
+
+	if v, ok := d.GetOk("title_in_portal"); ok {
+		tf.TitleInPortal = v.(string)
+		tf.RawTitleInPortal = v.(string)
+	}
+
+	if v, ok := d.GetOk("visible_in_portal"); ok {
+		tf.VisibleInPortal = v.(bool)
+	}
+
+	if v, ok := d.GetOk("editable_in_portal"); ok {
+		tf.EditableInPortal = v.(bool)
+	}
+
+	if v, ok := d.GetOk("required_in_portal"); ok {
+		tf.RequiredInPortal = v.(bool)
+	}
+
+	if v, ok := d.GetOk("tag"); ok {
+		tf.Tag = v.(string)
+	}
+
+	if v, ok := d.GetOk("sub_type_id"); ok {
+		tf.SubTypeID = int64(v.(int))
+	}
+
+	if v, ok := d.GetOk("removable"); ok {
+		tf.Removable = v.(bool)
+	}
+
+	if v, ok := d.GetOk("agent_description"); ok {
+		tf.AgentDescription = v.(string)
+	}
+
+	if v, ok := d.GetOk("custom_field_option"); ok {
+		options := v.(*schema.Set).List()
+		customFieldOptions := make([]client.CustomFieldOption, len(options))
+		for _, o := range options {
+			option, ok := o.(map[string]interface{})
+			if !ok {
+				return tf, fmt.Errorf("could not parse custom options for field %v", tf)
+			}
+
+			customFieldOptions = append(customFieldOptions, client.CustomFieldOption{
+				Name:  option["name"].(string),
+				Value: option["value"].(string),
+				ID:    int64(option["id"].(int)),
+			})
+		}
+
+		tf.CustomFieldOptions = customFieldOptions
+	}
+
+	if v, ok := d.GetOk("system_field_options"); ok {
+		options := v.(*schema.Set).List()
+		systemFieldOptions := make([]client.TicketFieldSystemFieldOption, len(options))
+		for _, o := range options {
+			option, ok := o.(map[string]interface{})
+			if !ok {
+				return tf, fmt.Errorf("could not parse system options for field %v", tf)
+			}
+
+			systemFieldOptions = append(systemFieldOptions, client.TicketFieldSystemFieldOption{
+				Name:  option["name"].(string),
+				Value: option["value"].(string),
+			})
+		}
+
+		tf.SystemFieldOptions = systemFieldOptions
+	}
+
+	return tf, nil
+}
+
 func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
 	tf := client.TicketField{
