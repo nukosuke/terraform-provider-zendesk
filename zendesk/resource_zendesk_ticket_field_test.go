@@ -5,18 +5,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
+	. "github.com/golang/mock/gomock"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
 
 func TestReadTicketField(t *testing.T) {
-	ctrl := gomock.NewController(t)
+	ctrl := NewController(t)
 	defer ctrl.Finish()
 
 	m := mock.NewClient(ctrl)
 	id := 1234
-	gs := identifiableMapGetterSetter{
+	gs := &identifiableMapGetterSetter{
 		mapGetterSetter: make(mapGetterSetter),
 		id:              strconv.Itoa(id),
 	}
@@ -57,7 +57,7 @@ func TestReadTicketField(t *testing.T) {
 		}},
 	}
 
-	m.EXPECT().GetTicketField(gomock.Any()).Return(field, nil)
+	m.EXPECT().GetTicketField(Any()).Return(field, nil)
 	if err := readTicketField(gs, m); err != nil {
 		t.Fatal("readTicketField returned an error")
 	}
@@ -76,22 +76,61 @@ func TestReadTicketField(t *testing.T) {
 }
 
 func TestDeleteTicketField(t *testing.T) {
-	ctrl := gomock.NewController(t)
+	ctrl := NewController(t)
 	defer ctrl.Finish()
 
 	m := mock.NewClient(ctrl)
-	i := identifiableMapGetterSetter{
+	i := &identifiableMapGetterSetter{
 		id: "12345",
 	}
 
-	m.EXPECT().DeleteTicketField(gomock.Eq(int64(12345))).Return(nil)
+	m.EXPECT().DeleteTicketField(Eq(int64(12345))).Return(nil)
 	if err := deleteTicketField(i, m); err != nil {
 		t.Fatal("readTicketField returned an error")
 	}
 }
 
+func TestUpdateTicketField(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := &identifiableMapGetterSetter{
+		id:              "12345",
+		mapGetterSetter: make(mapGetterSetter),
+	}
+
+	m.EXPECT().UpdateTicketField(Eq(int64(12345)), Any()).Return(zendesk.TicketField{}, nil)
+	if err := updateTicketField(i, m); err != nil {
+		t.Fatal("readTicketField returned an error")
+	}
+}
+
+func TestCreateTicketField(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := &identifiableMapGetterSetter{
+		mapGetterSetter: make(mapGetterSetter),
+	}
+
+	out := zendesk.TicketField{
+		ID: 12345,
+	}
+
+	m.EXPECT().CreateTicketField(Any()).Return(out, nil)
+	if err := createTicketField(i, m); err != nil {
+		t.Fatal("create ticket field returned an error")
+	}
+
+	if v := i.Id(); v != "12345" {
+		t.Fatalf("Create did not set resource id. Id was %s", v)
+	}
+}
+
 func TestMarshalTicketField(t *testing.T) {
-	m := identifiableMapGetterSetter{
+	m := &identifiableMapGetterSetter{
 		id: "1234",
 		mapGetterSetter: mapGetterSetter{
 			"url":                   "https://example.zendesk.com/api/v2/ticket_fields/360011737434.json",

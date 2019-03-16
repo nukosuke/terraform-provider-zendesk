@@ -46,11 +46,11 @@ type identifiableMapGetterSetter struct {
 	id string
 }
 
-func (i identifiableMapGetterSetter) Id() string {
+func (i *identifiableMapGetterSetter) Id() string {
 	return i.id
 }
 
-func (i identifiableMapGetterSetter) SetId(id string) {
+func (i *identifiableMapGetterSetter) SetId(id string) {
 	i.id = id
 }
 

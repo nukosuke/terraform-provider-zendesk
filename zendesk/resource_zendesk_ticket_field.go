@@ -43,17 +43,7 @@ func resourceZendeskTicketField() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"raw_title": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-			"raw_description": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
@@ -85,11 +75,6 @@ func resourceZendeskTicketField() *schema.Resource {
 				//TODO: validation
 			},
 			"title_in_portal": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-			"raw_title_in_portal": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
@@ -166,6 +151,61 @@ func resourceZendeskTicketField() *schema.Resource {
 			},
 		},
 	}
+}
+
+// marshalTicketField encodes the provided ticket field into the provided resource data
+func marshalTicketField(field client.TicketField, d identifiableGetterSetter) error {
+	fields := map[string]interface{}{
+		"url":                   field.URL,
+		"type":                  field.Type,
+		"title":                 field.Title,
+		"description":           field.Description,
+		"position":              field.Position,
+		"active":                field.Active,
+		"required":              field.Required,
+		"collapsed_for_agents":  field.CollapsedForAgents,
+		"regexp_for_validation": field.RegexpForValidation,
+		"title_in_portal":       field.TitleInPortal,
+		"visible_in_portal":     field.VisibleInPortal,
+		"editable_in_portal":    field.EditableInPortal,
+		"required_in_portal":    field.RequiredInPortal,
+		"tag":                   field.Tag,
+		"sub_type_id":           field.SubTypeID,
+		"removable":             field.Removable,
+		"agent_description":     field.AgentDescription,
+	}
+
+	// set system field options
+	systemFieldOptions := make([]map[string]interface{}, len(field.SystemFieldOptions))
+	for _, v := range field.SystemFieldOptions {
+		m := map[string]interface{}{
+			"name":  v.Name,
+			"value": v.Value,
+		}
+		systemFieldOptions = append(systemFieldOptions, m)
+	}
+
+	fields["system_field_options"] = systemFieldOptions
+
+	// Set custom field options
+	customFieldOptions := make([]map[string]interface{}, len(field.CustomFieldOptions))
+	for _, v := range field.CustomFieldOptions {
+		m := map[string]interface{}{
+			"name":  v.Name,
+			"value": v.Value,
+			"id":    v.ID,
+		}
+		customFieldOptions = append(customFieldOptions, m)
+	}
+
+	fields["custom_field_option"] = customFieldOptions
+
+	err := setSchemaFields(d, fields)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // unmarshalTicketField parses the provided ResourceData and returns a ticket field
@@ -289,37 +329,23 @@ func unmarshalTicketField(d identifiableGetterSetter) (client.TicketField, error
 
 func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
-	tf := client.TicketField{
-		Type:  d.Get("type").(string),
-		Title: d.Get("title").(string),
-	}
+	return createTicketField(d, zd)
+}
 
-	// Handle type specific value
-	switch d.Get("type") {
-	case "regexp":
-		tf.RegexpForValidation = d.Get("regexp_for_validation").(string)
-	case "tagger":
-		options := d.Get("custom_field_option").(*schema.Set).List()
-
-		for _, option := range options {
-			tf.CustomFieldOptions = append(tf.CustomFieldOptions, client.CustomFieldOption{
-				Name:  option.(map[string]interface{})["name"].(string),
-				Value: option.(map[string]interface{})["value"].(string),
-			})
-		}
-	default:
-		// nop
+func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
+	tf, err := unmarshalTicketField(d)
+	if err != nil {
+		return err
 	}
 
 	// Actual API request
-	tf, err := zd.CreateTicketField(tf)
+	tf, err = zd.CreateTicketField(tf)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(fmt.Sprintf("%d", tf.ID))
-	d.Set("url", tf.URL)
-	return resourceZendeskTicketFieldRead(d, meta)
+	return marshalTicketField(tf, d)
 }
 
 func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
@@ -338,64 +364,32 @@ func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error
 		return err
 	}
 
-	fields := map[string]interface{}{
-		"url":                   field.URL,
-		"type":                  field.Type,
-		"title":                 field.Title,
-		"raw_title":             field.RawTitle,
-		"description":           field.Description,
-		"raw_description":       field.RawDescription,
-		"position":              field.Position,
-		"active":                field.Active,
-		"required":              field.Required,
-		"collapsed_for_agents":  field.CollapsedForAgents,
-		"regexp_for_validation": field.RegexpForValidation,
-		"title_in_portal":       field.TitleInPortal,
-		"raw_title_in_portal":   field.RawTitleInPortal,
-		"visible_in_portal":     field.VisibleInPortal,
-		"editable_in_portal":    field.EditableInPortal,
-		"required_in_portal":    field.RequiredInPortal,
-		"tag":                   field.Tag,
-		"sub_type_id":           field.SubTypeID,
-		"removable":             field.Removable,
-		"agent_description":     field.AgentDescription,
-	}
+	return marshalTicketField(field, d)
+}
 
-	// set system field options
-	systemFieldOptions := make([]map[string]interface{}, len(field.SystemFieldOptions))
-	for _, v := range field.SystemFieldOptions {
-		m := map[string]interface{}{
-			"name":  v.Name,
-			"value": v.Value,
-		}
-		systemFieldOptions = append(systemFieldOptions, m)
-	}
+func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) error {
+	zd := meta.(*client.Client)
+	return updateTicketField(d, zd)
+}
 
-	fields["system_field_options"] = systemFieldOptions
-
-	// Set custom field options
-	customFieldOptions := make([]map[string]interface{}, len(field.CustomFieldOptions))
-	for _, v := range field.CustomFieldOptions {
-		m := map[string]interface{}{
-			"name":  v.Name,
-			"value": v.Value,
-			"id":    v.ID,
-		}
-		customFieldOptions = append(customFieldOptions, m)
-	}
-
-	fields["custom_field_options"] = customFieldOptions
-
-	err = setSchemaFields(d, fields)
+func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
+	tf, err := unmarshalTicketField(d)
 	if err != nil {
 		return err
 	}
 
-	return nil
-}
+	id, err := strconv.ParseInt(d.Id(), 10, 64)
+	if err != nil {
+		return err
+	}
 
-func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	// Actual API request
+	tf, err = zd.UpdateTicketField(id, tf)
+	if err != nil {
+		return err
+	}
+
+	return marshalTicketField(tf, d)
 }
 
 func resourceZendeskTicketFieldDelete(d *schema.ResourceData, meta interface{}) error {
