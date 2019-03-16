@@ -5,13 +5,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
+	. "github.com/golang/mock/gomock"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
 
 func TestReadTicketField(t *testing.T) {
-	ctrl := gomock.NewController(t)
+	ctrl := NewController(t)
 	defer ctrl.Finish()
 
 	m := mock.NewClient(ctrl)
@@ -57,7 +57,7 @@ func TestReadTicketField(t *testing.T) {
 		}},
 	}
 
-	m.EXPECT().GetTicketField(gomock.Any()).Return(field, nil)
+	m.EXPECT().GetTicketField(Any()).Return(field, nil)
 	if err := readTicketField(gs, m); err != nil {
 		t.Fatal("readTicketField returned an error")
 	}
@@ -76,7 +76,7 @@ func TestReadTicketField(t *testing.T) {
 }
 
 func TestDeleteTicketField(t *testing.T) {
-	ctrl := gomock.NewController(t)
+	ctrl := NewController(t)
 	defer ctrl.Finish()
 
 	m := mock.NewClient(ctrl)
@@ -84,7 +84,7 @@ func TestDeleteTicketField(t *testing.T) {
 		id: "12345",
 	}
 
-	m.EXPECT().DeleteTicketField(gomock.Eq(int64(12345))).Return(nil)
+	m.EXPECT().DeleteTicketField(Eq(int64(12345))).Return(nil)
 	if err := deleteTicketField(i, m); err != nil {
 		t.Fatal("readTicketField returned an error")
 	}
