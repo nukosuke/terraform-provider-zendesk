@@ -90,6 +90,22 @@ func TestDeleteTicketField(t *testing.T) {
 	}
 }
 
+func TestUpdateTicketField(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := identifiableMapGetterSetter{
+		id:              "12345",
+		mapGetterSetter: make(mapGetterSetter),
+	}
+
+	m.EXPECT().UpdateTicketField(Eq(int64(12345)), Any()).Return(zendesk.TicketField{}, nil)
+	if err := updateTicketField(i, m); err != nil {
+		t.Fatal("readTicketField returned an error")
+	}
+}
+
 func TestMarshalTicketField(t *testing.T) {
 	m := identifiableMapGetterSetter{
 		id: "1234",
