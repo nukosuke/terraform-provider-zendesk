@@ -3,6 +3,7 @@ package zendesk
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -93,4 +94,8 @@ func setSchemaFields(d setter, m map[string]interface{}) error {
 	}
 
 	return nil
+}
+
+func atoi64(anum string) (int64, error) {
+	return strconv.ParseInt(anum, 10, 64)
 }
