@@ -29,6 +29,6 @@ require (
 	github.com/zclconf/go-cty v0.0.0-20190212192503-19dda139b164 // indirect
 	golang.org/x/crypto v0.0.0-20190313033226-a1f597ede03a // indirect
 	golang.org/x/net v0.0.0-20190313233723-9f648a60d977 // indirect
-	golang.org/x/sys v0.0.0-20190313050009-fead79001313 // indirect
+	golang.org/x/sys v0.0.0-20190316083947-a2f829d7f35f // indirect
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19 // indirect
 )
