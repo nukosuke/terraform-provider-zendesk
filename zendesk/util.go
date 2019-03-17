@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -61,8 +62,14 @@ func (i *identifiableMapGetterSetter) SetId(id string) {
 }
 
 func isValidFile() schema.SchemaValidateFunc {
-	return func(i interface{}, s string) (strings []string, errors []error) {
-		_, err := os.Open(s)
+	return func(i interface{}, key string) (strings []string, errors []error) {
+		v, ok := i.(string)
+		if !ok {
+			errors = append(errors, fmt.Errorf("expected type of %s to be string", key))
+			return
+		}
+
+		_, err := os.Open(v)
 		if err != nil {
 			errors = append(errors, err)
 		}

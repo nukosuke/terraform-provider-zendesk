@@ -38,8 +38,8 @@ func resourceZendeskAttachment() *schema.Resource {
 		},
 		Schema: map[string]*schema.Schema{
 			"file_path": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:         schema.TypeString,
+				Required:     true,
 				ValidateFunc: isValidFile(),
 			},
 			"file_name": {
@@ -67,7 +67,30 @@ func resourceZendeskAttachment() *schema.Resource {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			//TODO: add thumbnails
+			"thumbnails": {
+				Type: schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+						"file_name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"content_type": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"size": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+					},
+				},
+				Computed: true,
+			},
 		},
 	}
 }
@@ -114,5 +137,18 @@ func marshalAttachment(d identifiableGetterSetter, a attachment) error {
 		"inline":       a.Inline,
 	}
 
+	thumbnails := make([]map[string]interface{}, len(a.Thumbnails))
+	for _, v := range a.Thumbnails {
+		thumb := map[string]interface{}{
+			"id":           v.ID,
+			"file_name":    v.FileName,
+			"content_url":  v.ContentURL,
+			"content_type": v.ContentType,
+			"size":         v.Size,
+		}
+		thumbnails = append(thumbnails, thumb)
+	}
+
+	m["thumbnails"] = thumbnails
 	return setSchemaFields(d, m)
 }
