@@ -1,5 +1,11 @@
 package zendesk
 
+import (
+	"os"
+
+	"github.com/hashicorp/terraform/helper/schema"
+)
+
 type getter interface {
 	Get(string) interface{}
 	GetOk(string) (interface{}, bool)
@@ -52,6 +58,17 @@ func (i *identifiableMapGetterSetter) Id() string {
 
 func (i *identifiableMapGetterSetter) SetId(id string) {
 	i.id = id
+}
+
+func isValidFile() schema.SchemaValidateFunc {
+	return func(i interface{}, s string) (strings []string, errors []error) {
+		_, err := os.Open(s)
+		if err != nil {
+			errors = append(errors, err)
+		}
+
+		return
+	}
 }
 
 func setSchemaFields(d setter, m map[string]interface{}) error {

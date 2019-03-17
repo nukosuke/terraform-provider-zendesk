@@ -40,6 +40,7 @@ func resourceZendeskAttachment() *schema.Resource {
 			"file_path": {
 				Type:     schema.TypeString,
 				Required: true,
+				ValidateFunc: isValidFile(),
 			},
 			"file_name": {
 				Type:     schema.TypeString,
