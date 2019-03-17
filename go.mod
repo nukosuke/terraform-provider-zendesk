@@ -26,7 +26,7 @@ require (
 	github.com/nukosuke/go-zendesk v0.1.3-0.20190314021613-d931b14b8c24
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
-	github.com/zclconf/go-cty v0.0.0-20190212192503-19dda139b164 // indirect
+	github.com/zclconf/go-cty v0.0.0-20190317014947-9463876af40c // indirect
 	golang.org/x/crypto v0.0.0-20190313033226-a1f597ede03a // indirect
 	golang.org/x/net v0.0.0-20190313233723-9f648a60d977 // indirect
 	golang.org/x/sys v0.0.0-20190316083947-a2f829d7f35f // indirect
