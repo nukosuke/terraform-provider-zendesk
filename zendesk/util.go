@@ -62,16 +62,22 @@ func (i *identifiableMapGetterSetter) SetId(id string) {
 }
 
 func isValidFile() schema.SchemaValidateFunc {
-	return func(i interface{}, key string) (strings []string, errors []error) {
+	return func(i interface{}, key string) (strings []string, errs []error) {
 		v, ok := i.(string)
 		if !ok {
-			errors = append(errors, fmt.Errorf("expected type of %s to be string", key))
+			errs = append(errs, fmt.Errorf("expected type of %s to be string", key))
 			return
 		}
 
-		_, err := os.Open(v)
+		f, err := os.Stat(v)
 		if err != nil {
-			errors = append(errors, err)
+			errs = append(errs, err)
+			return
+		}
+
+		if f.IsDir() {
+			errs = append(errs, fmt.Errorf("%s: %s is a directory", key, v))
+			return
 		}
 
 		return

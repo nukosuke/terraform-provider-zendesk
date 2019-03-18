@@ -11,6 +11,11 @@ func TestIsValidFile(t *testing.T) {
 
 	_, errs = v("Missing", "file_path")
 	if len(errs) == 0 {
-		t.Fatalf("is Valid did not return an error")
+		t.Fatalf("is Valid did not return an error for missing file")
+	}
+
+	_, errs = v("testdata", "file_path")
+	if len(errs) == 0 {
+		t.Fatalf("is Valid did not return an error for a directory")
 	}
 }
