@@ -33,7 +33,7 @@ func resourceZendeskGroup() *schema.Resource {
 
 func marshalGroup(field client.Group, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
-		"url": field.URL,
+		"url":  field.URL,
 		"name": field.Name,
 	}
 
@@ -41,15 +41,12 @@ func marshalGroup(field client.Group, d identifiableGetterSetter) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
 func unmarshalGroup(d identifiableGetterSetter) (client.Group, error) {
-	group := client.Group{
-		URL: d.Get("url").(string),
-		Name: d.Get("name").(string),
-	}
+	group := client.Group{}
 
 	if v := d.Id(); v != "" {
 		id, err := atoi64(v)
@@ -59,23 +56,36 @@ func unmarshalGroup(d identifiableGetterSetter) (client.Group, error) {
 		group.ID = id
 	}
 
+	if v, ok := d.GetOk("url"); ok {
+		group.URL = v.(string)
+	}
+
+	if v, ok := d.GetOk("name"); ok {
+		group.Name = v.(string)
+	}
+
 	return group, nil
 }
 
 func resourceZendeskGroupCreate(d *schema.ResourceData, meta interface{}) error {
 	zd := meta.(*client.Client)
-	group := client.Group{
-		Name: d.Get("name").(string),
+	return createGroup(d, zd)
+}
+
+func createGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
+	group, err := unmarshalGroup(d)
+	if err != nil {
+		return err
 	}
 
 	// Actual API request
-	group, err := zd.CreateGroup(group)
+	group, err = zd.CreateGroup(group)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(fmt.Sprintf("%d", group.ID))
-	return nil
+	return marshalGroup(group, d)
 }
 
 func resourceZendeskGroupRead(d *schema.ResourceData, meta interface{}) error {
