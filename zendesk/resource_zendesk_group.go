@@ -79,7 +79,22 @@ func resourceZendeskGroupCreate(d *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceZendeskGroupRead(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	zd := meta.(*client.Client)
+	return readGroup(d, zd)
+}
+
+func readGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	field, err := zd.GetGroup(id)
+	if err != nil {
+		return err
+	}
+
+	return marshalGroup(field, d)
 }
 
 func resourceZendeskGroupUpdate(d *schema.ResourceData, meta interface{}) error {
