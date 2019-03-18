@@ -45,6 +45,7 @@ func resourceZendeskAttachment() *schema.Resource {
 			"file_name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 			"file_hash": {
 				Type:     schema.TypeString,
