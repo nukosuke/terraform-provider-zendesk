@@ -1,5 +1,12 @@
 package zendesk
 
+import (
+	"fmt"
+	"os"
+
+	"github.com/hashicorp/terraform/helper/schema"
+)
+
 type getter interface {
 	Get(string) interface{}
 	GetOk(string) (interface{}, bool)
@@ -52,6 +59,29 @@ func (i *identifiableMapGetterSetter) Id() string {
 
 func (i *identifiableMapGetterSetter) SetId(id string) {
 	i.id = id
+}
+
+func isValidFile() schema.SchemaValidateFunc {
+	return func(i interface{}, key string) (strings []string, errs []error) {
+		v, ok := i.(string)
+		if !ok {
+			errs = append(errs, fmt.Errorf("expected type of %s to be string", key))
+			return
+		}
+
+		f, err := os.Stat(v)
+		if err != nil {
+			errs = append(errs, err)
+			return
+		}
+
+		if f.IsDir() {
+			errs = append(errs, fmt.Errorf("%s: %s is a directory", key, v))
+			return
+		}
+
+		return
+	}
 }
 
 func setSchemaFields(d setter, m map[string]interface{}) error {

@@ -32,6 +32,7 @@ func Provider() terraform.ResourceProvider {
 			"zendesk_ticket_field": resourceZendeskTicketField(),
 			"zendesk_ticket_form":  resourceZendeskTicketForm(),
 			"zendesk_trigger":      resourceZendeskTrigger(),
+			"zendesk_attachment":   resourceZendeskAttachment(),
 		},
 
 		ConfigureFunc: providerConfigure,
