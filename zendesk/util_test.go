@@ -1,6 +1,10 @@
 package zendesk
 
-import "testing"
+import (
+	"io/ioutil"
+	"path/filepath"
+	"testing"
+)
 
 func TestIsValidFile(t *testing.T) {
 	v := isValidFile()
@@ -18,4 +22,19 @@ func TestIsValidFile(t *testing.T) {
 	if len(errs) == 0 {
 		t.Fatalf("is Valid did not return an error for a directory")
 	}
+}
+
+func readExampleConfig(t *testing.T, filename string) string {
+	dir, err := filepath.Abs("../examples")
+	if err != nil {
+		t.Fatalf("Failed to resolve fixture directory. Check the path: %s", err)
+	}
+
+	filepath := filepath.Join(dir, filename)
+	bytes, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		t.Fatalf("Failed to read fixture. %v", err)
+	}
+
+	return string(bytes)
 }

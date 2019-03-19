@@ -71,6 +71,7 @@ func resourceZendeskTicketField() *schema.Resource {
 			"regexp_for_validation": {
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 				// Regular expression field only
 				//TODO: validation
 			},
@@ -127,7 +128,7 @@ func resourceZendeskTicketField() *schema.Resource {
 						},
 						"id": {
 							Type:     schema.TypeInt,
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -176,7 +177,7 @@ func marshalTicketField(field client.TicketField, d identifiableGetterSetter) er
 	}
 
 	// set system field options
-	systemFieldOptions := make([]map[string]interface{}, len(field.SystemFieldOptions))
+	systemFieldOptions := make([]map[string]interface{}, 0)
 	for _, v := range field.SystemFieldOptions {
 		m := map[string]interface{}{
 			"name":  v.Name,
@@ -188,7 +189,7 @@ func marshalTicketField(field client.TicketField, d identifiableGetterSetter) er
 	fields["system_field_options"] = systemFieldOptions
 
 	// Set custom field options
-	customFieldOptions := make([]map[string]interface{}, len(field.CustomFieldOptions))
+	customFieldOptions := make([]map[string]interface{}, 0)
 	for _, v := range field.CustomFieldOptions {
 		m := map[string]interface{}{
 			"name":  v.Name,
@@ -289,7 +290,7 @@ func unmarshalTicketField(d identifiableGetterSetter) (client.TicketField, error
 
 	if v, ok := d.GetOk("custom_field_option"); ok {
 		options := v.(*schema.Set).List()
-		customFieldOptions := make([]client.CustomFieldOption, len(options))
+		customFieldOptions := make([]client.CustomFieldOption, 0)
 		for _, o := range options {
 			option, ok := o.(map[string]interface{})
 			if !ok {
@@ -308,7 +309,7 @@ func unmarshalTicketField(d identifiableGetterSetter) (client.TicketField, error
 
 	if v, ok := d.GetOk("system_field_options"); ok {
 		options := v.(*schema.Set).List()
-		systemFieldOptions := make([]client.TicketFieldSystemFieldOption, len(options))
+		systemFieldOptions := make([]client.TicketFieldSystemFieldOption, 0)
 		for _, o := range options {
 			option, ok := o.(map[string]interface{})
 			if !ok {
