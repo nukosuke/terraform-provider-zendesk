@@ -6,25 +6,31 @@ import (
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
+const (
+	accountVar = "ZENDESK_ACCEPTANCE_TEST_ACCOUNT"
+	emailVar   = "ZENDESK_ACCEPTANCE_TEST_EMAIL"
+	tokenVar   = "ZENDESK_ACCEPTANCE_TEST_TOKEN"
+)
+
 // Provider returns provider instance for Zendesk
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		// https://developer.zendesk.com/rest_api/docs/support/introduction#security-and-authentication
 		Schema: map[string]*schema.Schema{
 			"account": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "",
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc(accountVar, ""),
 			},
 			"email": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "",
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc(emailVar, ""),
 			},
 			"token": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "",
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc(tokenVar, ""),
 			},
 		},
 
