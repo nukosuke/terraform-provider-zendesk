@@ -63,7 +63,7 @@ func TestCreateGroup(t *testing.T) {
 	}
 }
 
-func TestMarshalGroup(t *testing.T) {
+func TestUnmarshalGroup(t *testing.T) {
 	m := &identifiableMapGetterSetter{
 		id: "1234",
 		mapGetterSetter: mapGetterSetter{

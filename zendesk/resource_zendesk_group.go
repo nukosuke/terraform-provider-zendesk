@@ -10,10 +10,20 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/groups
 func resourceZendeskGroup() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceZendeskGroupCreate,
-		Read:   resourceZendeskGroupRead,
-		Update: resourceZendeskGroupUpdate,
-		Delete: resourceZendeskGroupDelete,
+		Create: func(d *schema.ResourceData, meta interface{}) error {
+			zd := meta.(*client.Client)
+			return createGroup(d, zd)
+		},
+		Read: func(d *schema.ResourceData, meta interface{}) error {
+			zd := meta.(*client.Client)
+			return readGroup(d, zd)
+		},
+		Update: func(d *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
+		Delete: func(d *schema.ResourceData, meta interface{}) error {
+			return nil
+		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -31,10 +41,10 @@ func resourceZendeskGroup() *schema.Resource {
 	}
 }
 
-func marshalGroup(field client.Group, d identifiableGetterSetter) error {
+func marshalGroup(group client.Group, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
-		"url":  field.URL,
-		"name": field.Name,
+		"url":  group.URL,
+		"name": group.Name,
 	}
 
 	err := setSchemaFields(d, fields)
@@ -67,11 +77,6 @@ func unmarshalGroup(d identifiableGetterSetter) (client.Group, error) {
 	return group, nil
 }
 
-func resourceZendeskGroupCreate(d *schema.ResourceData, meta interface{}) error {
-	zd := meta.(*client.Client)
-	return createGroup(d, zd)
-}
-
 func createGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
 	group, err := unmarshalGroup(d)
 	if err != nil {
@@ -88,29 +93,16 @@ func createGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
 	return marshalGroup(group, d)
 }
 
-func resourceZendeskGroupRead(d *schema.ResourceData, meta interface{}) error {
-	zd := meta.(*client.Client)
-	return readGroup(d, zd)
-}
-
 func readGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
 	id, err := atoi64(d.Id())
 	if err != nil {
 		return err
 	}
 
-	field, err := zd.GetGroup(id)
+	group, err := zd.GetGroup(id)
 	if err != nil {
 		return err
 	}
 
-	return marshalGroup(field, d)
-}
-
-func resourceZendeskGroupUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
-}
-
-func resourceZendeskGroupDelete(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	return marshalGroup(group, d)
 }
