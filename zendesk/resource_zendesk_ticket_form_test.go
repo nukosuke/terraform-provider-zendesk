@@ -3,7 +3,6 @@ package zendesk
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"testing"
 
 	. "github.com/golang/mock/gomock"
