@@ -6,10 +6,37 @@ import (
 	"strconv"
 	"testing"
 
+	. "github.com/golang/mock/gomock"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/nukosuke/go-zendesk/zendesk"
+	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
+
+func TestCreateTicketForm(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := newIdentifiableGetterSetter()
+	out := zendesk.TicketForm{
+		ID:   12345,
+		Name: "foo",
+	}
+
+	m.EXPECT().CreateTicketForm(Any()).Return(out, nil)
+	if err := createTicketForm(i, m); err != nil {
+		t.Fatal("create ticket field returned an error")
+	}
+
+	if v := i.Id(); v != "12345" {
+		t.Fatalf("Create did not set resource id. Id was %s", v)
+	}
+
+	if v := i.Get("name"); v != "foo" {
+		t.Fatalf("Create did not set resource name. name was %v", v)
+	}
+}
 
 func testTicketFormDestroyed(s *terraform.State) error {
 	client := testAccProvider.Meta().(zendesk.TicketFieldAPI)

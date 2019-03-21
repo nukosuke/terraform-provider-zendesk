@@ -54,6 +54,12 @@ type identifiableMapGetterSetter struct {
 	id string
 }
 
+func newIdentifiableGetterSetter() identifiableGetterSetter {
+	return &identifiableMapGetterSetter{
+		mapGetterSetter: make(mapGetterSetter),
+	}
+}
+
 func (i *identifiableMapGetterSetter) Id() string {
 	return i.id
 }
