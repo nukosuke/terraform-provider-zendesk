@@ -38,6 +38,21 @@ func TestCreateTicketForm(t *testing.T) {
 	}
 }
 
+func TestDeleteTicketForm(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := newIdentifiableGetterSetter()
+	i.SetId("12345")
+
+	expectedID := int64(12345)
+	m.EXPECT().DeleteTicketForm(Eq(expectedID)).Return(nil)
+	if err := deleteTicketForm(i, m); err != nil {
+		t.Fatal("create ticket field returned an error")
+	}
+}
+
 func testTicketFormDestroyed(s *terraform.State) error {
 	client := testAccProvider.Meta().(zendesk.TicketFieldAPI)
 
