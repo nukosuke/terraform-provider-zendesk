@@ -89,7 +89,7 @@ func TestReadGroup(t *testing.T) {
 
 	m.EXPECT().GetGroup(Any()).Return(field, nil)
 	if err := readGroup(gs, m); err != nil {
-		t.Fatal("readGroup returned an error")
+		t.Fatalf("readGroup returned an error: %v", err)
 	}
 
 	if v := gs.mapGetterSetter["url"]; v != field.URL {
@@ -116,7 +116,7 @@ func TestCreateGroup(t *testing.T) {
 
 	m.EXPECT().CreateGroup(Any()).Return(out, nil)
 	if err := createGroup(i, m); err != nil {
-		t.Fatal("create group returned an error")
+		t.Fatalf("create group returned an error: %v", err)
 	}
 
 	if v := i.Id(); v != "12345" {
@@ -136,7 +136,7 @@ func TestUpdateGroup(t *testing.T) {
 
 	m.EXPECT().UpdateGroup(Eq(int64(12345)), Any()).Return(zendesk.Group{}, nil)
 	if err := updateGroup(i, m); err != nil {
-		t.Fatal("readGroup returned an error")
+		t.Fatalf("updateGroup returned an error: %v", err)
 	}
 }
 
@@ -151,7 +151,7 @@ func TestDeleteGroup(t *testing.T) {
 
 	m.EXPECT().DeleteGroup(Eq(int64(12345))).Return(nil)
 	if err := deleteGroup(i, m); err != nil {
-		t.Fatal("readGroup returned an error")
+		t.Fatalf("deleteGroup returned an error: %v", err)
 	}
 }
 
@@ -170,7 +170,7 @@ func testGroupDestroyed(s *terraform.State) error {
 
 		_, err = client.GetGroup(id)
 		if err == nil {
-			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed group")
+			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed group: %v", err)
 		}
 
 		zd, ok := err.(zendesk.Error)
@@ -197,7 +197,10 @@ func TestAccGroupExample(t *testing.T) {
 			{
 				Config: readExampleConfig(t, "groups.tf"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("zendesk_group.support-group", "name", "Support"),
+					resource.TestCheckResourceAttr("zendesk_group.moderator-group", "name", "Moderator"),
+					resource.TestCheckResourceAttrSet("zendesk_group.moderator-group", "url"),
+					resource.TestCheckResourceAttr("zendesk_group.developer-group", "name", "Developer"),
+					resource.TestCheckResourceAttrSet("zendesk_group.developer-group", "url"),
 				),
 			},
 		},
