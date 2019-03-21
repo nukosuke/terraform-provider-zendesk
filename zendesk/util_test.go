@@ -1,8 +1,10 @@
 package zendesk
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -37,4 +39,16 @@ func readExampleConfig(t *testing.T, filename string) string {
 	}
 
 	return string(bytes)
+}
+
+func concatExampleConfig(t *testing.T, configs ...string) string {
+	builder := new(strings.Builder)
+	for _, config := range configs {
+		_, err := fmt.Fprintln(builder, config)
+		if err != nil {
+			t.Fatalf("Encountered an error while concatonating config files: %v", err)
+		}
+	}
+
+	return builder.String()
 }

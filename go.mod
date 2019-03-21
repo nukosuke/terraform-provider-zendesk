@@ -23,7 +23,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/mitchellh/hashstructure v1.0.0 // indirect
-	github.com/nukosuke/go-zendesk v0.1.3-0.20190320131432-4c85342ac7a4
+	github.com/nukosuke/go-zendesk v0.1.3-0.20190321092254-6042726535d6
 	github.com/pkg/errors v0.0.0-20170505043639-c605e284fe17
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
