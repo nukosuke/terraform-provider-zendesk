@@ -19,10 +19,12 @@ func resourceZendeskGroup() *schema.Resource {
 			return readGroup(d, zd)
 		},
 		Update: func(d *schema.ResourceData, meta interface{}) error {
-			return nil
+			zd := meta.(*client.Client)
+			return updateGroup(d, zd)
 		},
 		Delete: func(d *schema.ResourceData, meta interface{}) error {
-			return nil
+			zd := meta.(*client.Client)
+			return deleteGroup(d, zd)
 		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -105,4 +107,33 @@ func readGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
 	}
 
 	return marshalGroup(group, d)
+}
+
+func updateGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
+	group, err := unmarshalGroup(d)
+	if err != nil {
+		return err
+	}
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	// ActualAPI request
+	group, err = zd.UpdateGroup(id, group)
+	if err != nil {
+		return err
+	}
+
+	return marshalGroup(group, d)
+}
+
+func deleteGroup(d identifiable, zd client.GroupAPI) error {
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	return zd.DeleteGroup(id)
 }
