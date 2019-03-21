@@ -2,7 +2,6 @@ package zendesk
 
 import (
 	"fmt"
-	"net/http"
 	"strconv"
 	"testing"
 
@@ -169,17 +168,12 @@ func testGroupDestroyed(s *terraform.State) error {
 		}
 
 		group, err := client.GetGroup(id)
-		if err == nil {
-			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed group %d\nGroup was:\n%v", id, group)
+		if err != nil {
+			return err
 		}
 
-		zd, ok := err.(zendesk.Error)
-		if !ok {
-			return fmt.Errorf("error %v cannot be asserted as a zendesk error", err)
-		}
-
-		if zd.Status() != http.StatusNotFound {
-			return fmt.Errorf("did not get a not found error after destroy. error was %v", zd)
+		if !group.Deleted {
+			return fmt.Errorf("group %d is not marked as deleted", group.ID)
 		}
 	}
 
