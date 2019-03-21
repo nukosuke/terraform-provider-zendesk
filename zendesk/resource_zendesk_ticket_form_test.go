@@ -53,6 +53,39 @@ func TestDeleteTicketForm(t *testing.T) {
 	}
 }
 
+func TestDeleteTicketFormFailure(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := newIdentifiableGetterSetter()
+	i.SetId("12345")
+
+	expected := fmt.Errorf("error")
+	m.EXPECT().DeleteTicketForm(Any()).Return(expected)
+	if err := deleteTicketForm(i, m); err != expected {
+		t.Fatal("Did not recieve the expected error from delete")
+	}
+}
+
+func TestReadTicketForm(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := newIdentifiableGetterSetter()
+	i.SetId("12345")
+
+	expected := zendesk.TicketForm{
+		Name:     "foobar",
+		Position: int64(1),
+	}
+	m.EXPECT().GetTicketForm(Eq(int64(12345))).Return(expected, nil)
+	if err := readTicketForm(i, m); err != nil {
+		t.Fatalf("recieved an error when calling read ticket form: %v", err)
+	}
+}
+
 func testTicketFormDestroyed(s *terraform.State) error {
 	client := testAccProvider.Meta().(zendesk.TicketFieldAPI)
 
