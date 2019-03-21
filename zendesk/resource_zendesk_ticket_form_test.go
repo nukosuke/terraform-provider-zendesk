@@ -53,21 +53,6 @@ func TestDeleteTicketForm(t *testing.T) {
 	}
 }
 
-func TestDeleteTicketFormFailure(t *testing.T) {
-	ctrl := NewController(t)
-	defer ctrl.Finish()
-
-	m := mock.NewClient(ctrl)
-	i := newIdentifiableGetterSetter()
-	i.SetId("12345")
-
-	expected := fmt.Errorf("error")
-	m.EXPECT().DeleteTicketForm(Any()).Return(expected)
-	if err := deleteTicketForm(i, m); err != expected {
-		t.Fatal("Did not recieve the expected error from delete")
-	}
-}
-
 func TestReadTicketForm(t *testing.T) {
 	ctrl := NewController(t)
 	defer ctrl.Finish()
