@@ -168,9 +168,9 @@ func testGroupDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		_, err = client.GetGroup(id)
+		group, err := client.GetGroup(id)
 		if err == nil {
-			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed group: %v", r)
+			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed group %d\nGroup was:\n%v", id, group)
 		}
 
 		zd, ok := err.(zendesk.Error)
