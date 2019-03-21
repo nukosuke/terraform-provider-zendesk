@@ -105,7 +105,7 @@ func testTicketFormDestroyed(s *terraform.State) error {
 			continue
 		}
 
-		id, err := strconv.ParseInt(r.Primary.ID, 10, 64)
+		id, err := atoi64(r.Primary.ID)
 		if err != nil {
 			return err
 		}
