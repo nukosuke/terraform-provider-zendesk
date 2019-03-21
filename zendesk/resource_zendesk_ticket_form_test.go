@@ -71,6 +71,32 @@ func TestReadTicketForm(t *testing.T) {
 	}
 }
 
+func TestUnmarshalTicketForm(t *testing.T) {
+
+	d := &identifiableMapGetterSetter{
+		id: "47",
+		mapGetterSetter: mapGetterSetter{
+			"url":              "https://company.zendesk.com/api/v2/ticket_forms/47.json",
+			"name":             "Snowboard Problem",
+			"display_name":     "Snowboard Damage",
+			"end_user_visible": true,
+			"position":         9999,
+			"active":           true,
+			"default":          false,
+			"in_all_brands":    false,
+		},
+	}
+
+	tf, err := unmarshalTicketForm(d)
+	if err != nil {
+		t.Fatalf("unmarshal returned an error: %v", err)
+	}
+
+	if tf.Name != d.Get("name") {
+		t.Fatalf("ticket did not have the correct name")
+	}
+}
+
 func testTicketFormDestroyed(s *terraform.State) error {
 	client := testAccProvider.Meta().(zendesk.TicketFieldAPI)
 
