@@ -135,6 +135,7 @@ github.com/hashicorp/go-cleanhttp v0.5.0/go.mod h1:JpRdi6/HCYpAwUzNwuwqhbovhLtng
 github.com/hashicorp/go-getter v0.0.0-20180327010114-90bb99a48d86/go.mod h1:6rdJFnhkXnzGOJbvkrdv4t9nLwKcVA+tmbQeUlkIzrU=
 github.com/hashicorp/go-getter v1.1.0 h1:iGVeg7L4V5FTFV3D6w+1NAyvth7BIWWSzD60pWloe2Q=
 github.com/hashicorp/go-getter v1.1.0/go.mod h1:q+PoBhh16brIKwJS9kt18jEtXHTg2EGkmrA9P7HVS+U=
+github.com/hashicorp/go-getter v1.2.0 h1:E05bVPilzyh2yXgT6srn7WEkfMZaH+LuX9tDJw/4kaE=
 github.com/hashicorp/go-getter v1.2.0/go.mod h1:/O1k/AizTN0QmfEKknCYGvICeyKUDqCYA8vvWtGWDeQ=
 github.com/hashicorp/go-hclog v0.0.0-20170716174523-b4e5765d1e5f/go.mod h1:9bjs9uLqI8l75knNv3lV1kA55veR+WUPSiKIWcQHudI=
 github.com/hashicorp/go-hclog v0.0.0-20180709165350-ff2cf002a8dd/go.mod h1:9bjs9uLqI8l75knNv3lV1kA55veR+WUPSiKIWcQHudI=
@@ -424,6 +425,8 @@ golang.org/x/sys v0.0.0-20190313050009-fead79001313/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20190316083947-a2f829d7f35f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20190318201208-6c81ef8f67ca h1:giryj8FP3FW1R+MCthNGLMz/KwMXrtB7Alf7D8a/bBQ=
 golang.org/x/sys v0.0.0-20190318201208-6c81ef8f67ca/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20190322073026-f7bb7a8bee54 h1:VCyl0sR+FpkC8pbyPlngzfZDKIN+THZWqa7ZNy8EsbQ=
+golang.org/x/sys v0.0.0-20190322073026-f7bb7a8bee54/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.0.0-20171013141220-c01e4764d870/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.0 h1:g61tztE5qeGQ89tm6NTjjM9VPIm088od1l6aSorWRWg=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
