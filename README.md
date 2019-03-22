@@ -29,8 +29,15 @@ $ go mod download
 $ go build
 ```
 
+## Authors
+- [nukosuke](https://github.com/nukosuke)
+- [tamccall](https://github.com/tamccall)
+
 ## License
 
 MIT License
 
 See the file [LICENSE](./LICENSE) for details.
+
+## See also
+- [nukosuke/go-zendesk](https://github.com/nukosuke/go-zendesk)
