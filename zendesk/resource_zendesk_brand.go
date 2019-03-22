@@ -55,8 +55,9 @@ func resourceZendeskBrand() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 			},
-			"logo": {
-				// TODO
+			"logo_attachment_id": {
+				Type:     schema.TypeInt,
+				Optional: true,
 			},
 			"ticket_form_ids": {
 				Type: schema.TypeSet,
