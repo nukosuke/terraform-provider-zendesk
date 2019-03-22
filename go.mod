@@ -31,5 +31,5 @@ require (
 	golang.org/x/crypto v0.0.0-20190322043327-b7391e95e576 // indirect
 	golang.org/x/net v0.0.0-20190320074318-1272bf9dcd53 // indirect
 	golang.org/x/sys v0.0.0-20190322073026-f7bb7a8bee54 // indirect
-	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19 // indirect
+	google.golang.org/genproto v0.0.0-20190322084225-e79c0c59cdb5 // indirect
 )
