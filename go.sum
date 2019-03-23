@@ -48,6 +48,8 @@ github.com/aws/aws-sdk-go v1.18.5 h1:S6j4o4AoJpq98DRc7wQrQsPZg73NyntGtUj6K6NPnuY
 github.com/aws/aws-sdk-go v1.18.5/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.19.0 h1:3d9Htr/dl/+8xJYx/fpjEifvfpabZB1YUu61i/WX87Q=
 github.com/aws/aws-sdk-go v1.19.0/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
+github.com/aws/aws-sdk-go v1.19.1 h1:8kOP0/XGJwXIFlYoD1DAtA39cAjc15Iv/QiDMKitD9U=
+github.com/aws/aws-sdk-go v1.19.1/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/beevik/etree v0.0.0-20171015221209-af219c0c7ea1/go.mod h1:r8Aw8JqVegEf0w2fDnATrX9VpkMcyFeM0FhwO62wh+A=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d h1:xDfNPAt8lFiC1UJrqV3uuy861HCTo708pDMbjHHdCas=
@@ -150,6 +152,8 @@ github.com/hashicorp/go-multierror v1.0.0/go.mod h1:dHtQlpGsu+cZNNAkkCN/P3hoUDHh
 github.com/hashicorp/go-plugin v0.0.0-20180125190438-e53f54cbf51e/go.mod h1:JSqWYsict+jzcj0+xElxyrBQRPNoiWQuddnxArJ7XHQ=
 github.com/hashicorp/go-plugin v0.0.0-20190220160451-3f118e8ee104 h1:9iQ/zrTOJqzP+kH37s6xNb6T1RysiT7fnDD3DJbspVw=
 github.com/hashicorp/go-plugin v0.0.0-20190220160451-3f118e8ee104/go.mod h1:++UyYGoz3o5w9ZzAdZxtQKrWWP+iqPBn3cQptSMzBuY=
+github.com/hashicorp/go-plugin v0.0.0-20190323095526-52e1c4730856 h1:Q2BRt8ZKURsBaKxW3bExqBm3Fq71XDqX3SzxNG9ecyw=
+github.com/hashicorp/go-plugin v0.0.0-20190323095526-52e1c4730856/go.mod h1:++UyYGoz3o5w9ZzAdZxtQKrWWP+iqPBn3cQptSMzBuY=
 github.com/hashicorp/go-retryablehttp v0.5.1/go.mod h1:9B5zBasrRhHXnJnui7y6sL7es7NDiJgTc6Er0maI1Xs=
 github.com/hashicorp/go-rootcerts v0.0.0-20160503143440-6bb64b370b90/go.mod h1:o4zcYY1e0GEZI6eSEr+43QDYmuGglw1qSO6qdHUHCgg=
 github.com/hashicorp/go-safetemp v0.0.0-20180326211150-b1a1dbde6fdc/go.mod h1:oaerMy3BhqiTbVye6QuFhFtIceqFoDHxNAB65b+Rj1I=
