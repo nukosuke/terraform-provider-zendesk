@@ -24,7 +24,7 @@ require (
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/mitchellh/hashstructure v1.0.0 // indirect
 	github.com/nukosuke/go-zendesk v0.1.3-0.20190321092254-6042726535d6
-	github.com/pkg/errors v0.0.0-20170505043639-c605e284fe17
+	github.com/pkg/errors v0.8.1
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/zclconf/go-cty v0.0.0-20190321230320-fd76348b9329 // indirect

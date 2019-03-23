@@ -13,6 +13,7 @@ cache:
 stack: go 1.11.6
 
 install:
+  - sed -i.bak '/github.com\/hashicorp\/go-getter/d' go.sum # dirty workaround for #76
   - go mod download
 
 before_test:
