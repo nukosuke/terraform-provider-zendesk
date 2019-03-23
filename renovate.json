@@ -1,5 +1,12 @@
 {
   "extends": [
     "config:base"
+  ],
+  "schedule": ["every weekend"],
+  "packageRules": [
+    {
+      "packagePatterns": ["^github.com/hashicorp/go-getter"],
+      "enabled": false
+    }
   ]
 }
