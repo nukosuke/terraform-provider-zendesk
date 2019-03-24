@@ -25,7 +25,8 @@ func resourceZendeskAttachment() *schema.Resource {
 			return createAttachment(data, zd)
 		},
 		Read: func(data *schema.ResourceData, i interface{}) error {
-			return nil
+			zd := i.(zendesk.AttachmentAPI)
+			return readAttachment(data, zd)
 		},
 		Delete: func(data *schema.ResourceData, i interface{}) error {
 			return nil
@@ -88,6 +89,10 @@ func resourceZendeskAttachment() *schema.Resource {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
+						"content_url": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
 					},
 				},
 				Computed: true,
@@ -102,6 +107,7 @@ func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) erro
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
 	fileName := d.Get("file_name").(string)
 	w := zd.UploadAttachment(fileName, "")
@@ -125,6 +131,41 @@ func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) erro
 		FilePath:   path,
 		Hash:       h.Sum(nil),
 	})
+}
+
+func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
+	out := attachment{}
+	if v, ok := d.GetOk("file_path"); ok {
+		file, err := os.Open(v.(string))
+		if err != nil {
+			return err
+		}
+
+		defer file.Close()
+
+		h := sha1.New()
+		_, err = io.Copy(h, file)
+		if err != nil {
+			return err
+		}
+
+		out.FilePath = v.(string)
+		out.Hash = h.Sum(nil)
+	}
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	a, err := zd.GetAttachment(id)
+	if err != nil {
+		return err
+	}
+
+	out.Attachment = a
+
+	return marshalAttachment(d, out)
 }
 
 func marshalAttachment(d identifiableGetterSetter, a attachment) error {
