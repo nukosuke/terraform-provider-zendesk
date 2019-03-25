@@ -1,12 +1,22 @@
 package zendesk
 
 import (
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
+
+const systemFieldConfig = `
+data "zendesk_system_field" "assignee" {
+  	id = "%s"
+}
+`
+const systemFieldEnvVar = "ASSIGNEE_FIELD_ID"
 
 func TestSystemField(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -29,4 +39,30 @@ func TestSystemField(t *testing.T) {
 	if v, ok := m.GetOk("url"); !ok || v.(string) != out.URL {
 		t.Fatalf("Read system field did not set URL field. Expected %v, Got %v", out.URL, v)
 	}
+}
+
+func testAccSystemFieldPreCheck(t *testing.T) {
+	if v := os.Getenv(systemFieldEnvVar); v == "" {
+		t.Fatalf("%s must be set for acceptance tests", systemFieldEnvVar)
+	}
+}
+
+func TestAccSystemField(t *testing.T) {
+	id := os.Getenv(systemFieldEnvVar)
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			testAccSystemFieldPreCheck(t)
+		},
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(systemFieldConfig, id),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("data.zendesk_system_field.assignee", "url"),
+					resource.TestCheckResourceAttr("data.zendesk_system_field.assignee", "type", "assignee"),
+				),
+			},
+		},
+	})
 }
