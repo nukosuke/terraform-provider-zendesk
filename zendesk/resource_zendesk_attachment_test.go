@@ -80,6 +80,40 @@ func TestCreateZendeskAttachment(t *testing.T) {
 	}
 }
 
+func TestDeleteZendeskAttachmentCallsWhenTokenIsSet(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+
+	m.EXPECT().DeleteUpload(Any()).Return(nil)
+
+	d := &identifiableMapGetterSetter{
+		mapGetterSetter: mapGetterSetter{
+			"token": "foo",
+		},
+	}
+
+	err := deleteAttachment(d, m)
+	if err != nil {
+		t.Fatalf("delete attachment returned an error %v", err)
+	}
+}
+
+func TestDeleteZendeskAttachmentDoesNotCallWhenTokenIsNotSet(t *testing.T) {
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+
+	d := newIdentifiableGetterSetter()
+
+	err := deleteAttachment(d, m)
+	if err != nil {
+		t.Fatalf("delete attachment returned an error %v", err)
+	}
+}
+
 func testAttachmentDestroyed(s *terraform.State) error {
 	client := testAccProvider.Meta().(zendesk.AttachmentAPI)
 
