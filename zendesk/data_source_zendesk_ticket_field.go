@@ -6,11 +6,11 @@ import (
 	"strconv"
 )
 
-func dataSourceZendeskSystemField() *schema.Resource {
+func dataSourceZendeskTicketField() *schema.Resource {
 	return &schema.Resource{
 		Read: func(data *schema.ResourceData, i interface{}) error {
 			zd := i.(*zendesk.Client)
-			return readSystemField(data, zd)
+			return readTicketFieldDataSource(data, zd)
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -132,7 +132,7 @@ func dataSourceZendeskSystemField() *schema.Resource {
 	}
 }
 
-func readSystemField(d identifiableGetterSetter, zd zendesk.TicketFieldAPI) error {
+func readTicketFieldDataSource(d identifiableGetterSetter, zd zendesk.TicketFieldAPI) error {
 	id := d.Get("id").(int)
 	d.SetId(strconv.Itoa(id))
 	return readTicketField(d, zd)

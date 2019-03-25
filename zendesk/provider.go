@@ -44,7 +44,7 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"zendesk_system_field": dataSourceZendeskSystemField(),
+			"zendesk_ticket_field": dataSourceZendeskTicketField(),
 		},
 
 		ConfigureFunc: providerConfigure,

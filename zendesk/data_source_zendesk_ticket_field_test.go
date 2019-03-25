@@ -12,7 +12,7 @@ import (
 )
 
 const systemFieldConfig = `
-data "zendesk_system_field" "assignee" {
+data "zendesk_ticket_field" "assignee" {
   	id = "%s"
 }
 `
@@ -31,7 +31,7 @@ func TestSystemField(t *testing.T) {
 	}
 
 	c.EXPECT().GetTicketField(gomock.Eq(int64(id))).Return(out, nil)
-	err := readSystemField(m, c)
+	err := readTicketFieldDataSource(m, c)
 	if err != nil {
 		t.Fatalf("Read system field returned an error. %v", err)
 	}
@@ -59,8 +59,8 @@ func TestAccSystemField(t *testing.T) {
 			{
 				Config: fmt.Sprintf(systemFieldConfig, id),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.zendesk_system_field.assignee", "url"),
-					resource.TestCheckResourceAttr("data.zendesk_system_field.assignee", "type", "assignee"),
+					resource.TestCheckResourceAttrSet("data.zendesk_ticket_field.assignee", "url"),
+					resource.TestCheckResourceAttr("data.zendesk_ticket_field.assignee", "type", "assignee"),
 				),
 			},
 		},
