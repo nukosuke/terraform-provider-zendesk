@@ -10,7 +10,7 @@ require (
 	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/hashicorp/go-getter v1.2.0 // indirect
 	github.com/hashicorp/go-hclog v0.8.0 // indirect
-	github.com/hashicorp/go-plugin v0.0.0-20190323095526-52e1c4730856 // indirect
+	github.com/hashicorp/go-plugin v1.0.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl2 v0.0.0-20190319004547-f9f92da699d8 // indirect
