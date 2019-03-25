@@ -4,6 +4,17 @@
 # API reference:
 #   https://developer.zendesk.com/rest_api/docs/support/brands
 
+variable "logo_file_path" {
+  type = "string"
+  default = "../zendesk/testdata/street.jpg"
+}
+
+resource "zendesk_attachment" "logo" {
+  file_name = "street.jpg"
+  file_path = "${var.logo_file_path}"
+  file_hash = "${base64sha256(file(var.logo_file_path))}"
+}
+
 resource "zendesk_brand" "T-800" {
   name            = "T-800"
   active          = true
