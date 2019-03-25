@@ -30,7 +30,8 @@ func resourceZendeskAttachment() *schema.Resource {
 			return readAttachment(data, zd)
 		},
 		Delete: func(data *schema.ResourceData, i interface{}) error {
-			return nil
+			zd := i.(zendesk.AttachmentAPI)
+			return deleteAttachment(data, zd)
 		},
 		Update: func(data *schema.ResourceData, i interface{}) error {
 			return errors.New("Update attachment not supported")
@@ -53,6 +54,10 @@ func resourceZendeskAttachment() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 				ForceNew: true,
+			},
+			"token": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"content_url": {
 				Type:     schema.TypeString,
@@ -127,11 +132,25 @@ func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) erro
 
 	a := result.Attachment
 	d.SetId(strconv.FormatInt(a.ID, 10))
+	err = d.Set("token", result.Token)
+	if err != nil {
+		return err
+	}
+
 	return marshalAttachment(d, attachment{
 		Attachment: a,
 		FilePath:   filePath,
 		Hash:       h.Sum(nil),
 	})
+}
+
+func deleteAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
+	v, ok := d.GetOk("token")
+	if !ok {
+		return nil
+	}
+
+	return zd.DeleteUpload(v.(string))
 }
 
 func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
