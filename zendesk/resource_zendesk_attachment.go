@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/nukosuke/go-zendesk/zendesk"
-	"github.com/pkg/errors"
 )
 
 type attachment struct {
@@ -31,7 +30,8 @@ func resourceZendeskAttachment() *schema.Resource {
 			return deleteAttachment(data, zd)
 		},
 		Update: func(data *schema.ResourceData, i interface{}) error {
-			return errors.New("Update attachment not supported")
+			zd := i.(zendesk.AttachmentAPI)
+			return readAttachment(data, zd)
 		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
