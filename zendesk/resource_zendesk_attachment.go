@@ -3,6 +3,7 @@ package zendesk
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -102,10 +103,10 @@ func resourceZendeskAttachment() *schema.Resource {
 }
 
 func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
-	path := d.Get("file_path").(string)
-	file, err := os.Open(path)
+	filePath := d.Get("file_path").(string)
+	file, err := os.Open(filePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("error reading file %v: %v", filePath, err)
 	}
 	defer file.Close()
 
@@ -116,19 +117,19 @@ func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) erro
 	h := sha1.New()
 	_, err = io.Copy(h, tee)
 	if err != nil {
-		return err
+		return fmt.Errorf("error reading file %v: %v", fileName, err)
 	}
 
 	result, err := w.Close()
 	if err != nil {
-		return err
+		return fmt.Errorf("getting response from zendesk: %v", err)
 	}
 
 	a := result.Attachment
 	d.SetId(strconv.FormatInt(a.ID, 10))
 	return marshalAttachment(d, attachment{
 		Attachment: a,
-		FilePath:   path,
+		FilePath:   filePath,
 		Hash:       h.Sum(nil),
 	})
 }
@@ -138,7 +139,7 @@ func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error 
 	if v, ok := d.GetOk("file_path"); ok {
 		file, err := os.Open(v.(string))
 		if err != nil {
-			return err
+			return fmt.Errorf("error opening file %v: %v", v, err)
 		}
 
 		defer file.Close()
@@ -146,7 +147,7 @@ func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error 
 		h := sha1.New()
 		_, err = io.Copy(h, file)
 		if err != nil {
-			return err
+			return fmt.Errorf("error reading file %v: %v", v, err)
 		}
 
 		out.FilePath = v.(string)
@@ -160,7 +161,7 @@ func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error 
 
 	a, err := zd.GetAttachment(id)
 	if err != nil {
-		return err
+		return fmt.Errorf("getting response from zendesk: %v", err)
 	}
 
 	out.Attachment = a
@@ -179,18 +180,18 @@ func marshalAttachment(d identifiableGetterSetter, a attachment) error {
 		"inline":       a.Inline,
 	}
 
-	thumbnails := make([]map[string]interface{}, len(a.Thumbnails))
-	for _, v := range a.Thumbnails {
-		thumb := map[string]interface{}{
-			"id":           v.ID,
-			"file_name":    v.FileName,
-			"content_url":  v.ContentURL,
-			"content_type": v.ContentType,
-			"size":         v.Size,
-		}
-		thumbnails = append(thumbnails, thumb)
-	}
-
-	m["thumbnails"] = thumbnails
+	//thumbnails := make([]map[string]interface{}, len(a.Thumbnails))
+	//for _, v := range a.Thumbnails {
+	//	thumb := map[string]interface{}{
+	//		"id":           v.ID,
+	//		"file_name":    v.FileName,
+	//		"content_url":  v.ContentURL,
+	//		"content_type": v.ContentType,
+	//		"size":         v.Size,
+	//	}
+	//	thumbnails = append(thumbnails, thumb)
+	//}
+	//
+	//m["thumbnails"] = thumbnails
 	return setSchemaFields(d, m)
 }
