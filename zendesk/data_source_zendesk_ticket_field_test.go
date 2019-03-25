@@ -18,7 +18,7 @@ data "zendesk_ticket_field" "assignee" {
 `
 const systemFieldEnvVar = "ASSIGNEE_FIELD_ID"
 
-func TestSystemField(t *testing.T) {
+func TestTicketFieldDataSourceRead(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	c := mock.NewClient(ctrl)
 
@@ -47,7 +47,7 @@ func testAccSystemFieldPreCheck(t *testing.T) {
 	}
 }
 
-func TestAccSystemField(t *testing.T) {
+func TestAccTicketFieldDataSource(t *testing.T) {
 	id := os.Getenv(systemFieldEnvVar)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
