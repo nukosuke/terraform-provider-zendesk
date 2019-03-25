@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"testing"
 
 	. "github.com/golang/mock/gomock"
 	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
@@ -78,6 +80,38 @@ func TestCreateZendeskAttachment(t *testing.T) {
 	}
 }
 
+func testAttachmentDestroyed(s *terraform.State) error {
+	client := testAccProvider.Meta().(zendesk.AttachmentAPI)
+
+	for _, r := range s.RootModule().Resources {
+		if r.Type != "zendesk_attachment" {
+			continue
+		}
+
+		id, err := atoi64(r.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		_, err = client.GetAttachment(id)
+		if err == nil {
+			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket attachment")
+		}
+
+		zd, ok := err.(zendesk.Error)
+		if !ok {
+			return fmt.Errorf("error %v cannot be asserted as a zendesk error", err)
+		}
+
+		if zd.Status() != http.StatusNotFound {
+			return fmt.Errorf(`did not get a "not found error"" after destroy. error was %v`, zd)
+		}
+
+	}
+
+	return nil
+}
+
 func TestAccZendeskAttachment(t *testing.T) {
 	original, err := os.Open("testdata/street.jpg")
 	if err != nil {
@@ -107,8 +141,8 @@ func TestAccZendeskAttachment(t *testing.T) {
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
-		Providers: testAccProviders,
-		//TODO: check destroyed
+		Providers:    testAccProviders,
+		CheckDestroy: testAttachmentDestroyed,
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(attachmentConfig, original.Name(), hashString),
