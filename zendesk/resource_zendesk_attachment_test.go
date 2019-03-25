@@ -114,12 +114,14 @@ func TestAccZendeskAttachment(t *testing.T) {
 				Config: fmt.Sprintf(attachmentConfig, original.Name(), hashString),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("zendesk_attachment.file", "content_url"),
+					resource.TestCheckResourceAttr("zendesk_attachment.file", "file_path", original.Name()),
 				),
 			},
 			{
 				Config: fmt.Sprintf(attachmentConfig, tmpfile.Name(), hashString),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("zendesk_attachment.file", "content_url"),
+					resource.TestCheckResourceAttr("zendesk_attachment.file", "file_path", tmpfile.Name()),
 				),
 			},
 		},
