@@ -43,6 +43,10 @@ func Provider() terraform.ResourceProvider {
 			"zendesk_attachment":   resourceZendeskAttachment(),
 		},
 
+		DataSourcesMap: map[string]*schema.Resource{
+			"zendesk_system_field": dataSourceZendeskSystemField(),
+		},
+
 		ConfigureFunc: providerConfigure,
 	}
 }

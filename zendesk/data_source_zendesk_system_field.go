@@ -3,6 +3,7 @@ package zendesk
 import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/nukosuke/go-zendesk/zendesk"
+	"strconv"
 )
 
 func dataSourceZendeskSystemField() *schema.Resource {
@@ -135,5 +136,7 @@ func dataSourceZendeskSystemField() *schema.Resource {
 }
 
 func readSystemField(d identifiableGetterSetter, zd zendesk.TicketFieldAPI) error {
-
+	id := d.Get("id").(int)
+	d.SetId(strconv.Itoa(id))
+	return readTicketField(d, zd)
 }
