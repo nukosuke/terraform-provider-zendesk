@@ -12,9 +12,6 @@ func dataSourceZendeskSystemField() *schema.Resource {
 			zd := i.(*zendesk.Client)
 			return readSystemField(data, zd)
 		},
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
 
 		Schema: map[string]*schema.Schema{
 			"id": {
