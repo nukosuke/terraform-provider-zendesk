@@ -51,6 +51,7 @@ func TestCreateZendeskAttachment(t *testing.T) {
 		mapGetterSetter: mapGetterSetter{
 			"file_path": "testdata/street.jpg",
 			"file_name": "street.jpg",
+			"file_hash": "foo",
 		},
 	}
 
@@ -62,9 +63,4 @@ func TestCreateZendeskAttachment(t *testing.T) {
 	if v := d.Id(); v != "1234" {
 		t.Fatalf("Resource did not have expected id %s", v)
 	}
-
-	if v := d.Get("file_hash"); v != "1c6cd6cd6891f0fb27c73fb076791139a0d87a15" {
-		t.Fatalf("File hash did not have expected value. Was %s", v)
-	}
-
 }
