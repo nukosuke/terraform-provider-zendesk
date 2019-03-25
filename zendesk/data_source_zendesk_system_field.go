@@ -10,7 +10,7 @@ func dataSourceZendeskSystemField() *schema.Resource {
 	return &schema.Resource{
 		Read: func(data *schema.ResourceData, i interface{}) error {
 			zd := i.(*zendesk.Client)
-			return readTicketField(data, zd)
+			return readSystemField(data, zd)
 		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
