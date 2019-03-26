@@ -1,21 +1,18 @@
 package zendesk
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
 	"io"
 	"os"
 	"strconv"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/nukosuke/go-zendesk/zendesk"
-	"github.com/pkg/errors"
 )
 
 type attachment struct {
 	zendesk.Attachment
 	FilePath string
-	Hash     []byte
+	Hash     string
 }
 
 func resourceZendeskAttachment() *schema.Resource {
@@ -25,13 +22,16 @@ func resourceZendeskAttachment() *schema.Resource {
 			return createAttachment(data, zd)
 		},
 		Read: func(data *schema.ResourceData, i interface{}) error {
-			return nil
+			zd := i.(zendesk.AttachmentAPI)
+			return readAttachment(data, zd)
 		},
 		Delete: func(data *schema.ResourceData, i interface{}) error {
-			return nil
+			zd := i.(zendesk.AttachmentAPI)
+			return deleteAttachment(data, zd)
 		},
 		Update: func(data *schema.ResourceData, i interface{}) error {
-			return errors.New("Update attachment not supported")
+			zd := i.(zendesk.AttachmentAPI)
+			return readAttachment(data, zd)
 		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -49,8 +49,12 @@ func resourceZendeskAttachment() *schema.Resource {
 			},
 			"file_hash": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 				ForceNew: true,
+			},
+			"token": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"content_url": {
 				Type:     schema.TypeString,
@@ -88,6 +92,10 @@ func resourceZendeskAttachment() *schema.Resource {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
+						"content_url": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
 					},
 				},
 				Computed: true,
@@ -97,18 +105,17 @@ func resourceZendeskAttachment() *schema.Resource {
 }
 
 func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
-	path := d.Get("file_path").(string)
-	file, err := os.Open(path)
+	filePath := d.Get("file_path").(string)
+	file, err := os.Open(filePath)
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
 	fileName := d.Get("file_name").(string)
 	w := zd.UploadAttachment(fileName, "")
-	tee := io.TeeReader(file, w)
 
-	h := sha1.New()
-	_, err = io.Copy(h, tee)
+	_, err = io.Copy(w, file)
 	if err != nil {
 		return err
 	}
@@ -120,17 +127,58 @@ func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) erro
 
 	a := result.Attachment
 	d.SetId(strconv.FormatInt(a.ID, 10))
-	return marshalAttachment(d, attachment{
+	err = d.Set("token", result.Token)
+	if err != nil {
+		return err
+	}
+
+	out := attachment{
 		Attachment: a,
-		FilePath:   path,
-		Hash:       h.Sum(nil),
-	})
+		FilePath:   filePath,
+		Hash:       d.Get("file_hash").(string),
+	}
+	return marshalAttachment(d, out)
+}
+
+func deleteAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
+	v, ok := d.GetOk("token")
+	if !ok {
+		return nil
+	}
+
+	return zd.DeleteUpload(v.(string))
+}
+
+func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
+	out := attachment{}
+
+	if v, ok := d.GetOk("file_path"); ok {
+		out.FilePath = v.(string)
+	}
+
+	if v, ok := d.GetOk("file_hash"); ok {
+		out.Hash = v.(string)
+	}
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	a, err := zd.GetAttachment(id)
+	if err != nil {
+		return err
+	}
+
+	out.Attachment = a
+
+	return marshalAttachment(d, out)
 }
 
 func marshalAttachment(d identifiableGetterSetter, a attachment) error {
 	m := map[string]interface{}{
 		"file_path":    a.FilePath,
-		"file_hash":    hex.EncodeToString(a.Hash),
+		"file_hash":    a.Hash,
 		"file_name":    a.FileName,
 		"content_url":  a.ContentURL,
 		"content_type": a.ContentType,
@@ -138,7 +186,7 @@ func marshalAttachment(d identifiableGetterSetter, a attachment) error {
 		"inline":       a.Inline,
 	}
 
-	thumbnails := make([]map[string]interface{}, len(a.Thumbnails))
+	thumbnails := make([]map[string]interface{}, 0)
 	for _, v := range a.Thumbnails {
 		thumb := map[string]interface{}{
 			"id":           v.ID,
