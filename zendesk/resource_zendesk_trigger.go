@@ -13,7 +13,10 @@ func resourceZendeskTrigger() *schema.Resource {
 		Create: resourceZendeskTriggerCreate,
 		Read:   resourceZendeskTriggerRead,
 		Update: resourceZendeskTriggerUpdate,
-		Delete: resourceZendeskTriggerDelete,
+		Delete: func(data *schema.ResourceData, i interface{}) error {
+			zd := i.(client.TriggerAPI)
+			return resourceZendeskTriggerDelete(data, zd)
+		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -114,8 +117,13 @@ func resourceZendeskTriggerUpdate(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceZendeskTriggerDelete(d *schema.ResourceData, meta interface{}) error {
-	return nil
+func resourceZendeskTriggerDelete(d identifiable, zd client.TriggerAPI) error {
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	return zd.DeleteTrigger(id)
 }
 
 func triggerConditionSchema() *schema.Schema {
