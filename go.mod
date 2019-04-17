@@ -13,7 +13,7 @@ require (
 	github.com/hashicorp/go-plugin v1.0.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl2 v0.0.0-20190402224431-8b450a7d58f9 // indirect
+	github.com/hashicorp/hcl2 v0.0.0-20190416173108-2c5a4b7d729a // indirect
 	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
 	github.com/hashicorp/terraform v0.11.13
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
