@@ -72,49 +72,138 @@ func resourceZendeskTrigger() *schema.Resource {
 	}
 }
 
+func marshalTrigger(trigger client.Trigger, d identifiableGetterSetter) error {
+	fields := map[string]interface{}{
+		"title":       trigger.Title,
+		"active":      trigger.Active,
+		"position":    trigger.Position,
+		"description": trigger.Description,
+	}
+
+	var alls []map[string]interface{}
+	for _, v := range trigger.Conditions.All {
+		m := map[string]interface{}{
+			"field":    v.Field,
+			"operator": v.Operator,
+			"value":    v.Value,
+		}
+		alls = append(alls, m)
+	}
+	fields["all"] = alls
+
+	var anys []map[string]interface{}
+	for _, v := range trigger.Conditions.Any {
+		m := map[string]interface{}{
+			"field":    v.Field,
+			"operator": v.Operator,
+			"value":    v.Value,
+		}
+		anys = append(anys, m)
+	}
+	fields["any"] = anys
+
+	var actions []map[string]interface{}
+	for _, v := range trigger.Actions {
+		m := map[string]interface{}{
+			"field": v.Field,
+			"value": v.Value,
+		}
+		actions = append(actions, m)
+	}
+	fields["actions"] = actions
+
+	return setSchemaFields(d, fields)
+}
+
+func unmarshalTrigger(d identifiableGetterSetter) (client.Trigger, error) {
+	trg := client.Trigger{}
+
+	if v := d.Id(); v != "" {
+		id, err := atoi64(v)
+		if err != nil {
+			return trg, fmt.Errorf("could not parse trigger id %s: %v", v, err)
+		}
+		trg.ID = id
+	}
+
+	if v, ok := d.GetOk("title"); ok {
+		trg.Title = v.(string)
+	}
+
+	if v, ok := d.GetOk("active"); ok {
+		trg.Active = v.(bool)
+	}
+
+	if v, ok := d.GetOk("description"); ok {
+		trg.Description = v.(string)
+	}
+
+	if v, ok := d.GetOk("all"); ok {
+		allConditions := v.(*schema.Set).List()
+		conditions := []client.TriggerCondition{}
+		for _, c := range allConditions {
+			condition, ok := c.(map[string]interface{})
+			if !ok {
+				return trg, fmt.Errorf("could not parse 'all' conditions for trigger %v", trg)
+			}
+			conditions = append(conditions, client.TriggerCondition{
+				Field:    condition["field"].(string),
+				Operator: condition["operator"].(string),
+				Value:    condition["value"].(string),
+			})
+		}
+		trg.Conditions.All = conditions
+	}
+
+	if v, ok := d.GetOk("any"); ok {
+		anyConditions := v.(*schema.Set).List()
+		conditions := []client.TriggerCondition{}
+		for _, c := range anyConditions {
+			condition, ok := c.(map[string]interface{})
+			if !ok {
+				return trg, fmt.Errorf("could not parse 'any' conditions for trigger %v", trg)
+			}
+			conditions = append(conditions, client.TriggerCondition{
+				Field:    condition["field"].(string),
+				Operator: condition["operator"].(string),
+				Value:    condition["value"].(string),
+			})
+		}
+		trg.Conditions.Any = conditions
+	}
+
+	if v, ok := d.GetOk("actions"); ok {
+		triggerActions := v.(*schema.Set).List()
+		actions := []client.TriggerAction{}
+		for _, a := range triggerActions {
+			action, ok := a.(map[string]interface{})
+			if !ok {
+				return trg, fmt.Errorf("could not parse actions for trigger %v", trg)
+			}
+			actions = append(actions, client.TriggerAction{
+				Field: action["field"].(string),
+				Value: action["value"], // can take string or []string. So, let it be.
+			})
+		}
+		trg.Actions = actions
+	}
+
+	return trg, nil
+}
+
 func createTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
-	trg := client.Trigger{
-		Title:       d.Get("title").(string),
-		Active:      d.Get("active").(bool),
-		Description: d.Get("description").(string),
+	trg, err := unmarshalTrigger(d)
+	if err != nil {
+		return err
 	}
 
-	// Conditions
-	alls := d.Get("all").(*schema.Set).List()
-	for _, all := range alls {
-		trg.Conditions.All = append(trg.Conditions.All, client.TriggerCondition{
-			Field:    all.(map[string]interface{})["field"].(string),
-			Operator: all.(map[string]interface{})["operator"].(string),
-			Value:    all.(map[string]interface{})["value"].(string),
-		})
-	}
-	anys := d.Get("any").(*schema.Set).List()
-	for _, any := range anys {
-		trg.Conditions.Any = append(trg.Conditions.Any, client.TriggerCondition{
-			Field:    any.(map[string]interface{})["field"].(string),
-			Operator: any.(map[string]interface{})["operator"].(string),
-			Value:    any.(map[string]interface{})["value"].(string),
-		})
-	}
-
-	// Actions
-	actions := d.Get("action").(*schema.Set).List()
-	for _, action := range actions {
-		trg.Actions = append(trg.Actions, client.TriggerAction{
-			Field: action.(map[string]interface{})["field"].(string),
-			Value: action.(map[string]interface{})["value"].(string),
-		})
-		// TODO: notification_user specific handling
-	}
-
-	// Actual API request
-	trg, err := zd.CreateTrigger(trg)
+	trg, err = zd.CreateTrigger(trg)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(fmt.Sprintf("%d", trg.ID))
-	return nil
+	return marshalTrigger(trg, d)
 }
 
 func readTrigger(d *schema.ResourceData, zd client.TriggerAPI) error {
