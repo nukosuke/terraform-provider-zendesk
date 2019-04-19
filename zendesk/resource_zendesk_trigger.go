@@ -206,12 +206,37 @@ func createTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
 	return marshalTrigger(trg, d)
 }
 
-func readTrigger(d *schema.ResourceData, zd client.TriggerAPI) error {
-	return nil
+func readTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	trigger, err := zd.GetTrigger(id)
+	if err != nil {
+		return err
+	}
+
+	return marshalTrigger(trigger, d)
 }
 
 func updateTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
-	return nil
+	trigger, err := unmarshalTrigger(d)
+	if err != nil {
+		return err
+	}
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	trigger, err = zd.UpdateTrigger(id, trigger)
+	if err != nil {
+		return err
+	}
+
+	return marshalTrigger(trigger, d)
 }
 
 func deleteTrigger(d identifiable, zd client.TriggerAPI) error {
