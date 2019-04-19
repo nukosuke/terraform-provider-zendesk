@@ -421,6 +421,8 @@ golang.org/x/crypto v0.0.0-20190404165931-38d8ce5564a5 h1:YIUJKSJj+G5XvCGfMdsLPD
 golang.org/x/crypto v0.0.0-20190404165931-38d8ce5564a5/go.mod h1:WFFai1msRO1wXaEeE5yQxYXgSfI8pQAWXbQop6sCtWE=
 golang.org/x/crypto v0.0.0-20190411195839-88737f569e3a h1:smSA4Gh4wTBwtQFfk6C4bQ4IxNyxA3o78V1hly9UUNw=
 golang.org/x/crypto v0.0.0-20190411195839-88737f569e3a/go.mod h1:WFFai1msRO1wXaEeE5yQxYXgSfI8pQAWXbQop6sCtWE=
+golang.org/x/crypto v0.0.0-20190419074833-df01cb2cc480 h1:QsVLdmtXEpOzV4sVQ8SY5lYZUUH3C6AcCoU/dwZQpss=
+golang.org/x/crypto v0.0.0-20190419074833-df01cb2cc480/go.mod h1:WFFai1msRO1wXaEeE5yQxYXgSfI8pQAWXbQop6sCtWE=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/lint v0.0.0-20180702182130-06c8688daad7/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
 golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
