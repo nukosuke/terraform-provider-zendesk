@@ -204,6 +204,8 @@ github.com/hashicorp/hcl2 v0.0.0-20190402224431-8b450a7d58f9 h1:3+Lt2OqrciDlNHL2
 github.com/hashicorp/hcl2 v0.0.0-20190402224431-8b450a7d58f9/go.mod h1:HtEzazM5AZ9fviNEof8QZB4T1Vz9UhHrGhnMPzl//Ek=
 github.com/hashicorp/hcl2 v0.0.0-20190416173108-2c5a4b7d729a h1:W2uNFs9I+qEZm9GTHEhCiFXyIo6cIVmubN2Q8j+IBJ4=
 github.com/hashicorp/hcl2 v0.0.0-20190416173108-2c5a4b7d729a/go.mod h1:HtEzazM5AZ9fviNEof8QZB4T1Vz9UhHrGhnMPzl//Ek=
+github.com/hashicorp/hcl2 v0.0.0-20190418154424-f7764c69544d h1:7IxBLa8uoikYSkE1L8VbYFrmQWVQhQUFwjR9BOLOYjg=
+github.com/hashicorp/hcl2 v0.0.0-20190418154424-f7764c69544d/go.mod h1:HtEzazM5AZ9fviNEof8QZB4T1Vz9UhHrGhnMPzl//Ek=
 github.com/hashicorp/hil v0.0.0-20170627220502-fa9f258a9250/go.mod h1:KHvg/R2/dPtaePb16oW4qIyzkMxXOL38xjRN64adsts=
 github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 h1:T1Q6ag9tCwun16AW+XK3tAql24P4uTGUMIn1/92WsQQ=
 github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93/go.mod h1:n2TSygSNwsLJ76m8qFXTSc7beTb+auJxYdqrnoqwZWE=
