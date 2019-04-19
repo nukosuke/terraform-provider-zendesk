@@ -10,12 +10,21 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/triggers
 func resourceZendeskTrigger() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceZendeskTriggerCreate,
-		Read:   resourceZendeskTriggerRead,
-		Update: resourceZendeskTriggerUpdate,
-		Delete: func(data *schema.ResourceData, i interface{}) error {
+		Create: func(d *schema.ResourceData, i interface{}) error {
 			zd := i.(client.TriggerAPI)
-			return resourceZendeskTriggerDelete(data, zd)
+			return createTrigger(d, zd)
+		},
+		Read: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.TriggerAPI)
+			return readTrigger(d, zd)
+		},
+		Update: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.TriggerAPI)
+			return updateTrigger(d, zd)
+		},
+		Delete: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.TriggerAPI)
+			return deleteTrigger(d, zd)
 		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -63,8 +72,7 @@ func resourceZendeskTrigger() *schema.Resource {
 	}
 }
 
-func resourceZendeskTriggerCreate(d *schema.ResourceData, meta interface{}) error {
-	zd := meta.(*client.Client)
+func createTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
 	trg := client.Trigger{
 		Title:       d.Get("title").(string),
 		Active:      d.Get("active").(bool),
@@ -109,15 +117,15 @@ func resourceZendeskTriggerCreate(d *schema.ResourceData, meta interface{}) erro
 	return nil
 }
 
-func resourceZendeskTriggerRead(d *schema.ResourceData, meta interface{}) error {
+func readTrigger(d *schema.ResourceData, zd client.TriggerAPI) error {
 	return nil
 }
 
-func resourceZendeskTriggerUpdate(d *schema.ResourceData, meta interface{}) error {
+func updateTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
 	return nil
 }
 
-func resourceZendeskTriggerDelete(d identifiable, zd client.TriggerAPI) error {
+func deleteTrigger(d identifiable, zd client.TriggerAPI) error {
 	id, err := atoi64(d.Id())
 	if err != nil {
 		return err
