@@ -4,12 +4,12 @@ require (
 	github.com/agext/levenshtein v1.2.2 // indirect
 	github.com/apparentlymart/go-cidr v1.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.19.15 // indirect
-	github.com/blang/semver v3.6.1 // indirect
+	github.com/aws/aws-sdk-go v1.19.20 // indirect
+	github.com/blang/semver v0.0.0-20190414102917-ba2c2ddd8906 // indirect
 	github.com/golang/mock v1.2.0
 	github.com/golang/protobuf v1.3.1 // indirect
 	github.com/hashicorp/go-getter v1.2.0 // indirect
-	github.com/hashicorp/go-hclog v0.8.0 // indirect
+	github.com/hashicorp/go-hclog v0.9.0 // indirect
 	github.com/hashicorp/go-plugin v1.0.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -27,9 +27,9 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
-	github.com/zclconf/go-cty v0.0.0-20190321230320-fd76348b9329 // indirect
-	golang.org/x/crypto v0.0.0-20190424033229-d864b10871cd // indirect
-	golang.org/x/net v0.0.0-20190424033229-afe8014c977f // indirect
-	golang.org/x/sys v0.0.0-20190424033229-953cdadca894 // indirect
-	google.golang.org/genproto v0.0.0-20190424033229-e7d98fc518a7 // indirect
+	github.com/zclconf/go-cty v0.0.0-20190429195709-b18a157db9e2 // indirect
+	golang.org/x/crypto v0.0.0-20190429195709-a29dc8fdc734 // indirect
+	golang.org/x/net v0.0.0-20190429195709-4829fb13d2c6 // indirect
+	golang.org/x/sys v0.0.0-20190429195709-d89cdac9e872 // indirect
+	google.golang.org/genproto v0.0.0-20190429195709-357c62f0e4bb // indirect
 )
