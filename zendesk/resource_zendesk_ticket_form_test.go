@@ -129,8 +129,6 @@ func testTicketFormDestroyed(s *terraform.State) error {
 }
 
 func TestAccTicketFormExample(t *testing.T) {
-	// TODO: remove this skip on upgrade
-	t.Skip("the test zendesk account is currently a trial account and forms cannot be created")
 	configs := []string{
 		readExampleConfig(t, "ticket_fields.tf"),
 		readExampleConfig(t, "ticket_forms.tf"),
