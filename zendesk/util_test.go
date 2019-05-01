@@ -3,6 +3,7 @@ package zendesk
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -23,6 +24,13 @@ func TestIsValidFile(t *testing.T) {
 	_, errs = v("testdata", "file_path")
 	if len(errs) == 0 {
 		t.Fatalf("is Valid did not return an error for a directory")
+	}
+}
+
+const AssigneeSystemFieldEnvVar = "TF_VAR_ASSIGNEE_TICKET_FIELD_ID"
+func SystemFieldVariablePreCheck(t *testing.T) {
+	if v := os.Getenv(AssigneeSystemFieldEnvVar); v == "" {
+		t.Fatalf("%s must be set for acceptance tests", AssigneeSystemFieldEnvVar)
 	}
 }
 
