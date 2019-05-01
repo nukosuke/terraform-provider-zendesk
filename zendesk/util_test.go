@@ -9,6 +9,15 @@ import (
 	"testing"
 )
 
+var SystemFieldEnvVars = []string{
+	AssigneeSystemFieldEnvVar,
+	"TF_VAR_DESCRIPTION_TICKET_FIELD_ID",
+	"TF_VAR_GROUP_TICKET_FIELD_ID" ,
+	"TF_VAR_STATUS_TICKET_FIELD_ID",
+	"TF_VAR_SUBJECT_TICKET_FIELD_ID",
+}
+const AssigneeSystemFieldEnvVar = "TF_VAR_ASSIGNEE_TICKET_FIELD_ID"
+
 func TestIsValidFile(t *testing.T) {
 	v := isValidFile()
 	_, errs := v("testdata/street.jpg", "file_path")
@@ -27,10 +36,11 @@ func TestIsValidFile(t *testing.T) {
 	}
 }
 
-const AssigneeSystemFieldEnvVar = "TF_VAR_ASSIGNEE_TICKET_FIELD_ID"
-func SystemFieldVariablePreCheck(t *testing.T) {
-	if v := os.Getenv(AssigneeSystemFieldEnvVar); v == "" {
-		t.Fatalf("%s must be set for acceptance tests", AssigneeSystemFieldEnvVar)
+func testSystemFieldVariablePreCheck(t *testing.T) {
+	for _, envVar := range SystemFieldEnvVars {
+		if v := os.Getenv(envVar); v == "" {
+			t.Fatalf("%s must be set for acceptance tests", envVar)
+		}
 	}
 }
 

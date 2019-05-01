@@ -40,18 +40,12 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 	}
 }
 
-func testAccSystemFieldPreCheck(t *testing.T) {
-	if v := os.Getenv(AssigneeSystemFieldEnvVar); v == "" {
-		t.Fatalf("%s must be set for acceptance tests", AssigneeSystemFieldEnvVar)
-	}
-}
-
 func TestAccTicketFieldDataSource(t *testing.T) {
 	id := os.Getenv(AssigneeSystemFieldEnvVar)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccSystemFieldPreCheck(t)
+			testSystemFieldVariablePreCheck(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
