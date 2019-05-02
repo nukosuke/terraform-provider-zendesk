@@ -50,6 +50,7 @@ func resourceZendeskTicketForm() *schema.Resource {
 			"active": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default: true,
 			},
 			"end_user_visible": {
 				Type:     schema.TypeBool,
@@ -69,6 +70,7 @@ func resourceZendeskTicketForm() *schema.Resource {
 			"in_all_brands": {
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default: true,
 			},
 			"restricted_brand_ids": {
 				Type: schema.TypeSet,

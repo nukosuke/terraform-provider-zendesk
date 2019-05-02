@@ -16,7 +16,6 @@ data "zendesk_ticket_field" "assignee" {
   	id = "%s"
 }
 `
-const systemFieldEnvVar = "ASSIGNEE_FIELD_ID"
 
 func TestTicketFieldDataSourceRead(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -41,18 +40,12 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 	}
 }
 
-func testAccSystemFieldPreCheck(t *testing.T) {
-	if v := os.Getenv(systemFieldEnvVar); v == "" {
-		t.Fatalf("%s must be set for acceptance tests", systemFieldEnvVar)
-	}
-}
-
 func TestAccTicketFieldDataSource(t *testing.T) {
-	id := os.Getenv(systemFieldEnvVar)
+	id := os.Getenv(AssigneeSystemFieldEnvVar)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testAccSystemFieldPreCheck(t)
+			testSystemFieldVariablePreCheck(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -191,7 +192,11 @@ func TestMarshalTicketField(t *testing.T) {
 func testTicketFieldDestroyed(s *terraform.State) error {
 	client := testAccProvider.Meta().(zendesk.TicketFieldAPI)
 
-	for _, r := range s.RootModule().Resources {
+	for k, r := range s.RootModule().Resources {
+		if strings.HasPrefix(k, "data") {
+			continue
+		}
+
 		if r.Type != "zendesk_ticket_field" {
 			continue
 		}
@@ -203,7 +208,7 @@ func testTicketFieldDestroyed(s *terraform.State) error {
 
 		_, err = client.GetTicketField(id)
 		if err == nil {
-			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field")
+			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field named %s",  k)
 		}
 
 		zd, ok := err.(zendesk.Error)
@@ -224,6 +229,7 @@ func TestAccTicketFieldExample(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
+			testSystemFieldVariablePreCheck(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testTicketFieldDestroyed,

@@ -2,7 +2,6 @@ package zendesk
 
 import (
 	"fmt"
-	"net/http"
 	"testing"
 
 	. "github.com/golang/mock/gomock"
@@ -97,10 +96,10 @@ func TestUnmarshalTicketForm(t *testing.T) {
 }
 
 func testTicketFormDestroyed(s *terraform.State) error {
-	client := testAccProvider.Meta().(zendesk.TicketFieldAPI)
+	client := testAccProvider.Meta().(zendesk.TicketFormAPI)
 
-	for _, r := range s.RootModule().Resources {
-		if r.Type != "zendesk_ticket_field" {
+	for k, r := range s.RootModule().Resources {
+		if r.Type != "zendesk_ticket_form" {
 			continue
 		}
 
@@ -109,18 +108,13 @@ func testTicketFormDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		_, err = client.GetTicketField(id)
-		if err == nil {
-			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field")
+		form, err := client.GetTicketForm(id)
+		if err != nil {
+			return fmt.Errorf("got an error from zendesk when trying to fetch the destroyed ticket form %s. %v", k, err)
 		}
 
-		zd, ok := err.(zendesk.Error)
-		if !ok {
-			return fmt.Errorf("error %v cannot be asserted as a zendesk error", err)
-		}
-
-		if zd.Status() != http.StatusNotFound {
-			return fmt.Errorf(`did not get a "not found error" after destroy. error was %v`, zd)
+		if form.Active {
+			return fmt.Errorf("form %v is still active", form)
 		}
 
 	}
@@ -129,8 +123,6 @@ func testTicketFormDestroyed(s *terraform.State) error {
 }
 
 func TestAccTicketFormExample(t *testing.T) {
-	// TODO: remove this skip on upgrade
-	t.Skip("the test zendesk account is currently a trial account and forms cannot be created")
 	configs := []string{
 		readExampleConfig(t, "ticket_fields.tf"),
 		readExampleConfig(t, "ticket_forms.tf"),
@@ -139,6 +131,7 @@ func TestAccTicketFormExample(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
+			testSystemFieldVariablePreCheck(t)
 		},
 		Providers: testAccProviders,
 		CheckDestroy: resource.ComposeTestCheckFunc(
