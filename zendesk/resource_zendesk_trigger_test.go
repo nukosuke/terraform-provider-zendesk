@@ -115,6 +115,22 @@ func TestReadTrigger(t *testing.T) {
 	}
 }
 
+func TestUpdateTrigger(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	i := &identifiableMapGetterSetter{
+		id:              "12345",
+		mapGetterSetter: mapGetterSetter{},
+	}
+
+	m.EXPECT().UpdateTrigger(gomock.Eq(int64(12345)), gomock.Any()).Return(zendesk.Trigger{}, nil)
+	if err := updateTrigger(i, m); err != nil {
+		t.Fatalf("updateTrigger returned an error %v", err)
+	}
+}
+
 func TestDeleteTrigger(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
