@@ -161,7 +161,7 @@ func testTriggerDestroyed(s *terraform.State) error {
 		}
 
 		_, err = client.GetTrigger(id)
-		if err != nil {
+		if err == nil {
 			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed trigger. resource name %s", k)
 		}
 
