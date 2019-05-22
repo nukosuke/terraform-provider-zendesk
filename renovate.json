@@ -14,6 +14,7 @@
   "lockFileMaintenance": {
     "enabled": true
   },
+  "gomodTidy": true,
   "schedule": "every weekend",
   "labels": ["renovate"]
 }
