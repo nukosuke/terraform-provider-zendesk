@@ -5,7 +5,7 @@ require (
 	github.com/apparentlymart/go-cidr v1.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.19.33 // indirect
-	github.com/blang/semver v0.0.0-20190414102917-ba2c2ddd8906 // indirect
+	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/golang/mock v1.3.1
 	github.com/hashicorp/go-getter v1.3.0 // indirect
 	github.com/hashicorp/go-hclog v0.9.2 // indirect
