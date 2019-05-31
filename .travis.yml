@@ -43,6 +43,8 @@ jobs:
       script:
         - go test -v -cover -coverprofile=coverage.out -run TestAcc.* ./...
         - goveralls -coverprofile=coverage.out -service=travis-ci
+      after_success:
+        - curl -X POST $DOCKERHUB_TRIGGER_ENDPOINT
 
 before_deploy:
   - go get github.com/mitchellh/gox
