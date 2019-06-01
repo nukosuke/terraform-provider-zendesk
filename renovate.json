@@ -1,20 +1,13 @@
 {
-  "groupName": "all dependencies",
-  "separateMajorMinor": false,
-  "groupSlug": "all",
-  "packageRules": [
-    {
-      "packagePatterns": [
-        "*"
-      ],
-      "groupName": "all dependencies",
-      "groupSlug": "all"
-    }
+  "extends": [
+    "config:base"
   ],
-  "lockFileMaintenance": {
-    "enabled": true
-  },
+
+  "groupName": "all dependencies",
+  "groupSlug": "all",
   "gomodTidy": true,
   "schedule": "every weekend",
+
+
   "labels": ["renovate"]
 }
