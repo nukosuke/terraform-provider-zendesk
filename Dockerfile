@@ -1,18 +1,16 @@
-## -*- docker-image-name: "terraform-zendesk" -*-
+## -*- docker-image-name: "terraform-provider-zendesk" -*-
 FROM hashicorp/terraform:full AS builder
 
-ENV VERSION=master
 ENV GO111MODULE="on"
-
-WORKDIR /
-ADD https://github.com/nukosuke/terraform-provider-zendesk/archive/${VERSION}.zip ./
-RUN unzip ${VERSION}.zip && \
-  mv terraform-provider-zendesk-${VERSION} terraform-provider-zendesk && \
-  cd terraform-provider-zendesk
-
 WORKDIR /terraform-provider-zendesk
+
+# module cache layer
+COPY go.mod go.sum /terraform-provider-zendesk/
 RUN go mod tidy
 RUN go mod download
+
+# source cache layer
+COPY . .
 RUN go build .
 
 # dist
