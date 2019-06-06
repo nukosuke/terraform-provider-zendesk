@@ -3,7 +3,6 @@ language: go
 go:
   - "1.11.x"
   - "1.12.x"
-  - master
 
 env:
   - GO111MODULE=on
@@ -27,8 +26,7 @@ jobs:
   include:
     - stage: acceptance
       if: type != pull_request and branch = master
-      go:
-        - master
+      go: 1.12.x
       env:
         - GO111MODULE=on
         - TF_ACC=1
