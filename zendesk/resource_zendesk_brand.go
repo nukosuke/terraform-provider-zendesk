@@ -11,7 +11,8 @@ import (
 func resourceZendeskBrand() *schema.Resource {
 	return &schema.Resource{
 		Create: func(d *schema.ResourceData, meta interface{}) error {
-			return nil
+			zd := meta.(*client.Client)
+			return createBrand(d, zd)
 		},
 		Read: func(d *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -164,4 +165,19 @@ func unmarshalBrand(d identifiableGetterSetter) (client.Brand, error) {
 	}
 
 	return brand, nil
+}
+
+func createBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
+	brand, err := unmarshalBrand(d)
+	if err != nil {
+		return err
+	}
+
+	brand, err = zd.CreateBrand(brand)
+	if err != nil {
+		return err
+	}
+
+	d.SetId(fmt.Sprintf("%d", brand.ID))
+	return marshalBrand(brand, d)
 }
