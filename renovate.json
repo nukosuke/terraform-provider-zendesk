@@ -1,14 +1,18 @@
 {
-  "groupName": "all dependencies",
   "separateMajorMinor": false,
-  "groupSlug": "all",
   "packageRules": [
+    {
+      "packageNames": ["github.com/hashicorp/terraform"],
+      "groupName": "Terraform",
+      "groupSlug": "terraform"
+    },
     {
       "packagePatterns": [
         "*"
       ],
-      "groupName": "all dependencies",
-      "groupSlug": "all"
+      "excludePackageNames": ["github.com/hashicorp/terraform"],
+      "groupName": "Indirect Dependencies",
+      "groupSlug": "indirect"
     }
   ],
   "lockFileMaintenance": {
