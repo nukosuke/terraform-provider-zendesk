@@ -19,7 +19,8 @@ func resourceZendeskBrand() *schema.Resource {
 			return readBrand(d, zd)
 		},
 		Update: func(d *schema.ResourceData, meta interface{}) error {
-			return nil
+			zd := meta.(*client.Client)
+			return updateBrand(d, zd)
 		},
 		Delete: func(d *schema.ResourceData, meta interface{}) error {
 			return nil
@@ -190,6 +191,25 @@ func readBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
 	}
 
 	brand, err := zd.GetBrand(id)
+	if err != nil {
+		return err
+	}
+
+	return marshalBrand(brand, d)
+}
+
+func updateBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	brand, err := unmarshalBrand(d)
+	if err != nil {
+		return err
+	}
+
+	brand, err = zd.UpdateBrand(id, brand)
 	if err != nil {
 		return err
 	}
