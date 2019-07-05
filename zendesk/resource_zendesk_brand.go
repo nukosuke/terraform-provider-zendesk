@@ -23,8 +23,10 @@ func resourceZendeskBrand() *schema.Resource {
 			return updateBrand(d, zd)
 		},
 		Delete: func(d *schema.ResourceData, meta interface{}) error {
-			return nil
+			zd := meta.(*client.Client)
+			return deleteBrand(d, zd)
 		},
+
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
@@ -215,4 +217,14 @@ func updateBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
 	}
 
 	return marshalBrand(brand, d)
+}
+
+
+func deleteBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	return zd.DeleteBrand(id)
 }

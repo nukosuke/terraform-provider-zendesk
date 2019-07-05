@@ -93,3 +93,20 @@ func TestUpdateBrand(t *testing.T) {
 		t.Fatalf("Update did not set name to the expected value. Was %s expected %s", v, updatedBrand.Name)
 	}
 }
+
+func TestDeleteBrand(t *testing.T) {
+	id := int64(1234)
+	i := newIdentifiableGetterSetter()
+	i.SetId(fmt.Sprintf("%d", id))
+
+	ctrl := NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewClient(ctrl)
+	m.EXPECT().DeleteBrand(id).Return(nil)
+
+	err := deleteBrand(i, m)
+	if err != nil {
+		t.Fatalf("delete brand returned an error: %v", err)
+	}
+}
