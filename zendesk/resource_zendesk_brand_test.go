@@ -69,7 +69,7 @@ func TestReadBrand(t *testing.T) {
 	if v := i.Get("subdomain"); v != testBrand.Subdomain {
 		t.Fatalf("Subdomain was not set to the expected value. Was: %s Expected %s", v, testBrand.Subdomain)
 	}
- }
+}
 
 func TestUpdateBrand(t *testing.T) {
 	updatedBrand := testBrand

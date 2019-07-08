@@ -219,7 +219,6 @@ func updateBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
 	return marshalBrand(brand, d)
 }
 
-
 func deleteBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
 	id, err := atoi64(d.Id())
 	if err != nil {
