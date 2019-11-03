@@ -1,9 +1,9 @@
 package zendesk
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/nukosuke/go-zendesk/zendesk"
-	"strconv"
 )
 
 func dataSourceZendeskTicketField() *schema.Resource {
@@ -16,7 +16,7 @@ func dataSourceZendeskTicketField() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeInt,
-				Required: true,
+				Computed: true,
 			},
 			"url": {
 				Type:     schema.TypeString,
@@ -28,7 +28,7 @@ func dataSourceZendeskTicketField() *schema.Resource {
 			},
 			"title": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -133,7 +133,37 @@ func dataSourceZendeskTicketField() *schema.Resource {
 }
 
 func readTicketFieldDataSource(d identifiableGetterSetter, zd zendesk.TicketFieldAPI) error {
-	id := d.Get("id").(int)
-	d.SetId(strconv.Itoa(id))
-	return readTicketField(d, zd)
+	searchTitle := d.Get("title").(string)
+
+	ticketFields, _, err := zd.GetTicketFields()
+	if err != nil {
+		return err
+	}
+
+	var found *zendesk.TicketField
+
+	for _, ticketField := range ticketFields {
+		if ticketField.Title == searchTitle {
+			found = &ticketField
+			break
+		}
+	}
+
+	if found == nil {
+		return fmt.Errorf("unable to locate any ticket field with title: %s", searchTitle)
+	}
+
+	fields := map[string]interface{}{
+		"id":          found.ID,
+		"title":       found.Title,
+		"url":         found.URL,
+		"description": found.Description,
+	}
+
+	err = setSchemaFields(d, fields)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
