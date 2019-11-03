@@ -51,6 +51,7 @@ func resourceZendeskTarget() *schema.Resource {
 					//"twitter_target",
 					//"url_target",
 					"http_target",
+					"url_target_v2", // synonym of http_target
 					//"yammer_target",
 				}, false),
 			},
