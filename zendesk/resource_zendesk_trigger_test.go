@@ -14,7 +14,7 @@ func TestTriggerDelete(t *testing.T) {
 
 	d.SetId("1234")
 
-	c.EXPECT().DeleteTrigger(gomock.Eq(int64(1234))).Return(nil)
+	c.EXPECT().DeleteTrigger(gomock.Any(), gomock.Eq(int64(1234))).Return(nil)
 	err := resourceZendeskTriggerDelete(d, c)
 	if err != nil {
 		t.Fatalf("Got error from resource delete: %v", err)

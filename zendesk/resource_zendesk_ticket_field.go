@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 
@@ -340,7 +341,8 @@ func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) err
 	}
 
 	// Actual API request
-	tf, err = zd.CreateTicketField(tf)
+	ctx := context.Background()
+	tf, err = zd.CreateTicketField(ctx, tf)
 	if err != nil {
 		return err
 	}
@@ -360,7 +362,8 @@ func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error
 		return err
 	}
 
-	field, err := zd.GetTicketField(id)
+	ctx := context.Background()
+	field, err := zd.GetTicketField(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -385,7 +388,8 @@ func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) err
 	}
 
 	// Actual API request
-	tf, err = zd.UpdateTicketField(id, tf)
+	ctx := context.Background()
+	tf, err = zd.UpdateTicketField(ctx, id, tf)
 	if err != nil {
 		return err
 	}
@@ -404,5 +408,6 @@ func deleteTicketField(d identifiable, zd client.TicketFieldAPI) error {
 		return err
 	}
 
-	return zd.DeleteTicketField(id)
+	ctx := context.Background()
+	return zd.DeleteTicketField(ctx, id)
 }

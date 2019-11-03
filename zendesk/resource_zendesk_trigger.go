@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -100,7 +101,8 @@ func resourceZendeskTriggerCreate(d *schema.ResourceData, meta interface{}) erro
 	}
 
 	// Actual API request
-	trg, err := zd.CreateTrigger(trg)
+	ctx := context.Background()
+	trg, err := zd.CreateTrigger(ctx, trg)
 	if err != nil {
 		return err
 	}
@@ -123,7 +125,8 @@ func resourceZendeskTriggerDelete(d identifiable, zd client.TriggerAPI) error {
 		return err
 	}
 
-	return zd.DeleteTrigger(id)
+	ctx := context.Background()
+	return zd.DeleteTrigger(ctx, id)
 }
 
 func triggerConditionSchema() *schema.Schema {

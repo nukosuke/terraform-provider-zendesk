@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -86,7 +87,8 @@ func createGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
 	}
 
 	// Actual API request
-	group, err = zd.CreateGroup(group)
+	ctx := context.Background()
+	group, err = zd.CreateGroup(ctx, group)
 	if err != nil {
 		return err
 	}
@@ -101,7 +103,8 @@ func readGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
 		return err
 	}
 
-	group, err := zd.GetGroup(id)
+	ctx := context.Background()
+	group, err := zd.GetGroup(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -121,7 +124,8 @@ func updateGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
 	}
 
 	// ActualAPI request
-	group, err = zd.UpdateGroup(id, group)
+	ctx := context.Background()
+	group, err = zd.UpdateGroup(ctx, id, group)
 	if err != nil {
 		return err
 	}
@@ -135,5 +139,6 @@ func deleteGroup(d identifiable, zd client.GroupAPI) error {
 		return err
 	}
 
-	return zd.DeleteGroup(id)
+	ctx := context.Background()
+	return zd.DeleteGroup(ctx, id)
 }

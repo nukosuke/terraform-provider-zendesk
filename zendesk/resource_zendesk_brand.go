@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -97,7 +98,7 @@ func marshalBrand(brand client.Brand, d identifiableGetterSetter) error {
 		"active":             brand.Active,
 		"default":            brand.Default,
 		"logo_attachment_id": brand.Logo.ID,
-		"ticket_form_ids":    brand.TicketFieldIDs,
+		"ticket_form_ids":    brand.TicketFormIDs,
 		"subdomain":          brand.Subdomain,
 		"host_mapping":       brand.HostMapping,
 		"signature_template": brand.SignatureTemplate,
@@ -152,7 +153,7 @@ func unmarshalBrand(d identifiableGetterSetter) (client.Brand, error) {
 	if v, ok := d.GetOk("ticket_form_ids"); ok {
 		ticketFormIDs := v.(*schema.Set).List()
 		for _, ticketFormID := range ticketFormIDs {
-			brand.TicketFieldIDs = append(brand.TicketFieldIDs, int64(ticketFormID.(int)))
+			brand.TicketFormIDs = append(brand.TicketFormIDs, int64(ticketFormID.(int)))
 		}
 	}
 
@@ -177,7 +178,8 @@ func createBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
 		return err
 	}
 
-	brand, err = zd.CreateBrand(brand)
+	ctx := context.Background()
+	brand, err = zd.CreateBrand(ctx, brand)
 	if err != nil {
 		return err
 	}
@@ -192,7 +194,8 @@ func readBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
 		return err
 	}
 
-	brand, err := zd.GetBrand(id)
+	ctx := context.Background()
+	brand, err := zd.GetBrand(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -211,7 +214,8 @@ func updateBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
 		return err
 	}
 
-	brand, err = zd.UpdateBrand(id, brand)
+	ctx := context.Background()
+	brand, err = zd.UpdateBrand(ctx, id, brand)
 	if err != nil {
 		return err
 	}
@@ -225,5 +229,6 @@ func deleteBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
 		return err
 	}
 
-	return zd.DeleteBrand(id)
+	ctx := context.Background()
+	return zd.DeleteBrand(ctx, id)
 }
