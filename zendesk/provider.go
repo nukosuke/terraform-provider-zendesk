@@ -41,6 +41,7 @@ func Provider() terraform.ResourceProvider {
 			"zendesk_ticket_form":  resourceZendeskTicketForm(),
 			"zendesk_trigger":      resourceZendeskTrigger(),
 			"zendesk_attachment":   resourceZendeskAttachment(),
+			"zendesk_organization": resourceZendeskOrganization(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
