@@ -8,9 +8,6 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk v1.2.0
 	github.com/mattn/go-isatty v0.0.7 // indirect
 	github.com/nukosuke/go-zendesk v0.2.0
-	github.com/pkg/errors v0.8.1
 	github.com/ulikunitz/xz v0.5.6 // indirect
-	golang.org/x/build v0.0.0-20190111050920-041ab4dc3f9d // indirect
 
 )
-
