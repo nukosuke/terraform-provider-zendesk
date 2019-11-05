@@ -208,7 +208,7 @@ func testTicketFieldDestroyed(s *terraform.State) error {
 
 		_, err = client.GetTicketField(id)
 		if err == nil {
-			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field named %s",  k)
+			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field named %s", k)
 		}
 
 		zd, ok := err.(zendesk.Error)

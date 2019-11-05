@@ -12,10 +12,11 @@ import (
 var SystemFieldEnvVars = []string{
 	AssigneeSystemFieldEnvVar,
 	"TF_VAR_DESCRIPTION_TICKET_FIELD_ID",
-	"TF_VAR_GROUP_TICKET_FIELD_ID" ,
+	"TF_VAR_GROUP_TICKET_FIELD_ID",
 	"TF_VAR_STATUS_TICKET_FIELD_ID",
 	"TF_VAR_SUBJECT_TICKET_FIELD_ID",
 }
+
 const AssigneeSystemFieldEnvVar = "TF_VAR_ASSIGNEE_TICKET_FIELD_ID"
 
 func TestIsValidFile(t *testing.T) {
