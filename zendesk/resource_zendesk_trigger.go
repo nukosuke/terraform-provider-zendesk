@@ -1,21 +1,32 @@
 package zendesk
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
+	"strings"
 )
 
 // https://developer.zendesk.com/rest_api/docs/support/triggers
 func resourceZendeskTrigger() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceZendeskTriggerCreate,
-		Read:   resourceZendeskTriggerRead,
-		Update: resourceZendeskTriggerUpdate,
-		Delete: func(data *schema.ResourceData, i interface{}) error {
+		Create: func(d *schema.ResourceData, i interface{}) error {
 			zd := i.(client.TriggerAPI)
-			return resourceZendeskTriggerDelete(data, zd)
+			return createTrigger(d, zd)
+		},
+		Read: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.TriggerAPI)
+			return readTrigger(d, zd)
+		},
+		Update: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.TriggerAPI)
+			return updateTrigger(d, zd)
+		},
+		Delete: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.TriggerAPI)
+			return deleteTrigger(d, zd)
 		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -63,61 +74,202 @@ func resourceZendeskTrigger() *schema.Resource {
 	}
 }
 
-func resourceZendeskTriggerCreate(d *schema.ResourceData, meta interface{}) error {
-	zd := meta.(*client.Client)
-	trg := client.Trigger{
-		Title:       d.Get("title").(string),
-		Active:      d.Get("active").(bool),
-		Description: d.Get("description").(string),
+// Marshal the zendesk client object to the terraform schema
+func marshalTrigger(trigger client.Trigger, d identifiableGetterSetter) error {
+	fields := map[string]interface{}{
+		"title":       trigger.Title,
+		"active":      trigger.Active,
+		"position":    trigger.Position,
+		"description": trigger.Description,
 	}
 
-	// Conditions
-	alls := d.Get("all").(*schema.Set).List()
-	for _, all := range alls {
-		trg.Conditions.All = append(trg.Conditions.All, client.TriggerCondition{
-			Field:    all.(map[string]interface{})["field"].(string),
-			Operator: all.(map[string]interface{})["operator"].(string),
-			Value:    all.(map[string]interface{})["value"].(string),
-		})
+	var alls []map[string]interface{}
+	for _, v := range trigger.Conditions.All {
+		m := map[string]interface{}{
+			"field":    v.Field,
+			"operator": v.Operator,
+			"value":    v.Value,
+		}
+		alls = append(alls, m)
 	}
-	anys := d.Get("any").(*schema.Set).List()
-	for _, any := range anys {
-		trg.Conditions.Any = append(trg.Conditions.Any, client.TriggerCondition{
-			Field:    any.(map[string]interface{})["field"].(string),
-			Operator: any.(map[string]interface{})["operator"].(string),
-			Value:    any.(map[string]interface{})["value"].(string),
-		})
+	fields["all"] = alls
+
+	var anys []map[string]interface{}
+	for _, v := range trigger.Conditions.Any {
+		m := map[string]interface{}{
+			"field":    v.Field,
+			"operator": v.Operator,
+			"value":    v.Value,
+		}
+		anys = append(anys, m)
+	}
+	fields["any"] = anys
+
+	var actions []map[string]interface{}
+	for _, action := range trigger.Actions {
+
+		// If the trigger value is a string, leave it be
+		// If it's a list, marshal it to a string
+		var stringVal string
+		switch action.Value.(type) {
+		case []interface{}:
+			tmp, err := json.Marshal(action.Value)
+			if err != nil {
+				return fmt.Errorf("error decoding trigger action value: %s", err)
+			}
+			stringVal = string(tmp)
+		case string:
+			stringVal = action.Value.(string)
+		}
+
+		m := map[string]interface{}{
+			"field": action.Field,
+			"value": stringVal,
+		}
+		actions = append(actions, m)
+	}
+	fields["action"] = actions
+	return setSchemaFields(d, fields)
+}
+
+// Unmarshal the terraform schema to the Zendesk client object
+func unmarshalTrigger(d identifiableGetterSetter) (client.Trigger, error) {
+	trg := client.Trigger{}
+
+	if v := d.Id(); v != "" {
+		id, err := atoi64(v)
+		if err != nil {
+			return trg, fmt.Errorf("could not parse trigger id %s: %v", v, err)
+		}
+		trg.ID = id
 	}
 
-	// Actions
-	actions := d.Get("action").(*schema.Set).List()
-	for _, action := range actions {
-		trg.Actions = append(trg.Actions, client.TriggerAction{
-			Field: action.(map[string]interface{})["field"].(string),
-			Value: action.(map[string]interface{})["value"].(string),
-		})
-		// TODO: notification_user specific handling
+	if v, ok := d.GetOk("title"); ok {
+		trg.Title = v.(string)
 	}
 
-	// Actual API request
-	trg, err := zd.CreateTrigger(trg)
+	if v, ok := d.GetOk("active"); ok {
+		trg.Active = v.(bool)
+	}
+
+	if v, ok := d.GetOk("description"); ok {
+		trg.Description = v.(string)
+	}
+
+	if v, ok := d.GetOk("all"); ok {
+		allConditions := v.(*schema.Set).List()
+		conditions := []client.TriggerCondition{}
+		for _, c := range allConditions {
+			condition, ok := c.(map[string]interface{})
+			if !ok {
+				return trg, fmt.Errorf("could not parse 'all' conditions for trigger %v", trg)
+			}
+			conditions = append(conditions, client.TriggerCondition{
+				Field:    condition["field"].(string),
+				Operator: condition["operator"].(string),
+				Value:    condition["value"].(string),
+			})
+		}
+		trg.Conditions.All = conditions
+	}
+
+	if v, ok := d.GetOk("any"); ok {
+		anyConditions := v.(*schema.Set).List()
+		conditions := []client.TriggerCondition{}
+		for _, c := range anyConditions {
+			condition, ok := c.(map[string]interface{})
+			if !ok {
+				return trg, fmt.Errorf("could not parse 'any' conditions for trigger %v", trg)
+			}
+			conditions = append(conditions, client.TriggerCondition{
+				Field:    condition["field"].(string),
+				Operator: condition["operator"].(string),
+				Value:    condition["value"].(string),
+			})
+		}
+		trg.Conditions.Any = conditions
+	}
+
+	if v, ok := d.GetOk("action"); ok {
+		triggerActions := v.(*schema.Set).List()
+		actions := []client.TriggerAction{}
+		for _, a := range triggerActions {
+			action, ok := a.(map[string]interface{})
+			if !ok {
+				return trg, fmt.Errorf("could not parse actions for trigger %v", trg)
+			}
+
+			// If the action value is a list, unmarshal it
+			var actionValue interface{}
+			if strings.HasPrefix(action["value"].(string), "[") {
+				err := json.Unmarshal([]byte(action["value"].(string)), &actionValue)
+				if err != nil {
+					return trg, fmt.Errorf("error unmarshalling trigger action value: %s", err)
+				}
+			} else {
+				actionValue = action["value"]
+			}
+
+			actions = append(actions, client.TriggerAction{
+				Field: action["field"].(string),
+				Value: actionValue,
+			})
+		}
+		trg.Actions = actions
+	}
+
+	return trg, nil
+}
+
+func createTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
+	trg, err := unmarshalTrigger(d)
+	if err != nil {
+		return err
+	}
+
+	trg, err = zd.CreateTrigger(trg)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(fmt.Sprintf("%d", trg.ID))
-	return nil
+	return marshalTrigger(trg, d)
 }
 
-func resourceZendeskTriggerRead(d *schema.ResourceData, meta interface{}) error {
-	return nil
+func readTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	trigger, err := zd.GetTrigger(id)
+	if err != nil {
+		return err
+	}
+
+	return marshalTrigger(trigger, d)
 }
 
-func resourceZendeskTriggerUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
+func updateTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
+	trigger, err := unmarshalTrigger(d)
+	if err != nil {
+		return err
+	}
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	trigger, err = zd.UpdateTrigger(id, trigger)
+	if err != nil {
+		return err
+	}
+
+	return marshalTrigger(trigger, d)
 }
 
-func resourceZendeskTriggerDelete(d identifiable, zd client.TriggerAPI) error {
+func deleteTrigger(d identifiable, zd client.TriggerAPI) error {
 	id, err := atoi64(d.Id())
 	if err != nil {
 		return err
