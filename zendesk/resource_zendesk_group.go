@@ -3,7 +3,7 @@ package zendesk
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
