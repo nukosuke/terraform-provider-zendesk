@@ -9,8 +9,8 @@ import (
 	"time"
 
 	. "github.com/golang/mock/gomock"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
@@ -208,7 +208,7 @@ func testTicketFieldDestroyed(s *terraform.State) error {
 
 		_, err = client.GetTicketField(id)
 		if err == nil {
-			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field named %s",  k)
+			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field named %s", k)
 		}
 
 		zd, ok := err.(zendesk.Error)

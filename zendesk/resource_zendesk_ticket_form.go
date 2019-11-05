@@ -3,7 +3,7 @@ package zendesk
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
@@ -50,7 +50,7 @@ func resourceZendeskTicketForm() *schema.Resource {
 			"active": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default: true,
+				Default:  true,
 			},
 			"end_user_visible": {
 				Type:     schema.TypeBool,
@@ -70,7 +70,7 @@ func resourceZendeskTicketForm() *schema.Resource {
 			"in_all_brands": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default: true,
+				Default:  true,
 			},
 			"restricted_brand_ids": {
 				Type: schema.TypeSet,
