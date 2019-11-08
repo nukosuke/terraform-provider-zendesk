@@ -29,7 +29,7 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 		URL: "foobar",
 	}
 
-	c.EXPECT().GetTicketField(gomock.Eq(int64(id))).Return(out, nil)
+	c.EXPECT().GetTicketField(gomock.Any(), gomock.Eq(int64(id))).Return(out, nil)
 	err := readTicketFieldDataSource(m, c)
 	if err != nil {
 		t.Fatalf("Read system field returned an error. %v", err)

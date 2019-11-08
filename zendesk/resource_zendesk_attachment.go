@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"io"
 	"os"
 	"strconv"
@@ -113,7 +114,8 @@ func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) erro
 	defer file.Close()
 
 	fileName := d.Get("file_name").(string)
-	w := zd.UploadAttachment(fileName, "")
+	ctx := context.Background()
+	w := zd.UploadAttachment(ctx, fileName, "")
 
 	_, err = io.Copy(w, file)
 	if err != nil {
@@ -146,7 +148,8 @@ func deleteAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) erro
 		return nil
 	}
 
-	return zd.DeleteUpload(v.(string))
+	ctx := context.Background()
+	return zd.DeleteUpload(ctx, v.(string))
 }
 
 func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
@@ -165,7 +168,8 @@ func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error 
 		return err
 	}
 
-	a, err := zd.GetAttachment(id)
+	ctx := context.Background()
+	a, err := zd.GetAttachment(ctx, id)
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
@@ -60,7 +61,7 @@ func TestCreateZendeskAttachment(t *testing.T) {
 	}
 	w := newMockUploadWriter(u, nil)
 
-	m.EXPECT().UploadAttachment(Any(), Any()).Return(w)
+	m.EXPECT().UploadAttachment(Any(), Any(), Any()).Return(w)
 
 	d := &identifiableMapGetterSetter{
 		mapGetterSetter: mapGetterSetter{
@@ -86,7 +87,7 @@ func TestDeleteZendeskAttachmentCallsWhenTokenIsSet(t *testing.T) {
 
 	m := mock.NewClient(ctrl)
 
-	m.EXPECT().DeleteUpload(Any()).Return(nil)
+	m.EXPECT().DeleteUpload(Any(), Any()).Return(nil)
 
 	d := &identifiableMapGetterSetter{
 		mapGetterSetter: mapGetterSetter{
@@ -127,7 +128,7 @@ func testAttachmentDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		_, err = client.GetAttachment(id)
+		_, err = client.GetAttachment(context.Background(), id)
 		if err == nil {
 			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket attachment")
 		}

@@ -1,12 +1,13 @@
 package zendesk
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
-	"strings"
 )
 
 // https://developer.zendesk.com/rest_api/docs/support/triggers
@@ -227,7 +228,8 @@ func createTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
 		return err
 	}
 
-	trg, err = zd.CreateTrigger(trg)
+	ctx := context.Background()
+	trg, err = zd.CreateTrigger(ctx, trg)
 	if err != nil {
 		return err
 	}
@@ -242,7 +244,8 @@ func readTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
 		return err
 	}
 
-	trigger, err := zd.GetTrigger(id)
+	ctx := context.Background()
+	trigger, err := zd.GetTrigger(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -261,7 +264,8 @@ func updateTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
 		return err
 	}
 
-	trigger, err = zd.UpdateTrigger(id, trigger)
+	ctx := context.Background()
+	trigger, err = zd.UpdateTrigger(ctx, id, trigger)
 	if err != nil {
 		return err
 	}
@@ -275,7 +279,8 @@ func deleteTrigger(d identifiable, zd client.TriggerAPI) error {
 		return err
 	}
 
-	return zd.DeleteTrigger(id)
+	ctx := context.Background()
+	return zd.DeleteTrigger(ctx, id)
 }
 
 func triggerConditionSchema() *schema.Schema {
