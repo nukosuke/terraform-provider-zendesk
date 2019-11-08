@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -114,18 +115,18 @@ func resourceZendeskTarget() *schema.Resource {
 
 func marshalTarget(target client.Target, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
-		"url":  target.URL,
-		"type": target.Type,
-		"title": target.Title,
+		"url":    target.URL,
+		"type":   target.Type,
+		"title":  target.Title,
 		"active": target.Active,
 		// email_target
-		"email": target.Email,
+		"email":   target.Email,
 		"subject": target.Subject,
 		// http_target
-		"target_url": target.TargetURL,
-		"method": target.Method,
-		"username": target.Username,
-		"password": target.Password,
+		"target_url":   target.TargetURL,
+		"method":       target.Method,
+		"username":     target.Username,
+		"password":     target.Password,
 		"content_type": target.ContentType,
 	}
 
@@ -206,7 +207,8 @@ func createTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
 	}
 
 	// Actual API request
-	target, err = zd.CreateTarget(target)
+	ctx := context.Background()
+	target, err = zd.CreateTarget(ctx, target)
 	if err != nil {
 		return err
 	}
@@ -221,7 +223,8 @@ func readTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
 		return err
 	}
 
-	target, err := zd.GetTarget(id)
+	ctx := context.Background()
+	target, err := zd.GetTarget(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -241,7 +244,8 @@ func updateTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
 	}
 
 	// ActualAPI request
-	target, err = zd.UpdateTarget(id, target)
+	ctx := context.Background()
+	target, err = zd.UpdateTarget(ctx, id, target)
 	if err != nil {
 		return err
 	}
@@ -255,5 +259,6 @@ func deleteTarget(d identifiable, zd client.TargetAPI) error {
 		return err
 	}
 
-	return zd.DeleteTarget(id)
+	ctx := context.Background()
+	return zd.DeleteTarget(ctx, id)
 }

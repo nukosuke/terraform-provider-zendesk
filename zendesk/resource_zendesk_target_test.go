@@ -17,10 +17,10 @@ func TestMarshalTarget(t *testing.T) {
 	expectedSubject := "New ticket created"
 
 	g := zendesk.Target{
-		URL:  expectedURL,
-		Type: expectedType,
-		Title: expectedTitle,
-		Email: expectedEmail,
+		URL:     expectedURL,
+		Type:    expectedType,
+		Title:   expectedTitle,
+		Email:   expectedEmail,
 		Subject: expectedSubject,
 	}
 	m := &identifiableMapGetterSetter{
@@ -77,10 +77,10 @@ func TestUnmarshalTarget(t *testing.T) {
 	m := &identifiableMapGetterSetter{
 		id: "1234",
 		mapGetterSetter: mapGetterSetter{
-			"url":  "https://example.zendesk.com/api/v2/targets/360011737434.json",
-			"type": "email_target",
-			"title": "target :: email :: john.doe@example.com",
-			"email": "john.doe@example.com",
+			"url":     "https://example.zendesk.com/api/v2/targets/360011737434.json",
+			"type":    "email_target",
+			"title":   "target :: email :: john.doe@example.com",
+			"email":   "john.doe@example.com",
 			"subject": "New ticket created",
 		},
 	}
@@ -123,15 +123,15 @@ func TestReadTarget(t *testing.T) {
 	}
 
 	field := zendesk.Target{
-		ID:   int64(id),
-		URL:  "foo",
-		Type: "email_target",
-		Title: "target :: email :: john.doe@example.com",
-		Email: "john.doe@example.com",
+		ID:      int64(id),
+		URL:     "foo",
+		Type:    "email_target",
+		Title:   "target :: email :: john.doe@example.com",
+		Email:   "john.doe@example.com",
 		Subject: "New ticket created",
 	}
 
-	m.EXPECT().GetTarget(Any()).Return(field, nil)
+	m.EXPECT().GetTarget(Any(), Any()).Return(field, nil)
 	if err := readTarget(gs, m); err != nil {
 		t.Fatalf("readTarget returned an error: %v", err)
 	}
@@ -170,7 +170,7 @@ func TestCreateTarget(t *testing.T) {
 		ID: 12345,
 	}
 
-	m.EXPECT().CreateTarget(Any()).Return(out, nil)
+	m.EXPECT().CreateTarget(Any(), Any()).Return(out, nil)
 	if err := createTarget(i, m); err != nil {
 		t.Fatalf("create target returned an error: %v", err)
 	}
@@ -190,7 +190,7 @@ func TestUpdateTarget(t *testing.T) {
 		mapGetterSetter: make(mapGetterSetter),
 	}
 
-	m.EXPECT().UpdateTarget(Eq(int64(12345)), Any()).Return(zendesk.Target{}, nil)
+	m.EXPECT().UpdateTarget(Any(), Eq(int64(12345)), Any()).Return(zendesk.Target{}, nil)
 	if err := updateTarget(i, m); err != nil {
 		t.Fatalf("updateTarget returned an error: %v", err)
 	}
@@ -205,7 +205,7 @@ func TestDeleteTarget(t *testing.T) {
 		id: "12345",
 	}
 
-	m.EXPECT().DeleteTarget(Eq(int64(12345))).Return(nil)
+	m.EXPECT().DeleteTarget(Any(), Eq(int64(12345))).Return(nil)
 	if err := deleteTarget(i, m); err != nil {
 		t.Fatalf("deleteTarget returned an error: %v", err)
 	}
