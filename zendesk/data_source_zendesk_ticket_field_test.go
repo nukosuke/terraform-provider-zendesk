@@ -22,17 +22,27 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 	c := mock.NewClient(ctrl)
 
 	m := newIdentifiableGetterSetter()
-	id := int(1234)
-	m.Set("id", id)
+	title := "Subject"
 
-	out := zendesk.TicketField{
-		URL: "foobar",
-	}
-
-	c.EXPECT().GetTicketField(gomock.Any(), gomock.Eq(int64(id))).Return(out, nil)
-	err := readTicketFieldDataSource(m, c)
+	err := m.Set("title", title)
 	if err != nil {
 		t.Fatalf("Read system field returned an error. %v", err)
+	}
+
+	out := zendesk.TicketField{
+		ID:    1234,
+		Title: "Subject",
+		URL:   "foobar",
+	}
+
+	c.EXPECT().GetTicketFields(gomock.Any()).Return([]zendesk.TicketField{out}, zendesk.Page{}, nil)
+	err = readTicketFieldDataSource(m, c)
+	if err != nil {
+		t.Fatalf("Read system field returned an error. %v", err)
+	}
+
+	if v, ok := m.GetOk("id"); !ok || v.(int64) != out.ID {
+		t.Fatalf("Read system field did not set ID field. Expected %v, Got %v", out.ID, v)
 	}
 
 	if v, ok := m.GetOk("url"); !ok || v.(string) != out.URL {
