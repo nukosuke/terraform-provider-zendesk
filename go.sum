@@ -166,7 +166,7 @@ github.com/mitchellh/reflectwalk v1.0.0 h1:9D+8oIskB4VJBN5SFlmc27fSlIBZaov1Wpk/I
 github.com/mitchellh/reflectwalk v1.0.0/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
 github.com/mitchellh/reflectwalk v1.0.1 h1:FVzMWA5RllMAKIdUSC8mdWo3XtwoecrH79BY70sEEpE=
 github.com/mitchellh/reflectwalk v1.0.1/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
-github.com/nukosuke/go-zendesk v0.4.1 h1:NnPhsn+IwIvy+VlkCsPxQA2OSq4tiU03xWxyuVql+6A=
+github.com/nukosuke/go-zendesk v0.4.1 h1:hoW/8j+Zo/CDgU/nKQUvybyCCQTgqOisHb3qYgfln6I=
 github.com/nukosuke/go-zendesk v0.4.1/go.mod h1:7XxU/uBO4u+uEL+XJOfJn6q/X4SqCosI3TADzPxahmY=
 github.com/oklog/run v1.0.0 h1:Ru7dDtJNOyC66gQ5dQmaCa0qIsAUFY3sFpK1Xk8igrw=
 github.com/oklog/run v1.0.0/go.mod h1:dlhp/R75TPv97u0XWUtDeV/lRKWPKSdTuV0TZvrmrQA=
