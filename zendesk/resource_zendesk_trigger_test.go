@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"testing"
@@ -83,7 +84,7 @@ func TestCreateTrigger(t *testing.T) {
 		Title: "trigger",
 	}
 
-	m.EXPECT().CreateTrigger(gomock.Any()).Return(out, nil)
+	m.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(out, nil)
 	if err := createTrigger(i, m); err != nil {
 		t.Fatal("CreateTrigger return an error")
 	}
@@ -109,7 +110,7 @@ func TestReadTrigger(t *testing.T) {
 		Title:  "trigger",
 		Active: true,
 	}
-	m.EXPECT().GetTrigger(gomock.Eq(int64(12345))).Return(expected, nil)
+	m.EXPECT().GetTrigger(gomock.Any(), gomock.Eq(int64(12345))).Return(expected, nil)
 	if err := readTrigger(i, m); err != nil {
 		t.Fatalf("GetTrigger received an error when calling: %v", err)
 	}
@@ -125,7 +126,7 @@ func TestUpdateTrigger(t *testing.T) {
 		mapGetterSetter: mapGetterSetter{},
 	}
 
-	m.EXPECT().UpdateTrigger(gomock.Eq(int64(12345)), gomock.Any()).Return(zendesk.Trigger{}, nil)
+	m.EXPECT().UpdateTrigger(gomock.Any(), gomock.Eq(int64(12345)), gomock.Any()).Return(zendesk.Trigger{}, nil)
 	if err := updateTrigger(i, m); err != nil {
 		t.Fatalf("updateTrigger returned an error %v", err)
 	}
@@ -160,7 +161,8 @@ func testTriggerDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		_, err = client.GetTrigger(id)
+		ctx := context.Background()
+		_, err = client.GetTrigger(ctx, id)
 		if err == nil {
 			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed trigger. resource name %s", k)
 		}

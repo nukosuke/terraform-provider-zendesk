@@ -1,13 +1,13 @@
 package zendesk
 
 import (
-	"fmt"
+	//"fmt"
 	"strconv"
 	"testing"
 
 	. "github.com/golang/mock/gomock"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	//"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	//"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
@@ -86,7 +86,7 @@ func TestReadOrganization(t *testing.T) {
 		Name: "bar",
 	}
 
-	m.EXPECT().GetOrganization(Any()).Return(field, nil)
+	m.EXPECT().GetOrganization(Any(), Any()).Return(field, nil)
 	if err := readOrganization(gs, m); err != nil {
 		t.Fatalf("readOrganization returned an error: %v", err)
 	}
@@ -113,7 +113,7 @@ func TestCreateOrganization(t *testing.T) {
 		ID: 12345,
 	}
 
-	m.EXPECT().CreateOrganization(Any()).Return(out, nil)
+	m.EXPECT().CreateOrganization(Any(), Any()).Return(out, nil)
 	if err := createOrganization(i, m); err != nil {
 		t.Fatalf("create organization returned an error: %v", err)
 	}
@@ -133,7 +133,7 @@ func TestUpdateOrganization(t *testing.T) {
 		mapGetterSetter: make(mapGetterSetter),
 	}
 
-	m.EXPECT().UpdateOrganization(Eq(int64(12345)), Any()).Return(zendesk.Organization{}, nil)
+	m.EXPECT().UpdateOrganization(Any(), Eq(int64(12345)), Any()).Return(zendesk.Organization{}, nil)
 	if err := updateOrganization(i, m); err != nil {
 		t.Fatalf("updateOrganization returned an error: %v", err)
 	}
@@ -148,7 +148,7 @@ func TestDeleteOrganization(t *testing.T) {
 		id: "12345",
 	}
 
-	m.EXPECT().DeleteOrganization(Eq(int64(12345))).Return(nil)
+	m.EXPECT().DeleteOrganization(Any(), Eq(int64(12345))).Return(nil)
 	if err := deleteOrganization(i, m); err != nil {
 		t.Fatalf("deleteOrganization returned an error: %v", err)
 	}
