@@ -13,7 +13,7 @@ import (
 
 const systemFieldConfig = `
 data "zendesk_ticket_field" "assignee" {
-  	id = "%s"
+	title = "%s"
 }
 `
 
@@ -62,6 +62,7 @@ func TestAccTicketFieldDataSource(t *testing.T) {
 			{
 				Config: fmt.Sprintf(systemFieldConfig, id),
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttrSet("data.zendesk_ticket_field.assignee", "id"),
 					resource.TestCheckResourceAttrSet("data.zendesk_ticket_field.assignee", "url"),
 					resource.TestCheckResourceAttr("data.zendesk_ticket_field.assignee", "type", "assignee"),
 				),

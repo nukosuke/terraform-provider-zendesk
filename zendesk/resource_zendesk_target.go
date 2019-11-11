@@ -207,8 +207,7 @@ func createTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
 	}
 
 	// Actual API request
-	ctx := context.Background()
-	target, err = zd.CreateTarget(ctx, target)
+	target, err = zd.CreateTarget(context.Background(), target)
 	if err != nil {
 		return err
 	}
@@ -223,8 +222,7 @@ func readTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
 		return err
 	}
 
-	ctx := context.Background()
-	target, err := zd.GetTarget(ctx, id)
+	target, err := zd.GetTarget(context.Background(), id)
 	if err != nil {
 		return err
 	}
@@ -244,8 +242,7 @@ func updateTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
 	}
 
 	// ActualAPI request
-	ctx := context.Background()
-	target, err = zd.UpdateTarget(ctx, id, target)
+	target, err = zd.UpdateTarget(context.Background(), id, target)
 	if err != nil {
 		return err
 	}
@@ -259,6 +256,5 @@ func deleteTarget(d identifiable, zd client.TargetAPI) error {
 		return err
 	}
 
-	ctx := context.Background()
-	return zd.DeleteTarget(ctx, id)
+	return zd.DeleteTarget(context.Background(), id)
 }

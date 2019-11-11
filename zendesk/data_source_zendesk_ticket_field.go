@@ -3,6 +3,7 @@ package zendesk
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/nukosuke/go-zendesk/zendesk"
@@ -137,8 +138,7 @@ func dataSourceZendeskTicketField() *schema.Resource {
 func readTicketFieldDataSource(d identifiableGetterSetter, zd zendesk.TicketFieldAPI) error {
 	searchTitle := d.Get("title").(string)
 
-	ctx := context.Background()
-	ticketFields, _, err := zd.GetTicketFields(ctx)
+	ticketFields, _, err := zd.GetTicketFields(context.Background())
 	if err != nil {
 		return err
 	}
@@ -156,17 +156,6 @@ func readTicketFieldDataSource(d identifiableGetterSetter, zd zendesk.TicketFiel
 		return fmt.Errorf("unable to locate any ticket field with title: %s", searchTitle)
 	}
 
-	fields := map[string]interface{}{
-		"id":          found.ID,
-		"title":       found.Title,
-		"url":         found.URL,
-		"description": found.Description,
-	}
-
-	err = setSchemaFields(d, fields)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	d.SetId(strconv.Itoa(int(found.ID)))
+	return readTicketField(d, zd)
 }
