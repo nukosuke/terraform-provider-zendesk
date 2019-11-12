@@ -3,6 +3,7 @@ package zendesk
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -36,12 +37,14 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 	}
 
 	c.EXPECT().GetTicketFields(gomock.Any()).Return([]zendesk.TicketField{out}, zendesk.Page{}, nil)
+	c.EXPECT().GetTicketField(gomock.Any(), gomock.Any()).Return(out, nil)
+
 	err = readTicketFieldDataSource(m, c)
 	if err != nil {
 		t.Fatalf("Read system field returned an error. %v", err)
 	}
-
-	if v, ok := m.GetOk("id"); !ok || v.(int64) != out.ID {
+	
+	if v, ok := strconv.Atoi(m.Id()); ok != nil || int64(v) != out.ID {
 		t.Fatalf("Read system field did not set ID field. Expected %v, Got %v", out.ID, v)
 	}
 
