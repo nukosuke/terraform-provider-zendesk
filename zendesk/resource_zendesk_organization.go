@@ -112,7 +112,7 @@ func unmarshalOrganization(d identifiableGetterSetter) (client.Organization, err
 	}
 
 	if v, ok := d.GetOk("group_id"); ok {
-		org.GroupID = v.(int64)
+		org.GroupID = int64(v.(int))
 	}
 
 	if v, ok := d.GetOk("shared_tickets"); ok {
