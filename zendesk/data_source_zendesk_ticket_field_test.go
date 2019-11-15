@@ -43,7 +43,7 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Read system field returned an error. %v", err)
 	}
-	
+
 	if v, ok := strconv.Atoi(m.Id()); ok != nil || int64(v) != out.ID {
 		t.Fatalf("Read system field did not set ID field. Expected %v, Got %v", out.ID, v)
 	}
