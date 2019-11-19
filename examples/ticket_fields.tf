@@ -56,21 +56,21 @@ resource "zendesk_ticket_field" "textarea-field" {
 }
 
 data "zendesk_ticket_field" "assignee" {
-  title = "Assignee"
+  type = "assignee"
 }
 
 data "zendesk_ticket_field" "group" {
-  title = "Group"
+  type = "group"
 }
 
 data "zendesk_ticket_field" "status" {
-  title = "Status"
+  type = "status"
 }
 
 data "zendesk_ticket_field" "subject" {
-  title = "Subject"
+  type = "subject"
 }
 
 data "zendesk_ticket_field" "description" {
-  title = "Description"
+  type = "description"
 }
