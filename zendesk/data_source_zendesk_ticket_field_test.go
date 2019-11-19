@@ -23,15 +23,16 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 	c := mock.NewClient(ctrl)
 
 	m := newIdentifiableGetterSetter()
-	title := "Subject"
+	fieldtype := "subject"
 
-	err := m.Set("title", title)
+	err := m.Set("type", fieldtype)
 	if err != nil {
 		t.Fatalf("Read system field returned an error. %v", err)
 	}
 
 	out := zendesk.TicketField{
 		ID:    1234,
+		Type:  "subject",
 		Title: "Subject",
 		URL:   "foobar",
 	}
