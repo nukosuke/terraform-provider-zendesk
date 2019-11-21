@@ -43,11 +43,11 @@ func resourceZendeskBrand() *schema.Resource {
 			},
 			"brand_url": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"has_help_center": {
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"help_center_state": {
 				Type:     schema.TypeString,

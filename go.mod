@@ -1,5 +1,7 @@
 module github.com/nukosuke/terraform-provider-zendesk
 
+go 1.11
+
 require (
 	github.com/apparentlymart/go-dump v0.0.0-20190214190832-042adf3cf4a0 // indirect
 	github.com/aws/aws-sdk-go v1.25.3 // indirect
