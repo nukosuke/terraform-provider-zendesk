@@ -3,9 +3,14 @@ package zendesk
 import (
 	"fmt"
 	. "github.com/golang/mock/gomock"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
+	"math/rand"
+	"net/http"
 	"testing"
+	"time"
 )
 
 var testBrand = zendesk.Brand{
@@ -28,6 +33,14 @@ var testBrand = zendesk.Brand{
 	HostMapping:       "brand1.com",
 	SignatureTemplate: "{{agent.signature}}",
 }
+
+const brandConfig = `
+resource "zendesk_brand" "acc_brand" {
+  name            = "T-%d"
+  active          = true
+  subdomain       = "d3v-terraform-provider-t%d"
+}
+`
 
 func TestCreateBrand(t *testing.T) {
 	ctrl := NewController(t)
@@ -109,4 +122,62 @@ func TestDeleteBrand(t *testing.T) {
 	if err != nil {
 		t.Fatalf("delete brand returned an error: %v", err)
 	}
+}
+
+func testBrandDestroyed(s *terraform.State) error {
+	client := testAccProvider.Meta().(zendesk.BrandAPI)
+
+	for _, r := range s.RootModule().Resources {
+		if r.Type != "zendesk_brand" {
+			continue
+		}
+
+		id, err := atoi64(r.Primary.ID)
+		if err != nil {
+			return err
+		}
+
+		brand, err := client.GetBrand(id)
+		if err != nil {
+			zd, ok := err.(zendesk.Error)
+			if !ok {
+				return fmt.Errorf("error %v cannot be asserted as a zendesk error", err)
+			}
+
+			if zd.Status() != http.StatusNotFound {
+				return fmt.Errorf("did not get a not found error after destroy. error was %v", zd)
+			}
+		} else {
+			if brand.Active {
+				return fmt.Errorf("brand named %s is still active", brand.Name)
+			}
+		}
+	}
+
+	return nil
+}
+
+func TestAccZendeskBrand(t *testing.T) {
+	rand.Seed(time.Now().UTC().UnixNano())
+	n := rand.Int31n(199) + 801
+	config := fmt.Sprintf(brandConfig, n, n)
+
+	expectedSubdomain := fmt.Sprintf("d3v-terraform-provider-t%d", n)
+	expectedName := fmt.Sprintf("T-%d", n)
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+		},
+		Providers:    testAccProviders,
+		CheckDestroy: testBrandDestroyed,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("zendesk_brand.acc_brand", "name", expectedName),
+					resource.TestCheckResourceAttr("zendesk_brand.acc_brand", "subdomain", expectedSubdomain),
+				),
+			},
+		},
+	})
 }
