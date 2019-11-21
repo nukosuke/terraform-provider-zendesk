@@ -2,7 +2,6 @@ package zendesk
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"testing"
 
@@ -14,7 +13,7 @@ import (
 
 const systemFieldConfig = `
 data "zendesk_ticket_field" "assignee" {
-	title = "%s"
+	type = "%s"
 }
 `
 
@@ -23,15 +22,16 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 	c := mock.NewClient(ctrl)
 
 	m := newIdentifiableGetterSetter()
-	title := "Subject"
+	fieldtype := "subject"
 
-	err := m.Set("title", title)
+	err := m.Set("type", fieldtype)
 	if err != nil {
 		t.Fatalf("Read system field returned an error. %v", err)
 	}
 
 	out := zendesk.TicketField{
 		ID:    1234,
+		Type:  "subject",
 		Title: "Subject",
 		URL:   "foobar",
 	}
@@ -54,16 +54,14 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 }
 
 func TestAccTicketFieldDataSource(t *testing.T) {
-	id := os.Getenv(AssigneeSystemFieldEnvVar)
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testSystemFieldVariablePreCheck(t)
 		},
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: fmt.Sprintf(systemFieldConfig, id),
+				Config: fmt.Sprintf(systemFieldConfig, "assignee"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttrSet("data.zendesk_ticket_field.assignee", "id"),
 					resource.TestCheckResourceAttrSet("data.zendesk_ticket_field.assignee", "url"),

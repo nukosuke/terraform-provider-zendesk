@@ -27,11 +27,11 @@ func dataSourceZendeskTicketField() *schema.Resource {
 			},
 			"type": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"title": {
 				Type:     schema.TypeString,
-				Required: true,
+				Computed: true,
 			},
 			"description": {
 				Type:     schema.TypeString,
@@ -136,7 +136,7 @@ func dataSourceZendeskTicketField() *schema.Resource {
 }
 
 func readTicketFieldDataSource(d identifiableGetterSetter, zd zendesk.TicketFieldAPI) error {
-	searchTitle := d.Get("title").(string)
+	searchType := d.Get("type").(string)
 
 	ticketFields, _, err := zd.GetTicketFields(context.Background())
 	if err != nil {
@@ -146,14 +146,14 @@ func readTicketFieldDataSource(d identifiableGetterSetter, zd zendesk.TicketFiel
 	var found *zendesk.TicketField
 
 	for _, ticketField := range ticketFields {
-		if ticketField.Title == searchTitle {
+		if ticketField.Type == searchType {
 			found = &ticketField
 			break
 		}
 	}
 
 	if found == nil {
-		return fmt.Errorf("unable to locate any ticket field with title: %s", searchTitle)
+		return fmt.Errorf("unable to locate any ticket field with title: %s", searchType)
 	}
 
 	d.SetId(strconv.Itoa(int(found.ID)))
