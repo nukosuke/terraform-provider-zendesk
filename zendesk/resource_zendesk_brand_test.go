@@ -1,16 +1,18 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
-	. "github.com/golang/mock/gomock"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/nukosuke/go-zendesk/zendesk"
-	"github.com/nukosuke/go-zendesk/zendesk/mock"
 	"math/rand"
 	"net/http"
 	"testing"
 	"time"
+
+	. "github.com/golang/mock/gomock"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/nukosuke/go-zendesk/zendesk"
+	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
 
 var testBrand = zendesk.Brand{
@@ -137,7 +139,7 @@ func testBrandDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		brand, err := client.GetBrand(id)
+		brand, err := client.GetBrand(context.Background(), id)
 		if err != nil {
 			zd, ok := err.(zendesk.Error)
 			if !ok {
