@@ -12,7 +12,7 @@ Terraform provider for Zendesk
 
 ## Requirements
 
-- Terraform >= v0.11.10
+- Terraform >= v0.12.7
 - Go >= v1.11 (only for build)
 
 ## Installation
