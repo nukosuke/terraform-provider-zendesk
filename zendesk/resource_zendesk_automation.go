@@ -81,7 +81,6 @@ func marshalAutomation(automation client.Automation, d identifiableGetterSetter)
 		"title":       automation.Title,
 		"active":      automation.Active,
 		"position":    automation.Position,
-		"description": automation.Description,
 	}
 
 	var alls []map[string]interface{}
@@ -151,10 +150,6 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 
 	if v, ok := d.GetOk("active"); ok {
 		trg.Active = v.(bool)
-	}
-
-	if v, ok := d.GetOk("description"); ok {
-		trg.Description = v.(string)
 	}
 
 	if v, ok := d.GetOk("all"); ok {

@@ -16,7 +16,6 @@ import (
 func TestMarshalAutomation(t *testing.T) {
 	expected := zendesk.Automation{
 		Title:       "title",
-		Description: "blabla",
 		Active:      true,
 	}
 	m := &identifiableMapGetterSetter{
@@ -35,15 +34,6 @@ func TestMarshalAutomation(t *testing.T) {
 	if v != expected.Title {
 		t.Fatalf("automation had incorrect title value %v. should have been %v", v, expected.Title)
 	}
-
-	v, ok = m.GetOk("description")
-	if !ok {
-		t.Fatal("Failed to get description value")
-	}
-	if v != expected.Description {
-		t.Fatalf("automation had incorrect description value %v. should have been %v", v, expected.Description)
-	}
-
 	v, ok = m.GetOk("active")
 	if !ok {
 		t.Fatal("Failed to get active value")
