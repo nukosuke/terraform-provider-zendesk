@@ -34,6 +34,7 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
+			"zendesk_automation":	resourceZendeskAutomation(),
 			"zendesk_brand":        resourceZendeskBrand(),
 			"zendesk_group":        resourceZendeskGroup(),
 			"zendesk_ticket_field": resourceZendeskTicketField(),
