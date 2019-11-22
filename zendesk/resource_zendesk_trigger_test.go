@@ -192,8 +192,8 @@ func TestAccTriggerExample(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("zendesk_trigger.auto-reply-trigger", "title", "Auto Reply Trigger"),
 					resource.TestCheckResourceAttr("zendesk_trigger.auto-reply-trigger", "active", "true"),
-					resource.TestCheckResourceAttrSet("zendesk_trigger.auto-reply-trigger", "all"),
-					resource.TestCheckResourceAttrSet("zendesk_trigger.auto-reply-trigger", "action"),
+					resource.TestCheckResourceAttrSet("zendesk_trigger.auto-reply-trigger", "all.#"),
+					resource.TestCheckResourceAttrSet("zendesk_trigger.auto-reply-trigger", "action.#"),
 				),
 			},
 		},
