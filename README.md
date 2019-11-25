@@ -36,8 +36,19 @@ $ go build
 
 Mount your resource directory to `/terraform`.
 
-``` sh
-$ docker run --rm -ti -v $(pwd)/examples:/terraform nukosuke/terraform-provider-zendesk init
+<details>
+  <summary><b>terraform init</b></summary>
+  
+```sh
+~/workspace/github.com/nukosuke/terraform-provider-zendesk
+⟩ docker run --rm -ti \
+  -e TF_VAR_ZENDESK_EMAIL=agent@example.com \
+  -e TF_VAR_ZENDESK_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+  -e TF_VAR_ZENDESK_ACCOUNT=d3v-terraform-provider \
+  -v (pwd)/examples:/terraform \
+  nukosuke/terraform-provider-zendesk init
+
+Initializing the backend...
 
 Initializing provider plugins...
 
@@ -50,19 +61,32 @@ should now work.
 If you ever set or change modules or backend configuration for Terraform,
 rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
+```
 
+</details>
 
-$ docker run --rm -ti -v $(pwd)/examples:/terraform nukosuke/terraform-provider-zendesk plan
+<details>
+  <summary><b>terraform plan</b></summary>
+
+```sh
+~/workspace/github.com/nukosuke/terraform-provider-zendesk
+⟩ docker run --rm -ti \
+  -e TF_VAR_ZENDESK_EMAIL=agent@example.com \
+  -e TF_VAR_ZENDESK_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
+  -e TF_VAR_ZENDESK_ACCOUNT=d3v-terraform-provider \
+  -v $(pwd)/examples:/terraform \
+  -v $(pwd)/zendesk/testdata:/zendesk/testdata
+  nukosuke/terraform-provider-zendesk plan
 
 Refreshing Terraform state in-memory prior to plan...
 The refreshed state will be used to calculate this plan, but will not be
 persisted to local or remote state storage.
 
+data.zendesk_ticket_field.assignee: Refreshing state...
+data.zendesk_ticket_field.description: Refreshing state...
 data.zendesk_ticket_field.status: Refreshing state...
 data.zendesk_ticket_field.group: Refreshing state...
 data.zendesk_ticket_field.subject: Refreshing state...
-data.zendesk_ticket_field.assignee: Refreshing state...
-data.zendesk_ticket_field.description: Refreshing state...
 
 ------------------------------------------------------------------------
 
@@ -72,41 +96,269 @@ Resource actions are indicated with the following symbols:
 
 Terraform will perform the following actions:
 
-  + zendesk_attachment.logo
-      id:                                   <computed>
-      content_type:                         <computed>
-      content_url:                          <computed>
-      file_hash:                            "Vtptw0XCL7+ShQ8G3/9Q2dsYu3iofOk7J3WqTwzning="
-      file_name:                            "street.jpg"
-      file_path:                            "../zendesk/testdata/street.jpg"
-      inline:                               <computed>
-      size:                                 <computed>
-      thumbnails.#:                         <computed>
-      token:                                <computed>
+  # zendesk_attachment.logo will be created
+  + resource "zendesk_attachment" "logo" {
+      + content_type = (known after apply)
+      + content_url  = (known after apply)
+      + file_hash    = "56da6dc345c22fbf92850f06dfff50d9db18bb78a87ce93b2775aa4f0ce78a78"
+      + file_name    = "street.jpg"
+      + file_path    = "../zendesk/testdata/street.jpg"
+      + id           = (known after apply)
+      + inline       = (known after apply)
+      + size         = (known after apply)
+      + thumbnails   = (known after apply)
+      + token        = (known after apply)
+    }
 
-  ...
+  # zendesk_brand.T-1000 will be created
+  + resource "zendesk_brand" "T-1000" {
+      + active            = false
+      + brand_url         = (known after apply)
+      + has_help_center   = (known after apply)
+      + help_center_state = (known after apply)
+      + id                = (known after apply)
+      + name              = "T-1000"
+      + subdomain         = "d3v-terraform-provider-t1000"
+      + ticket_form_ids   = (known after apply)
+      + url               = (known after apply)
+    }
 
-  + zendesk_trigger.auto-reply-trigger
-      id:                                   <computed>
-      action.#:                             "1"
-      action.14699407.field:                "notification_user"
-      action.14699407.value:                "[\n  \"requester_id\",\n  \"Dear my customer\",\n  \"Hi. This message was configured by terraform-provider-zendesk.\"\n]\n"
-      active:                               "true"
-      all.#:                                "3"
-      all.1027606754.field:                 "update_type"
-      all.1027606754.operator:              "is"
-      all.1027606754.value:                 "Create"
-      all.2406064215.field:                 "role"
-      all.2406064215.operator:              "is"
-      all.2406064215.value:                 "end_user"
-      all.375493961.field:                  "status"
-      all.375493961.operator:               "is_not"
-      all.375493961.value:                  "solved"
-      title:                                "Auto Reply Trigger"
+  # zendesk_brand.T-800 will be created
+  + resource "zendesk_brand" "T-800" {
+      + active            = true
+      + brand_url         = (known after apply)
+      + has_help_center   = (known after apply)
+      + help_center_state = (known after apply)
+      + id                = (known after apply)
+      + name              = "T-800"
+      + subdomain         = "d3v-terraform-provider-t800"
+      + ticket_form_ids   = (known after apply)
+      + url               = (known after apply)
+    }
 
+  # zendesk_group.developer-group will be created
+  + resource "zendesk_group" "developer-group" {
+      + id   = (known after apply)
+      + name = "Developer"
+      + url  = (known after apply)
+    }
 
-Plan: 16 to add, 0 to change, 0 to destroy.
+  # zendesk_group.moderator-group will be created
+  + resource "zendesk_group" "moderator-group" {
+      + id   = (known after apply)
+      + name = "Moderator"
+      + url  = (known after apply)
+    }
+
+  # zendesk_target.email-target will be created
+  + resource "zendesk_target" "email-target" {
+      + active  = true
+      + email   = "john.doe@example.com"
+      + id      = (known after apply)
+      + subject = "New ticket created"
+      + title   = "target :: email :: john.doe@example.com"
+      + type    = "email_target"
+      + url     = (known after apply)
+    }
+
+  # zendesk_ticket_field.checkbox-field will be created
+  + resource "zendesk_ticket_field" "checkbox-field" {
+      + active                = true
+      + description           = (known after apply)
+      + id                    = (known after apply)
+      + position              = (known after apply)
+      + regexp_for_validation = (known after apply)
+      + removable             = (known after apply)
+      + system_field_options  = (known after apply)
+      + title                 = "Checkbox Field"
+      + title_in_portal       = (known after apply)
+      + type                  = "checkbox"
+      + url                   = (known after apply)
+    }
+
+  # zendesk_ticket_field.date-field will be created
+  + resource "zendesk_ticket_field" "date-field" {
+      + active                = true
+      + description           = (known after apply)
+      + id                    = (known after apply)
+      + position              = (known after apply)
+      + regexp_for_validation = (known after apply)
+      + removable             = (known after apply)
+      + system_field_options  = (known after apply)
+      + title                 = "Date Field"
+      + title_in_portal       = (known after apply)
+      + type                  = "date"
+      + url                   = (known after apply)
+    }
+
+  # zendesk_ticket_field.decimal-field will be created
+  + resource "zendesk_ticket_field" "decimal-field" {
+      + active                = true
+      + description           = (known after apply)
+      + id                    = (known after apply)
+      + position              = (known after apply)
+      + regexp_for_validation = (known after apply)
+      + removable             = (known after apply)
+      + system_field_options  = (known after apply)
+      + title                 = "Decimal Field"
+      + title_in_portal       = (known after apply)
+      + type                  = "decimal"
+      + url                   = (known after apply)
+    }
+
+  # zendesk_ticket_field.integer-field will be created
+  + resource "zendesk_ticket_field" "integer-field" {
+      + active                = true
+      + description           = (known after apply)
+      + id                    = (known after apply)
+      + position              = (known after apply)
+      + regexp_for_validation = (known after apply)
+      + removable             = (known after apply)
+      + system_field_options  = (known after apply)
+      + title                 = "Integer Field"
+      + title_in_portal       = (known after apply)
+      + type                  = "integer"
+      + url                   = (known after apply)
+    }
+
+  # zendesk_ticket_field.regexp-field will be created
+  + resource "zendesk_ticket_field" "regexp-field" {
+      + active                = true
+      + description           = (known after apply)
+      + id                    = (known after apply)
+      + position              = (known after apply)
+      + regexp_for_validation = "^[0-9]+-[0-9]+-[0-9]+$"
+      + removable             = (known after apply)
+      + system_field_options  = (known after apply)
+      + title                 = "Regexp Field"
+      + title_in_portal       = (known after apply)
+      + type                  = "regexp"
+      + url                   = (known after apply)
+    }
+
+  # zendesk_ticket_field.tagger-field will be created
+  + resource "zendesk_ticket_field" "tagger-field" {
+      + active                = true
+      + description           = (known after apply)
+      + id                    = (known after apply)
+      + position              = (known after apply)
+      + regexp_for_validation = (known after apply)
+      + removable             = (known after apply)
+      + system_field_options  = (known after apply)
+      + title                 = "Tagger Field"
+      + title_in_portal       = (known after apply)
+      + type                  = "tagger"
+      + url                   = (known after apply)
+
+      + custom_field_option {
+          + id    = (known after apply)
+          + name  = "Option 1"
+          + value = "opt1"
+        }
+      + custom_field_option {
+          + id    = (known after apply)
+          + name  = "Option 2"
+          + value = "opt2"
+        }
+    }
+
+  # zendesk_ticket_field.text-field will be created
+  + resource "zendesk_ticket_field" "text-field" {
+      + active                = true
+      + description           = (known after apply)
+      + id                    = (known after apply)
+      + position              = (known after apply)
+      + regexp_for_validation = (known after apply)
+      + removable             = (known after apply)
+      + system_field_options  = (known after apply)
+      + title                 = "Text Field"
+      + title_in_portal       = (known after apply)
+      + type                  = "text"
+      + url                   = (known after apply)
+    }
+
+  # zendesk_ticket_field.textarea-field will be created
+  + resource "zendesk_ticket_field" "textarea-field" {
+      + active                = true
+      + description           = (known after apply)
+      + id                    = (known after apply)
+      + position              = (known after apply)
+      + regexp_for_validation = (known after apply)
+      + removable             = (known after apply)
+      + system_field_options  = (known after apply)
+      + title                 = "Textarea Field"
+      + title_in_portal       = (known after apply)
+      + type                  = "textarea"
+      + url                   = (known after apply)
+    }
+
+  # zendesk_ticket_form.form-1 will be created
+  + resource "zendesk_ticket_form" "form-1" {
+      + active               = true
+      + id                   = (known after apply)
+      + in_all_brands        = true
+      + name                 = "Form 1"
+      + restricted_brand_ids = (known after apply)
+      + ticket_field_ids     = (known after apply)
+      + url                  = (known after apply)
+    }
+
+  # zendesk_ticket_form.form-2 will be created
+  + resource "zendesk_ticket_form" "form-2" {
+      + active               = true
+      + id                   = (known after apply)
+      + in_all_brands        = true
+      + name                 = "Form 2"
+      + restricted_brand_ids = (known after apply)
+      + ticket_field_ids     = (known after apply)
+      + url                  = (known after apply)
+    }
+
+  # zendesk_trigger.auto-reply-trigger will be created
+  + resource "zendesk_trigger" "auto-reply-trigger" {
+      + active   = true
+      + id       = (known after apply)
+      + position = (known after apply)
+      + title    = "Auto Reply Trigger"
+
+      + action {
+          + field = "notification_user"
+          + value = jsonencode(
+                [
+                  + "requester_id",
+                  + "Dear my customer",
+                  + "Hi. This message was configured by terraform-provider-zendesk.",
+                ]
+            )
+        }
+
+      + all {
+          + field    = "role"
+          + operator = "is"
+          + value    = "end_user"
+        }
+      + all {
+          + field    = "status"
+          + operator = "is_not"
+          + value    = "solved"
+        }
+      + all {
+          + field    = "update_type"
+          + operator = "is"
+          + value    = "Create"
+        }
+    }
+
+Plan: 17 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
 ```
+
+</details>
 
 
 ## Authors
