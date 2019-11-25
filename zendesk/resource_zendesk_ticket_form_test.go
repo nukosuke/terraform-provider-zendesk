@@ -1,12 +1,13 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
 	. "github.com/golang/mock/gomock"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
@@ -22,7 +23,7 @@ func TestCreateTicketForm(t *testing.T) {
 		Name: "foo",
 	}
 
-	m.EXPECT().CreateTicketForm(Any()).Return(out, nil)
+	m.EXPECT().CreateTicketForm(Any(), Any()).Return(out, nil)
 	if err := createTicketForm(i, m); err != nil {
 		t.Fatal("create ticket field returned an error")
 	}
@@ -45,7 +46,7 @@ func TestDeleteTicketForm(t *testing.T) {
 	i.SetId("12345")
 
 	expectedID := int64(12345)
-	m.EXPECT().DeleteTicketForm(Eq(expectedID)).Return(nil)
+	m.EXPECT().DeleteTicketForm(Any(), Eq(expectedID)).Return(nil)
 	if err := deleteTicketForm(i, m); err != nil {
 		t.Fatal("create ticket field returned an error")
 	}
@@ -63,7 +64,7 @@ func TestReadTicketForm(t *testing.T) {
 		Name:     "foobar",
 		Position: int64(1),
 	}
-	m.EXPECT().GetTicketForm(Eq(int64(12345))).Return(expected, nil)
+	m.EXPECT().GetTicketForm(Any(), Eq(int64(12345))).Return(expected, nil)
 	if err := readTicketForm(i, m); err != nil {
 		t.Fatalf("recieved an error when calling read ticket form: %v", err)
 	}
@@ -108,7 +109,7 @@ func testTicketFormDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		form, err := client.GetTicketForm(id)
+		form, err := client.GetTicketForm(context.Background(), id)
 		if err != nil {
 			return fmt.Errorf("got an error from zendesk when trying to fetch the destroyed ticket form %s. %v", k, err)
 		}
@@ -131,7 +132,6 @@ func TestAccTicketFormExample(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testSystemFieldVariablePreCheck(t)
 		},
 		Providers: testAccProviders,
 		CheckDestroy: resource.ComposeTestCheckFunc(

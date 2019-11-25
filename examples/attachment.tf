@@ -11,6 +11,6 @@ variable "logo_file_path" {
 
 resource "zendesk_attachment" "logo" {
   file_name = "street.jpg"
-  file_path = "${var.logo_file_path}"
-  file_hash = "${base64sha256(file(var.logo_file_path))}"
+  file_path = var.logo_file_path
+  file_hash = filesha256(var.logo_file_path)
 }

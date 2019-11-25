@@ -1,13 +1,14 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"testing"
 
 	. "github.com/golang/mock/gomock"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
@@ -86,7 +87,7 @@ func TestReadGroup(t *testing.T) {
 		Name: "bar",
 	}
 
-	m.EXPECT().GetGroup(Any()).Return(field, nil)
+	m.EXPECT().GetGroup(Any(), Any()).Return(field, nil)
 	if err := readGroup(gs, m); err != nil {
 		t.Fatalf("readGroup returned an error: %v", err)
 	}
@@ -113,7 +114,7 @@ func TestCreateGroup(t *testing.T) {
 		ID: 12345,
 	}
 
-	m.EXPECT().CreateGroup(Any()).Return(out, nil)
+	m.EXPECT().CreateGroup(Any(), Any()).Return(out, nil)
 	if err := createGroup(i, m); err != nil {
 		t.Fatalf("create group returned an error: %v", err)
 	}
@@ -133,7 +134,7 @@ func TestUpdateGroup(t *testing.T) {
 		mapGetterSetter: make(mapGetterSetter),
 	}
 
-	m.EXPECT().UpdateGroup(Eq(int64(12345)), Any()).Return(zendesk.Group{}, nil)
+	m.EXPECT().UpdateGroup(Any(), Eq(int64(12345)), Any()).Return(zendesk.Group{}, nil)
 	if err := updateGroup(i, m); err != nil {
 		t.Fatalf("updateGroup returned an error: %v", err)
 	}
@@ -148,7 +149,7 @@ func TestDeleteGroup(t *testing.T) {
 		id: "12345",
 	}
 
-	m.EXPECT().DeleteGroup(Eq(int64(12345))).Return(nil)
+	m.EXPECT().DeleteGroup(Any(), Eq(int64(12345))).Return(nil)
 	if err := deleteGroup(i, m); err != nil {
 		t.Fatalf("deleteGroup returned an error: %v", err)
 	}
@@ -167,7 +168,7 @@ func testGroupDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		group, err := client.GetGroup(id)
+		group, err := client.GetGroup(context.Background(), id)
 		if err != nil {
 			return err
 		}

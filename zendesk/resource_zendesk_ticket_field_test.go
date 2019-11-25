@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -9,8 +10,8 @@ import (
 	"time"
 
 	. "github.com/golang/mock/gomock"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/nukosuke/go-zendesk/zendesk"
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
@@ -62,7 +63,7 @@ func TestReadTicketField(t *testing.T) {
 		}},
 	}
 
-	m.EXPECT().GetTicketField(Any()).Return(field, nil)
+	m.EXPECT().GetTicketField(Any(), Any()).Return(field, nil)
 	if err := readTicketField(gs, m); err != nil {
 		t.Fatal("readTicketField returned an error")
 	}
@@ -93,7 +94,7 @@ func TestDeleteTicketField(t *testing.T) {
 		id: "12345",
 	}
 
-	m.EXPECT().DeleteTicketField(Eq(int64(12345))).Return(nil)
+	m.EXPECT().DeleteTicketField(Any(), Eq(int64(12345))).Return(nil)
 	if err := deleteTicketField(i, m); err != nil {
 		t.Fatal("readTicketField returned an error")
 	}
@@ -109,7 +110,7 @@ func TestUpdateTicketField(t *testing.T) {
 		mapGetterSetter: make(mapGetterSetter),
 	}
 
-	m.EXPECT().UpdateTicketField(Eq(int64(12345)), Any()).Return(zendesk.TicketField{}, nil)
+	m.EXPECT().UpdateTicketField(Any(), Eq(int64(12345)), Any()).Return(zendesk.TicketField{}, nil)
 	if err := updateTicketField(i, m); err != nil {
 		t.Fatal("readTicketField returned an error")
 	}
@@ -128,7 +129,7 @@ func TestCreateTicketField(t *testing.T) {
 		ID: 12345,
 	}
 
-	m.EXPECT().CreateTicketField(Any()).Return(out, nil)
+	m.EXPECT().CreateTicketField(Any(), Any()).Return(out, nil)
 	if err := createTicketField(i, m); err != nil {
 		t.Fatal("create ticket field returned an error")
 	}
@@ -206,9 +207,9 @@ func testTicketFieldDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		_, err = client.GetTicketField(id)
+		_, err = client.GetTicketField(context.Background(), id)
 		if err == nil {
-			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field named %s",  k)
+			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed ticket field named %s", k)
 		}
 
 		zd, ok := err.(zendesk.Error)
@@ -229,7 +230,6 @@ func TestAccTicketFieldExample(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
-			testSystemFieldVariablePreCheck(t)
 		},
 		Providers:    testAccProviders,
 		CheckDestroy: testTicketFieldDestroyed,

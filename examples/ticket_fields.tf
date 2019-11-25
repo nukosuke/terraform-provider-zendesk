@@ -55,27 +55,22 @@ resource "zendesk_ticket_field" "textarea-field" {
   type = "textarea"
 }
 
-variable "ASSIGNEE_TICKET_FIELD_ID" { type = "string" }
 data "zendesk_ticket_field" "assignee" {
-  id = "${var.ASSIGNEE_TICKET_FIELD_ID}"
+  type = "assignee"
 }
 
-variable "GROUP_TICKET_FIELD_ID" { type = "string" }
 data "zendesk_ticket_field" "group" {
-  id = "${var.GROUP_TICKET_FIELD_ID}"
+  type = "group"
 }
 
-variable "STATUS_TICKET_FIELD_ID" { type = "string" }
 data "zendesk_ticket_field" "status" {
-  id = "${var.STATUS_TICKET_FIELD_ID}"
+  type = "status"
 }
 
-variable "SUBJECT_TICKET_FIELD_ID" { type = "string" }
 data "zendesk_ticket_field" "subject" {
-  id = "${var.SUBJECT_TICKET_FIELD_ID}"
+  type = "subject"
 }
 
-variable "DESCRIPTION_TICKET_FIELD_ID" { type = "string" }
 data "zendesk_ticket_field" "description" {
-  id = "${var.DESCRIPTION_TICKET_FIELD_ID}"
+  type = "description"
 }

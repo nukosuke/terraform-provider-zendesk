@@ -1,8 +1,7 @@
 package zendesk
 
 import (
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
@@ -13,7 +12,7 @@ const (
 )
 
 // Provider returns provider instance for Zendesk
-func Provider() terraform.ResourceProvider {
+func Provider() *schema.Provider {
 	return &schema.Provider{
 		// https://developer.zendesk.com/rest_api/docs/support/introduction#security-and-authentication
 		Schema: map[string]*schema.Schema{
@@ -40,7 +39,9 @@ func Provider() terraform.ResourceProvider {
 			"zendesk_ticket_field": resourceZendeskTicketField(),
 			"zendesk_ticket_form":  resourceZendeskTicketForm(),
 			"zendesk_trigger":      resourceZendeskTrigger(),
+			"zendesk_target":       resourceZendeskTarget(),
 			"zendesk_attachment":   resourceZendeskAttachment(),
+			"zendesk_organization": resourceZendeskOrganization(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

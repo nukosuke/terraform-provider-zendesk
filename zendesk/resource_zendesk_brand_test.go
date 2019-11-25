@@ -1,16 +1,18 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
-	. "github.com/golang/mock/gomock"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/nukosuke/go-zendesk/zendesk"
-	"github.com/nukosuke/go-zendesk/zendesk/mock"
 	"math/rand"
 	"net/http"
 	"testing"
 	"time"
+
+	. "github.com/golang/mock/gomock"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/nukosuke/go-zendesk/zendesk"
+	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
 
 var testBrand = zendesk.Brand{
@@ -48,7 +50,7 @@ func TestCreateBrand(t *testing.T) {
 
 	m := mock.NewClient(ctrl)
 
-	m.EXPECT().CreateBrand(Any()).Return(testBrand, nil)
+	m.EXPECT().CreateBrand(Any(), Any()).Return(testBrand, nil)
 
 	i := newIdentifiableGetterSetter()
 	err := createBrand(i, m)
@@ -70,7 +72,7 @@ func TestReadBrand(t *testing.T) {
 	defer ctrl.Finish()
 
 	m := mock.NewClient(ctrl)
-	m.EXPECT().GetBrand(testBrand.ID).Return(testBrand, nil)
+	m.EXPECT().GetBrand(Any(), testBrand.ID).Return(testBrand, nil)
 	i := newIdentifiableGetterSetter()
 	i.SetId(fmt.Sprintf("%d", testBrand.ID))
 
@@ -95,7 +97,7 @@ func TestUpdateBrand(t *testing.T) {
 	defer ctrl.Finish()
 
 	m := mock.NewClient(ctrl)
-	m.EXPECT().UpdateBrand(testBrand.ID, Any()).Return(updatedBrand, nil)
+	m.EXPECT().UpdateBrand(Any(), testBrand.ID, Any()).Return(updatedBrand, nil)
 
 	err := updateBrand(i, m)
 	if err != nil {
@@ -116,7 +118,7 @@ func TestDeleteBrand(t *testing.T) {
 	defer ctrl.Finish()
 
 	m := mock.NewClient(ctrl)
-	m.EXPECT().DeleteBrand(id).Return(nil)
+	m.EXPECT().DeleteBrand(Any(), id).Return(nil)
 
 	err := deleteBrand(i, m)
 	if err != nil {
@@ -137,7 +139,7 @@ func testBrandDestroyed(s *terraform.State) error {
 			return err
 		}
 
-		brand, err := client.GetBrand(id)
+		brand, err := client.GetBrand(context.Background(), id)
 		if err != nil {
 			zd, ok := err.(zendesk.Error)
 			if !ok {

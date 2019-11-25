@@ -1,9 +1,10 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
@@ -50,7 +51,7 @@ func resourceZendeskTicketForm() *schema.Resource {
 			"active": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default: true,
+				Default:  true,
 			},
 			"end_user_visible": {
 				Type:     schema.TypeBool,
@@ -70,7 +71,7 @@ func resourceZendeskTicketForm() *schema.Resource {
 			"in_all_brands": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default: true,
+				Default:  true,
 			},
 			"restricted_brand_ids": {
 				Type: schema.TypeSet,
@@ -176,7 +177,8 @@ func createTicketForm(d identifiableGetterSetter, zd client.TicketFormAPI) error
 	}
 
 	// Actual API request
-	tf, err = zd.CreateTicketForm(tf)
+	ctx := context.Background()
+	tf, err = zd.CreateTicketForm(ctx, tf)
 	if err != nil {
 		return err
 	}
@@ -192,7 +194,8 @@ func readTicketForm(d identifiableGetterSetter, zd client.TicketFormAPI) error {
 		return err
 	}
 
-	tf, err := zd.GetTicketForm(id)
+	ctx := context.Background()
+	tf, err := zd.GetTicketForm(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -206,7 +209,8 @@ func updateTicketForm(d identifiableGetterSetter, zd client.TicketFormAPI) error
 		return err
 	}
 
-	tf, err = zd.UpdateTicketForm(tf.ID, tf)
+	ctx := context.Background()
+	tf, err = zd.UpdateTicketForm(ctx, tf.ID, tf)
 	if err != nil {
 		return err
 	}
@@ -220,5 +224,6 @@ func deleteTicketForm(d identifiable, zd client.TicketFormAPI) error {
 		return err
 	}
 
-	return zd.DeleteTicketForm(id)
+	ctx := context.Background()
+	return zd.DeleteTicketForm(ctx, id)
 }
