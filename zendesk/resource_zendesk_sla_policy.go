@@ -8,23 +8,23 @@ import (
 )
 
 // https://developer.zendesk.com/rest_api/docs/support/slaPolicies
-func resourceZendeskSlaPolicy() *schema.Resource {
+func resourceZendeskSLAPolicy() *schema.Resource {
 	return &schema.Resource{
 		Create: func(d *schema.ResourceData, i interface{}) error {
-			zd := i.(client.SlaPolicyAPI)
-			return createSlaPolicy(d, zd)
+			zd := i.(client.SLAPolicyAPI)
+			return createSLAPolicy(d, zd)
 		},
 		Read: func(d *schema.ResourceData, i interface{}) error {
-			zd := i.(client.SlaPolicyAPI)
-			return readSlaPolicy(d, zd)
+			zd := i.(client.SLAPolicyAPI)
+			return readSLAPolicy(d, zd)
 		},
 		Update: func(d *schema.ResourceData, i interface{}) error {
-			zd := i.(client.SlaPolicyAPI)
-			return updateSlaPolicy(d, zd)
+			zd := i.(client.SLAPolicyAPI)
+			return updateSLAPolicy(d, zd)
 		},
 		Delete: func(d *schema.ResourceData, i interface{}) error {
-			zd := i.(client.SlaPolicyAPI)
-			return deleteSlaPolicy(d, zd)
+			zd := i.(client.SLAPolicyAPI)
+			return deleteSLAPolicy(d, zd)
 		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -73,13 +73,13 @@ func resourceZendeskSlaPolicy() *schema.Resource {
 }
 
 // Marshal the zendesk client object to the terraform schema
-func marshalSlaPolicy(slaPolicy client.SlaPolicy, d identifiableGetterSetter) error {
+func marshalSLAPolicy(slaPolicy client.SLAPolicy, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
-		"title":       slaPolicy.Title,
-		"active":      slaPolicy.Active,
-		"position":    slaPolicy.Position,
-		"description": slaPolicy.Description,
-		"policy_metrics" : slaPolicy.PolicyMetrics,
+		"title":          slaPolicy.Title,
+		"active":         slaPolicy.Active,
+		"position":       slaPolicy.Position,
+		"description":    slaPolicy.Description,
+		"policy_metrics": slaPolicy.PolicyMetrics,
 	}
 
 	var alls []map[string]interface{}
@@ -104,15 +104,15 @@ func marshalSlaPolicy(slaPolicy client.SlaPolicy, d identifiableGetterSetter) er
 	}
 	fields["any"] = anys
 
-	var metrics []client.SlaPolicyMetric
+	var metrics []client.SLAPolicyMetric
 
 	fields["policy_metrics"] = metrics
 	return setSchemaFields(d, fields)
 }
 
 // Unmarshal the terraform schema to the Zendesk client object
-func unmarshalSlaPolicy(d identifiableGetterSetter) (client.SlaPolicy, error) {
-	sla := client.SlaPolicy{}
+func unmarshalSLAPolicy(d identifiableGetterSetter) (client.SLAPolicy, error) {
+	sla := client.SLAPolicy{}
 
 	if v := d.Id(); v != "" {
 		id, err := atoi64(v)
@@ -136,13 +136,13 @@ func unmarshalSlaPolicy(d identifiableGetterSetter) (client.SlaPolicy, error) {
 
 	if v, ok := d.GetOk("all"); ok {
 		allFilters := v.(*schema.Set).List()
-		filters := []client.SlaPolicyFilter{}
+		filters := []client.SLAPolicyFilter{}
 		for _, c := range allFilters {
 			condition, ok := c.(map[string]interface{})
 			if !ok {
 				return sla, fmt.Errorf("could not parse 'all' filters for slaPolicy %v", sla)
 			}
-			filters = append(filters, client.SlaPolicyFilter{
+			filters = append(filters, client.SLAPolicyFilter{
 				Field:    condition["field"].(string),
 				Operator: condition["operator"].(string),
 				Value:    condition["value"].(string),
@@ -153,13 +153,13 @@ func unmarshalSlaPolicy(d identifiableGetterSetter) (client.SlaPolicy, error) {
 
 	if v, ok := d.GetOk("any"); ok {
 		anyFilters := v.(*schema.Set).List()
-		filters := []client.SlaPolicyFilter{}
+		filters := []client.SLAPolicyFilter{}
 		for _, c := range anyFilters {
 			condition, ok := c.(map[string]interface{})
 			if !ok {
 				return sla, fmt.Errorf("could not parse 'any' filters for slaPolicy %v", sla)
 			}
-			filters = append(filters, client.SlaPolicyFilter{
+			filters = append(filters, client.SLAPolicyFilter{
 				Field:    condition["field"].(string),
 				Operator: condition["operator"].(string),
 				Value:    condition["value"].(string),
@@ -170,17 +170,17 @@ func unmarshalSlaPolicy(d identifiableGetterSetter) (client.SlaPolicy, error) {
 
 	if v, ok := d.GetOk("policy_metrics"); ok {
 		slaPolicyMetrics := v.(*schema.Set).List()
-		metrics := []client.SlaPolicyMetric{}
+		metrics := []client.SLAPolicyMetric{}
 		for _, a := range slaPolicyMetrics {
 			metric, ok := a.(map[string]interface{})
 			if !ok {
 				return sla, fmt.Errorf("could not parse metrics for slaPolicy %v", sla)
 			}
 
-			metrics = append(metrics, client.SlaPolicyMetric{
-				Priority: metric["priority"].(string),
-				Metric: metric["metric"].(string),
-				Target: metric["target"].(int),
+			metrics = append(metrics, client.SLAPolicyMetric{
+				Priority:      metric["priority"].(string),
+				Metric:        metric["metric"].(string),
+				Target:        metric["target"].(int),
 				BusinessHours: metric["business_hours"].(bool),
 			})
 		}
@@ -190,39 +190,39 @@ func unmarshalSlaPolicy(d identifiableGetterSetter) (client.SlaPolicy, error) {
 	return sla, nil
 }
 
-func createSlaPolicy(d identifiableGetterSetter, zd client.SlaPolicyAPI) error {
-	sla, err := unmarshalSlaPolicy(d)
+func createSLAPolicy(d identifiableGetterSetter, zd client.SLAPolicyAPI) error {
+	sla, err := unmarshalSLAPolicy(d)
 	if err != nil {
 		return err
 	}
 
 	ctx := context.Background()
-	sla, err = zd.CreateSlaPolicy(ctx, sla)
+	sla, err = zd.CreateSLAPolicy(ctx, sla)
 	if err != nil {
 		return err
 	}
 
 	d.SetId(fmt.Sprintf("%d", sla.ID))
-	return marshalSlaPolicy(sla, d)
+	return marshalSLAPolicy(sla, d)
 }
 
-func readSlaPolicy(d identifiableGetterSetter, zd client.SlaPolicyAPI) error {
+func readSLAPolicy(d identifiableGetterSetter, zd client.SLAPolicyAPI) error {
 	id, err := atoi64(d.Id())
 	if err != nil {
 		return err
 	}
 
 	ctx := context.Background()
-	slaPolicy, err := zd.GetSlaPolicy(ctx, id)
+	slaPolicy, err := zd.GetSLAPolicy(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	return marshalSlaPolicy(slaPolicy, d)
+	return marshalSLAPolicy(slaPolicy, d)
 }
 
-func updateSlaPolicy(d identifiableGetterSetter, zd client.SlaPolicyAPI) error {
-	slaPolicy, err := unmarshalSlaPolicy(d)
+func updateSLAPolicy(d identifiableGetterSetter, zd client.SLAPolicyAPI) error {
+	slaPolicy, err := unmarshalSLAPolicy(d)
 	if err != nil {
 		return err
 	}
@@ -233,22 +233,22 @@ func updateSlaPolicy(d identifiableGetterSetter, zd client.SlaPolicyAPI) error {
 	}
 
 	ctx := context.Background()
-	slaPolicy, err = zd.UpdateSlaPolicy(ctx, id, slaPolicy)
+	slaPolicy, err = zd.UpdateSLAPolicy(ctx, id, slaPolicy)
 	if err != nil {
 		return err
 	}
 
-	return marshalSlaPolicy(slaPolicy, d)
+	return marshalSLAPolicy(slaPolicy, d)
 }
 
-func deleteSlaPolicy(d identifiable, zd client.SlaPolicyAPI) error {
+func deleteSLAPolicy(d identifiable, zd client.SLAPolicyAPI) error {
 	id, err := atoi64(d.Id())
 	if err != nil {
 		return err
 	}
 
 	ctx := context.Background()
-	return zd.DeleteSlaPolicy(ctx, id)
+	return zd.DeleteSLAPolicy(ctx, id)
 }
 
 func slaPolicyFilterSchema() *schema.Schema {

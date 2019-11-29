@@ -42,7 +42,7 @@ func Provider() *schema.Provider {
 			"zendesk_target":       resourceZendeskTarget(),
 			"zendesk_attachment":   resourceZendeskAttachment(),
 			"zendesk_organization": resourceZendeskOrganization(),
-			"zendesk_sla_policy":	resourceZendeskSlaPolicy(),
+			"zendesk_sla_policy":   resourceZendeskSLAPolicy(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{

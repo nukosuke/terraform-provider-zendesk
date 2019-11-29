@@ -13,8 +13,8 @@ import (
 	"github.com/nukosuke/go-zendesk/zendesk/mock"
 )
 
-func TestMarshalSlaPolicy(t *testing.T) {
-	expected := zendesk.SlaPolicy{
+func TestMarshalSLAPolicy(t *testing.T) {
+	expected := zendesk.SLAPolicy{
 		Title:       "title",
 		Description: "blabla",
 		Active:      true,
@@ -23,7 +23,7 @@ func TestMarshalSlaPolicy(t *testing.T) {
 		mapGetterSetter: mapGetterSetter{},
 	}
 
-	err := marshalSlaPolicy(expected, m)
+	err := marshalSLAPolicy(expected, m)
 	if err != nil {
 		t.Fatalf("Failed to marshal map %v", err)
 	}
@@ -53,7 +53,7 @@ func TestMarshalSlaPolicy(t *testing.T) {
 	}
 }
 
-func TestUnmarshalSlaPolicy(t *testing.T) {
+func TestUnmarshalSLAPolicy(t *testing.T) {
 	m := &identifiableMapGetterSetter{
 		id: "100",
 		mapGetterSetter: mapGetterSetter{
@@ -63,7 +63,7 @@ func TestUnmarshalSlaPolicy(t *testing.T) {
 		},
 	}
 
-	sla, err := unmarshalSlaPolicy(m)
+	sla, err := unmarshalSLAPolicy(m)
 	if err != nil {
 		t.Fatalf("unmarshal returned an error: %v", err)
 	}
@@ -73,32 +73,32 @@ func TestUnmarshalSlaPolicy(t *testing.T) {
 	}
 }
 
-func TestCreateSlaPolicy(t *testing.T) {
+func TestCreateSLAPolicy(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	m := mock.NewClient(ctrl)
 	i := newIdentifiableGetterSetter()
-	out := zendesk.SlaPolicy{
+	out := zendesk.SLAPolicy{
 		ID:    12345,
 		Title: "sla policy",
 	}
 
-	m.EXPECT().CreateSlaPolicy(gomock.Any(), gomock.Any()).Return(out, nil)
-	if err := createSlaPolicy(i, m); err != nil {
-		t.Fatal("CreateSlaPolicy return an error")
+	m.EXPECT().CreateSLAPolicy(gomock.Any(), gomock.Any()).Return(out, nil)
+	if err := createSLAPolicy(i, m); err != nil {
+		t.Fatal("CreateSLAPolicy return an error")
 	}
 
 	if v := i.Id(); v != "12345" {
-		t.Fatalf("CreateSlaPolicy did not set resource id. Id was %s", v)
+		t.Fatalf("CreateSLAPolicy did not set resource id. Id was %s", v)
 	}
 
 	if v := i.Get("title"); v != "sla policy" {
-		t.Fatalf("CreateSlaPolicy did not set resource title. title was %s", v)
+		t.Fatalf("CreateSLAPolicy did not set resource title. title was %s", v)
 	}
 }
 
-func TestReadSlaPolicy(t *testing.T) {
+func TestReadSLAPolicy(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -106,17 +106,17 @@ func TestReadSlaPolicy(t *testing.T) {
 	i := newIdentifiableGetterSetter()
 	i.SetId("12345")
 
-	expected := zendesk.SlaPolicy{
+	expected := zendesk.SLAPolicy{
 		Title:  "sla policy",
 		Active: true,
 	}
-	m.EXPECT().GetSlaPolicy(gomock.Any(), gomock.Eq(int64(12345))).Return(expected, nil)
-	if err := readSlaPolicy(i, m); err != nil {
-		t.Fatalf("GetSlaPolicy received an error when calling: %v", err)
+	m.EXPECT().GetSLAPolicy(gomock.Any(), gomock.Eq(int64(12345))).Return(expected, nil)
+	if err := readSLAPolicy(i, m); err != nil {
+		t.Fatalf("GetSLAPolicy received an error when calling: %v", err)
 	}
 }
 
-func TestUpdateSlaPolicy(t *testing.T) {
+func TestUpdateSLAPolicy(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -126,13 +126,13 @@ func TestUpdateSlaPolicy(t *testing.T) {
 		mapGetterSetter: mapGetterSetter{},
 	}
 
-	m.EXPECT().UpdateSlaPolicy(gomock.Any(), gomock.Eq(int64(12345)), gomock.Any()).Return(zendesk.SlaPolicy{}, nil)
-	if err := updateSlaPolicy(i, m); err != nil {
-		t.Fatalf("updateSlaPolicy returned an error %v", err)
+	m.EXPECT().UpdateSLAPolicy(gomock.Any(), gomock.Eq(int64(12345)), gomock.Any()).Return(zendesk.SLAPolicy{}, nil)
+	if err := updateSLAPolicy(i, m); err != nil {
+		t.Fatalf("updateSLAPolicy returned an error %v", err)
 	}
 }
 
-func TestDeleteSlaPolicy(t *testing.T) {
+func TestDeleteSLAPolicy(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -141,15 +141,15 @@ func TestDeleteSlaPolicy(t *testing.T) {
 
 	d.SetId("1234")
 
-	c.EXPECT().DeleteSlaPolicy(gomock.Any(), gomock.Eq(int64(1234))).Return(nil)
-	err := deleteSlaPolicy(d, c)
+	c.EXPECT().DeleteSLAPolicy(gomock.Any(), gomock.Eq(int64(1234))).Return(nil)
+	err := deleteSLAPolicy(d, c)
 	if err != nil {
 		t.Fatalf("Got error from resource delete: %v", err)
 	}
 }
 
-func testSlaPolicyDestroyed(s *terraform.State) error {
-	client := testAccProvider.Meta().(zendesk.SlaPolicyAPI)
+func testSLAPolicyDestroyed(s *terraform.State) error {
+	client := testAccProvider.Meta().(zendesk.SLAPolicyAPI)
 
 	for k, r := range s.RootModule().Resources {
 		if r.Type != "zendesk_sla_policy" {
@@ -162,7 +162,7 @@ func testSlaPolicyDestroyed(s *terraform.State) error {
 		}
 
 		ctx := context.Background()
-		_, err = client.GetSlaPolicy(ctx, id)
+		_, err = client.GetSLAPolicy(ctx, id)
 		if err == nil {
 			return fmt.Errorf("did not get error from zendesk when trying to fetch the destroyed sla policy. resource name %s", k)
 		}
@@ -179,18 +179,18 @@ func testSlaPolicyDestroyed(s *terraform.State) error {
 	return nil
 }
 
-func TestAccSlaPolicyExample(t *testing.T) {
+func TestAccSLAPolicyExample(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck: func() {
 			testAccPreCheck(t)
 		},
 		Providers:    testAccProviders,
-		CheckDestroy: testSlaPolicyDestroyed,
+		CheckDestroy: testSLAPolicyDestroyed,
 		Steps: []resource.TestStep{
 			{
 				Config: readExampleConfig(t, "sla_policies.tf"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("zendesk_sla_policy.auto-reply-sla_policy", "title", "Auto Reply SlaPolicy"),
+					resource.TestCheckResourceAttr("zendesk_sla_policy.auto-reply-sla_policy", "title", "Auto Reply SLAPolicy"),
 					resource.TestCheckResourceAttr("zendesk_sla_policy.auto-reply-sla_policy", "active", "true"),
 					resource.TestCheckResourceAttrSet("zendesk_sla_policy.auto-reply-sla_policy", "all.#"),
 					resource.TestCheckResourceAttrSet("zendesk_sla_policy.auto-reply-sla_policy", "action.#"),
