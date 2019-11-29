@@ -53,13 +53,13 @@ func TestUnmarshalAutomation(t *testing.T) {
 		},
 	}
 
-	trg, err := unmarshalAutomation(m)
+	automation, err := unmarshalAutomation(m)
 	if err != nil {
 		t.Fatalf("unmarshal returned an error: %v", err)
 	}
 
-	if v := m.Get("title"); trg.Title != v {
-		t.Fatalf("automation had title value %v. should have been %v", trg.Title, v)
+	if v := m.Get("title"); automation.Title != v {
+		t.Fatalf("automation had title value %v. should have been %v", automation.Title, v)
 	}
 }
 

@@ -134,22 +134,22 @@ func marshalAutomation(automation client.Automation, d identifiableGetterSetter)
 
 // Unmarshal the terraform schema to the Zendesk client object
 func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) {
-	trg := client.Automation{}
+	automation := client.Automation{}
 
 	if v := d.Id(); v != "" {
 		id, err := atoi64(v)
 		if err != nil {
-			return trg, fmt.Errorf("could not parse automation id %s: %v", v, err)
+			return automation, fmt.Errorf("could not parse automation id %s: %v", v, err)
 		}
-		trg.ID = id
+		automation.ID = id
 	}
 
 	if v, ok := d.GetOk("title"); ok {
-		trg.Title = v.(string)
+		automation.Title = v.(string)
 	}
 
 	if v, ok := d.GetOk("active"); ok {
-		trg.Active = v.(bool)
+		automation.Active = v.(bool)
 	}
 
 	if v, ok := d.GetOk("all"); ok {
@@ -158,7 +158,7 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 		for _, c := range allConditions {
 			condition, ok := c.(map[string]interface{})
 			if !ok {
-				return trg, fmt.Errorf("could not parse 'all' conditions for automation %v", trg)
+				return automation, fmt.Errorf("could not parse 'all' conditions for automation %v", automation)
 			}
 			conditions = append(conditions, client.AutomationCondition{
 				Field:    condition["field"].(string),
@@ -166,7 +166,7 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 				Value:    condition["value"].(string),
 			})
 		}
-		trg.Conditions.All = conditions
+		automation.Conditions.All = conditions
 	}
 
 	if v, ok := d.GetOk("any"); ok {
@@ -175,7 +175,7 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 		for _, c := range anyConditions {
 			condition, ok := c.(map[string]interface{})
 			if !ok {
-				return trg, fmt.Errorf("could not parse 'any' conditions for automation %v", trg)
+				return automation, fmt.Errorf("could not parse 'any' conditions for automation %v", automation)
 			}
 			conditions = append(conditions, client.AutomationCondition{
 				Field:    condition["field"].(string),
@@ -183,7 +183,7 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 				Value:    condition["value"].(string),
 			})
 		}
-		trg.Conditions.Any = conditions
+		automation.Conditions.Any = conditions
 	}
 
 	if v, ok := d.GetOk("action"); ok {
@@ -192,7 +192,7 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 		for _, a := range automationActions {
 			action, ok := a.(map[string]interface{})
 			if !ok {
-				return trg, fmt.Errorf("could not parse actions for automation %v", trg)
+				return automation, fmt.Errorf("could not parse actions for automation %v", automation)
 			}
 
 			// If the action value is a list, unmarshal it
@@ -200,7 +200,7 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 			if strings.HasPrefix(action["value"].(string), "[") {
 				err := json.Unmarshal([]byte(action["value"].(string)), &actionValue)
 				if err != nil {
-					return trg, fmt.Errorf("error unmarshalling automation action value: %s", err)
+					return automation, fmt.Errorf("error unmarshalling automation action value: %s", err)
 				}
 			} else {
 				actionValue = action["value"]
@@ -211,26 +211,26 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 				Value: actionValue,
 			})
 		}
-		trg.Actions = actions
+		automation.Actions = actions
 	}
 
-	return trg, nil
+	return automation, nil
 }
 
 func createAutomation(d identifiableGetterSetter, zd client.AutomationAPI) error {
-	trg, err := unmarshalAutomation(d)
+	automation, err := unmarshalAutomation(d)
 	if err != nil {
 		return err
 	}
 
 	ctx := context.Background()
-	trg, err = zd.CreateAutomation(ctx, trg)
+	automation, err = zd.CreateAutomation(ctx, automation)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(fmt.Sprintf("%d", trg.ID))
-	return marshalAutomation(trg, d)
+	d.SetId(fmt.Sprintf("%d", automation.ID))
+	return marshalAutomation(automation, d)
 }
 
 func readAutomation(d identifiableGetterSetter, zd client.AutomationAPI) error {
