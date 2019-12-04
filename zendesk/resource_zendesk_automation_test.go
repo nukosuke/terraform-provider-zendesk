@@ -15,8 +15,9 @@ import (
 
 func TestMarshalAutomation(t *testing.T) {
 	expected := zendesk.Automation{
-		Title:       "title",
-		Active:      true,
+		Title:    "title",
+		Active:   true,
+		Position: 1,
 	}
 	m := &identifiableMapGetterSetter{
 		mapGetterSetter: mapGetterSetter{},

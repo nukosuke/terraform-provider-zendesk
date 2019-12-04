@@ -78,9 +78,9 @@ func resourceZendeskAutomation() *schema.Resource {
 // Marshal the zendesk client object to the terraform schema
 func marshalAutomation(automation client.Automation, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
-		"title":       automation.Title,
-		"active":      automation.Active,
-		"position":    automation.Position,
+		"title":    automation.Title,
+		"active":   automation.Active,
+		"position": automation.Position,
 	}
 
 	var alls []map[string]interface{}
