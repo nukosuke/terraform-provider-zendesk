@@ -15,9 +15,9 @@ resource "zendesk_sla_policy" "incidents_sla_policy" {
   }
 
   policy_metrics {
-    priority = "normal",
-    metric = "first_reply_time",
-    target = 30,
+    priority = "normal"
+    metric = "first_reply_time"
+    target = 30
     business_hours = false
   }
 }
