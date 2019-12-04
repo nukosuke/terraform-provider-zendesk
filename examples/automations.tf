@@ -9,9 +9,9 @@ resource "zendesk_automation" "auto-close-automation" {
   active = true
 
   all {
-    field: "status",
-    operator: "is",
-    value: "solved"
+    field = "status"
+    operator = "is"
+    value = "solved"
   }
 
   all {
