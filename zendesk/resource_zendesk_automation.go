@@ -46,6 +46,7 @@ func resourceZendeskAutomation() *schema.Resource {
 			"position": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Computed: true,
 			},
 			// Both the "all" and "any" parameter are optional, but at least one of them must be supplied
 			"all": automationConditionSchema(),

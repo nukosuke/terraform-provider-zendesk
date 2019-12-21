@@ -181,10 +181,17 @@ func TestAccAutomationExample(t *testing.T) {
 			{
 				Config: readExampleConfig(t, "automations.tf"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("zendesk_automation.auto-reply-automation", "title", "Auto Reply Automation"),
-					resource.TestCheckResourceAttr("zendesk_automation.auto-reply-automation", "active", "true"),
-					resource.TestCheckResourceAttrSet("zendesk_automation.auto-reply-automation", "all.#"),
-					resource.TestCheckResourceAttrSet("zendesk_automation.auto-reply-automation", "action.#"),
+					resource.TestCheckResourceAttr(
+						"zendesk_automation.auto-close-automation",
+						"title",
+						"Close ticket 4 days after status is set to solved",
+					),
+					resource.TestCheckResourceAttr("zendesk_automation.auto-close-automation",
+						"active",
+						"true",
+					),
+					resource.TestCheckResourceAttrSet("zendesk_automation.auto-close-automation", "all.#"),
+					resource.TestCheckResourceAttrSet("zendesk_automation.auto-close-automation", "action.#"),
 				),
 			},
 		},
