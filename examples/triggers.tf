@@ -28,12 +28,10 @@ resource "zendesk_trigger" "auto-reply-trigger" {
 
   action {
     field = "notification_user"
-    value = <<ENVELOPE
-[
-  "requester_id",
-  "Dear my customer",
-  "Hi. This message was configured by terraform-provider-zendesk."
-]
-ENVELOPE
+    value = jsonencode([
+      "requester_id",
+      "Dear my customer",
+      "Hi. This message was configured by terraform-provider-zendesk."
+    ])
   }
 }

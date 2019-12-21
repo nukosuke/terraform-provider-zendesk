@@ -5,7 +5,7 @@
 #   https://developer.zendesk.com/rest_api/docs/support/attachments
 
 variable "logo_file_path" {
-  type = "string"
+  type    = string
   default = "../zendesk/testdata/street.jpg"
 }
 
