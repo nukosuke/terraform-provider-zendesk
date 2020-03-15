@@ -3,7 +3,7 @@ module github.com/nukosuke/terraform-provider-zendesk
 go 1.11
 
 require (
-	github.com/golang/mock v1.4.1
+	github.com/golang/mock v1.4.2
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/terraform-plugin-sdk v1.8.0
 	github.com/mattn/go-isatty v0.0.7 // indirect
