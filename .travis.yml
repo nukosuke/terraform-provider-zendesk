@@ -6,7 +6,9 @@ go:
 #  - "1.13.x"
 
 env:
-  - GO111MODULE=on
+  global:
+    - GO111MODULE=on
+    - COVERALLS_PARALLEL=true
 
 cache:
   directories:
