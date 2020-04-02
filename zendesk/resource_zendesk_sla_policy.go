@@ -47,17 +47,27 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 			// Both the "all" and "any" parameter are optional, but at least one of them must be supplied
 			"all": slaPolicyFilterSchema(),
 			"any": slaPolicyFilterSchema(),
-			"action": {
+
+			"policy_metrics": {
 				Type: schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"field": {
+						"priority": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"value": {
+						"metric": {
 							Type:     schema.TypeString,
 							Required: true,
+						},
+						"target": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+						"business_hours": {
+							Type:     schema.TypeBool,
+							Default:  false,
+							Optional: true,
 						},
 					},
 				},
@@ -79,7 +89,6 @@ func marshalSLAPolicy(slaPolicy client.SLAPolicy, d identifiableGetterSetter) er
 		"active":         slaPolicy.Active,
 		"position":       slaPolicy.Position,
 		"description":    slaPolicy.Description,
-		"policy_metrics": slaPolicy.PolicyMetrics,
 	}
 
 	var alls []map[string]interface{}
@@ -104,7 +113,17 @@ func marshalSLAPolicy(slaPolicy client.SLAPolicy, d identifiableGetterSetter) er
 	}
 	fields["any"] = anys
 
-	var metrics []client.SLAPolicyMetric
+
+	var metrics []map[string]interface{}
+	for _, v := range slaPolicy.PolicyMetrics {
+		m := map[string]interface{}{
+			"priority": v.Priority,
+			"metric": v.Metric,
+			"target": v.Target,
+			"business_hours": v.BusinessHours,
+		}
+		metrics = append(metrics, m)
+	}
 
 	fields["policy_metrics"] = metrics
 	return setSchemaFields(d, fields)
