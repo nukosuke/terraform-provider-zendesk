@@ -114,6 +114,11 @@ func TestReadSLAPolicy(t *testing.T) {
 	if err := readSLAPolicy(i, m); err != nil {
 		t.Fatalf("GetSLAPolicy received an error when calling: %v", err)
 	}
+
+	active := i.Get("active").(bool)
+	if !active {
+		t.Fatal("Did not set active field")
+	}
 }
 
 func TestUpdateSLAPolicy(t *testing.T) {
