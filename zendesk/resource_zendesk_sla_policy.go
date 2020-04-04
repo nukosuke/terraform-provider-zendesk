@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
@@ -57,8 +58,16 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 							Required: true,
 						},
 						"metric": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice([]string{
+								"agent_work_time",
+								"first_reply_time",
+								"next_reply_time",
+								"pausable_update_time",
+								"periodic_update_time",
+								"requester_wait_time",
+							}, false),
 						},
 						"target": {
 							Type:     schema.TypeInt,
@@ -85,10 +94,10 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 // Marshal the zendesk client object to the terraform schema
 func marshalSLAPolicy(slaPolicy client.SLAPolicy, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
-		"title":          slaPolicy.Title,
-		"active":         slaPolicy.Active,
-		"position":       slaPolicy.Position,
-		"description":    slaPolicy.Description,
+		"title":       slaPolicy.Title,
+		"active":      slaPolicy.Active,
+		"position":    slaPolicy.Position,
+		"description": slaPolicy.Description,
 	}
 
 	var alls []map[string]interface{}
@@ -113,13 +122,12 @@ func marshalSLAPolicy(slaPolicy client.SLAPolicy, d identifiableGetterSetter) er
 	}
 	fields["any"] = anys
 
-
 	var metrics []map[string]interface{}
 	for _, v := range slaPolicy.PolicyMetrics {
 		m := map[string]interface{}{
-			"priority": v.Priority,
-			"metric": v.Metric,
-			"target": v.Target,
+			"priority":       v.Priority,
+			"metric":         v.Metric,
+			"target":         v.Target,
 			"business_hours": v.BusinessHours,
 		}
 		metrics = append(metrics, m)
