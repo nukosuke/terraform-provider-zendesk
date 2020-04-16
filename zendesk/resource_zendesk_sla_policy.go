@@ -36,11 +36,6 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
-			},
 			"position": {
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -95,7 +90,6 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 func marshalSLAPolicy(slaPolicy client.SLAPolicy, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
 		"title":       slaPolicy.Title,
-		"active":      slaPolicy.Active,
 		"position":    slaPolicy.Position,
 		"description": slaPolicy.Description,
 	}
@@ -151,10 +145,6 @@ func unmarshalSLAPolicy(d identifiableGetterSetter) (client.SLAPolicy, error) {
 
 	if v, ok := d.GetOk("title"); ok {
 		sla.Title = v.(string)
-	}
-
-	if v, ok := d.GetOk("active"); ok {
-		sla.Active = v.(bool)
 	}
 
 	if v, ok := d.GetOk("description"); ok {
