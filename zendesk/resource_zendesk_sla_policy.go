@@ -56,12 +56,12 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 							Type:         schema.TypeString,
 							Required:     true,
 							ValidateFunc: validation.StringInSlice([]string{
-								"agent_work_time",
-								"first_reply_time",
-								"next_reply_time",
-								"pausable_update_time",
-								"periodic_update_time",
-								"requester_wait_time",
+								client.AgentWorkTimeMetric,
+								client.FirstReplyTimeMetric,
+								client.NextReplyTimeMetric,
+								client.PausableUpdateTimeMetric, // TYPO :(
+								client.PeriodicUpdateTimeMetric,
+								client.RequesterWaitTimeMetric,
 							}, false),
 						},
 						"target": {
