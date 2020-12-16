@@ -3,8 +3,8 @@ package zendesk
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
@@ -58,8 +58,8 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 							Required: true,
 						},
 						"metric": {
-							Type:         schema.TypeString,
-							Required:     true,
+							Type:     schema.TypeString,
+							Required: true,
 							ValidateFunc: validation.StringInSlice([]string{
 								"agent_work_time",
 								"first_reply_time",
