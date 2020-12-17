@@ -13,7 +13,7 @@ Terraform provider for Zendesk
 ## Requirements
 
 - Terraform >= v0.12.7
-- Go >= v1.11 (only for build)
+- Go >= v1.14 (only for build)
 
 ## Installation
 
@@ -25,7 +25,6 @@ and locate the binary `terraform-provider-zendesk(.exe)` to executable path of y
 ```sh
 $ git clone git@github.com:nukosuke/terraform-provider-zendesk.git
 $ cd terraform-provider-zendesk
-$ export GO111MODULE=on
 $ go mod download
 $ go build
 ```
