@@ -1,6 +1,6 @@
 # terraform-provider-zendesk
 [![Gitter](https://badges.gitter.im/terraform-provider-zendesk/Lobby.svg)](https://gitter.im/terraform-provider-zendesk/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Build Status](https://travis-ci.org/nukosuke/terraform-provider-zendesk.svg?branch=master)](https://travis-ci.org/nukosuke/terraform-provider-zendesk)
+[![Actions Status](https://github.com/nukosuke/terraform-provider-zendesk/workflows/CI/badge.svg)](https://github.com/nukosuke/terraform-provider-zendesk/actions)
 [![Build status](https://ci.appveyor.com/api/projects/status/ti5il35v6a6ankcq/branch/master?svg=true)](https://ci.appveyor.com/project/nukosuke/terraform-provider-zendesk/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/nukosuke/terraform-provider-zendesk/badge.svg?branch=master)](https://coveralls.io/github/nukosuke/terraform-provider-zendesk?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nukosuke/terraform-provider-zendesk)](https://goreportcard.com/report/github.com/nukosuke/terraform-provider-zendesk)
