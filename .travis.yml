@@ -1,13 +1,11 @@
 language: go
 
 go:
-  - "1.11.x"
-  - "1.12.x"
-#  - "1.13.x"
+  - "1.14.x"
+  - "1.15.x"
 
 env:
   global:
-    - GO111MODULE=on
     - COVERALLS_PARALLEL=true
 
 cache:
@@ -29,7 +27,7 @@ jobs:
   include:
     - stage: acceptance
       if: type != pull_request and branch = master
-      go: 1.12.x
+      go: 1.14.x
       env:
         - GO111MODULE=on
         - TF_ACC=1
@@ -61,7 +59,7 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    go: "1.11.x"
+    go: "1.14.x"
 
 notifications:
   email: false
