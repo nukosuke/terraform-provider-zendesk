@@ -6,9 +6,9 @@
 
 resource "zendesk_sla_policy" "incidents_sla_policy" {
   title  = "Incidents"
-  active = true
 
   all {
+    # TODO: this is failing on the ACC test.
     field    = "type"
     operator = "is"
     value    = "incident"
