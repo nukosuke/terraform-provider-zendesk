@@ -1,23 +1,24 @@
 build: off
 
+image: Visual Studio 2022
+
 clone_folder: c:\github.com\nukosuke\terraform-provider-zendesk
 
 environment:
   GOPATH: c:\gopath
-  GO111MODULE: on
 
 cache:
-  - '%LocalAppData%\go-build'
-  - '%GOPATH%\pkg\mod'
+  - '%LocalAppData%\go-build -> go.sum'
+  - '%GOPATH%\pkg\mod -> go.sum'
 
-stack: go 1.11.6
+stack: go 1.17.7
 
 install:
-  - sed -i.bak '/github.com\/hashicorp\/go-getter/d' go.sum # dirty workaround for #76
+  - go version
   - go mod download
 
 before_test:
   - go vet ./...
 
 test_script:
-  - go test ./...
+  - go test -v ./...
