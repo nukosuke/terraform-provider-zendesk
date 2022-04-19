@@ -8,6 +8,12 @@ import (
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
+var reversedLocaleTypes map[string]int64
+
+func init() {
+	reversedLocaleTypes = reverseLocaleTypes()
+}
+
 // https://developer.zendesk.com/api-reference/ticketing/ticket-management/dynamic_content/
 func resourceZendeskDynamicContentItem() *schema.Resource {
 	return &schema.Resource{
@@ -36,8 +42,7 @@ func resourceZendeskDynamicContentItem() *schema.Resource {
 				Required: true,
 			},
 			"default_locale": {
-				// TODO: convert locale_id (int64) to locale string using zendesk.LocaleType
-				Type:     schema.TypeInt,
+				Type:     schema.TypeString,
 				Required: true,
 			},
 			"variant": {
@@ -53,7 +58,6 @@ func resourceZendeskDynamicContentItem() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						// TODO: convert locale_id (int64) to locale string using zendesk.LocaleType
 						"locale": {
 							Type:     schema.TypeString,
 							Required: true,
@@ -101,8 +105,7 @@ func unmarshalDynamicContentItem(d identifiableGetterSetter) (client.DynamicCont
 	}
 
 	if v, ok := d.GetOk("default_locale"); ok {
-		// FIXME: see TODO above
-		item.DefaultLocaleID = v.(int64)
+		item.DefaultLocaleID = reversedLocaleTypes[v.(string)]
 	}
 
 	if v, ok := d.GetOk("variant"); ok {
@@ -117,7 +120,7 @@ func unmarshalDynamicContentItem(d identifiableGetterSetter) (client.DynamicCont
 			variants = append(variants, client.DynamicContentVariant{
 				Active:   variant["active"].(bool),
 				Content:  variant["content"].(string),
-				LocaleID: variant["locale"].(int64),
+				LocaleID: reversedLocaleTypes[variant["locale"].(string)],
 			})
 		}
 		item.Variants = variants
@@ -185,4 +188,15 @@ func deleteDynamicContentItem(d identifiableGetterSetter, zd client.DynamicConte
 
 	ctx := context.Background()
 	return zd.DeleteDynamicContentItem(ctx, id)
+}
+
+func reverseLocaleTypes() map[string]int64 {
+	rlocs := map[string]int64{}
+	for i := client.LocaleENUS; i <= client.LocaleENPH; i++ {
+		loctxt := client.LocaleTypeText(i)
+		if loctxt != "" {
+			rlocs[loctxt] = int64(i)
+		}
+	}
+	return rlocs
 }
