@@ -12,8 +12,23 @@ import (
 func resourceZendeskDynamicContentItem() *schema.Resource {
 	return &schema.Resource{
 		Create: func(d *schema.ResourceData, meta interface{}) error {
-			zd := meta.(*client.Client)
+			zd := meta.(*client.DynamicContentAPI)
 			return createDynamicContentItem(d, zd)
+		},
+		Read: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.DynamicContentAPI)
+			return readDynamicContentItem(d, zd)
+		},
+		Update: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.DynamicContentAPI)
+			return updateDynamicContentItem(d, zd)
+		},
+		Delete: func(d *schema.ResourceData, i interface{}) error {
+			zd := i.(client.DynamicContentAPI)
+			return deleteDynamicContentItem(d, zd)
+		},
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -125,4 +140,36 @@ func createDynamicContentItem(d identifiableGetterSetter, zd client.DynamicConte
 
 	d.SetId(fmt.Sprintf("%d", item.ID))
 	return marshalDynamicContentItem(item, d)
+}
+
+func readDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
+	// TODO: Get single item
+	// return marshalDynamicContentItem(item, d)
+	return nil
+}
+
+func updateDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
+	item, err := unmarshalDynamicContentItem(d)
+	if err != nil {
+		return err
+	}
+
+	// id, err := atoi64(d.Id())
+	// if err != nil {
+	// 	return err
+	// }
+
+	// TODO: zd.UpdateDynamicContentItem(ctx, id, item)
+	// should be implemented by go-zendesk
+	return marshalDynamicContentItem(item, d)
+}
+
+func deleteDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
+	// id, err := atoi64(d.Id())
+	// if err != nil {
+	// 	return err
+	// }
+
+	// FIXME:
+	return nil
 }
