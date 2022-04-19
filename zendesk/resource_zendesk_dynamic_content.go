@@ -12,7 +12,7 @@ import (
 func resourceZendeskDynamicContentItem() *schema.Resource {
 	return &schema.Resource{
 		Create: func(d *schema.ResourceData, meta interface{}) error {
-			zd := meta.(*client.DynamicContentAPI)
+			zd := meta.(client.DynamicContentAPI)
 			return createDynamicContentItem(d, zd)
 		},
 		Read: func(d *schema.ResourceData, i interface{}) error {
