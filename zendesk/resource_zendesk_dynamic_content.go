@@ -143,9 +143,18 @@ func createDynamicContentItem(d identifiableGetterSetter, zd client.DynamicConte
 }
 
 func readDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
-	// TODO: Get single item
-	// return marshalDynamicContentItem(item, d)
-	return nil
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
+
+	ctx := context.Background()
+	item, err := zd.GetDynamicContentItem(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return marshalDynamicContentItem(item, d)
 }
 
 func updateDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
@@ -154,22 +163,26 @@ func updateDynamicContentItem(d identifiableGetterSetter, zd client.DynamicConte
 		return err
 	}
 
-	// id, err := atoi64(d.Id())
-	// if err != nil {
-	// 	return err
-	// }
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
 
-	// TODO: zd.UpdateDynamicContentItem(ctx, id, item)
-	// should be implemented by go-zendesk
+	ctx := context.Background()
+	item, err = zd.UpdateDynamicContentItem(ctx, id, item)
+	if err != nil {
+		return err
+	}
+
 	return marshalDynamicContentItem(item, d)
 }
 
 func deleteDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
-	// id, err := atoi64(d.Id())
-	// if err != nil {
-	// 	return err
-	// }
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return err
+	}
 
-	// FIXME:
-	return nil
+	ctx := context.Background()
+	return zd.DeleteDynamicContentItem(ctx, id)
 }
