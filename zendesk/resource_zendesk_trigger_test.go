@@ -188,7 +188,7 @@ func TestAccTriggerExample(t *testing.T) {
 		CheckDestroy: testTriggerDestroyed,
 		Steps: []resource.TestStep{
 			{
-				Config: readExampleConfig(t, "/resources/trigger/resource.tf"),
+				Config: readExampleConfig(t, "resources/trigger/resource.tf"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("zendesk_trigger.auto-reply-trigger", "title", "Auto Reply Trigger"),
 					resource.TestCheckResourceAttr("zendesk_trigger.auto-reply-trigger", "active", "true"),

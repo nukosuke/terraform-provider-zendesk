@@ -190,7 +190,7 @@ func TestAccGroupExample(t *testing.T) {
 		CheckDestroy: testGroupDestroyed,
 		Steps: []resource.TestStep{
 			{
-				Config: readExampleConfig(t, "groups.tf"),
+				Config: readExampleConfig(t, "resources/zendesk_group/resource.tf"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("zendesk_group.moderator-group", "name", "Moderator"),
 					resource.TestCheckResourceAttrSet("zendesk_group.moderator-group", "url"),
