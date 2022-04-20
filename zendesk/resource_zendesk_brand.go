@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
@@ -59,11 +58,6 @@ func resourceZendeskBrand() *schema.Resource {
 				Description: `The state of the Help Center. Allowed values are "enabled", "disabled", or "restricted".`,
 				Type:        schema.TypeString,
 				Computed:    true,
-				ValidateFunc: validation.StringInSlice([]string{
-					"enabled",
-					"disabled",
-					"restricted",
-				}, false),
 			},
 			"active": {
 				Description: "If the brand is set as active.",
