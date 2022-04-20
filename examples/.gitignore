@@ -27,4 +27,5 @@ override.tf.json
 #
 # !example_override.tf
 
-
+# provider's lockfile
+.terraform.lock.hcl
