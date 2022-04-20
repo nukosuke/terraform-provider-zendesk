@@ -1,6 +1,3 @@
-# attachment.tf
-#   Attachment example
-#
 # API reference:
 #   https://developer.zendesk.com/rest_api/docs/support/attachments
 

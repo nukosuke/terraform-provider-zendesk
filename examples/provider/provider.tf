@@ -1,11 +1,17 @@
-# zendesk.tf
-#   Zendesk provider config
-#
 # API document about authentication:
 #   https://developer.zendesk.com/rest_api/docs/support/introduction#security-and-authentication
 #
 # NOTE:
-#   v0.0.0 supports only token authentication
+#   currently only token authentication is supported
+
+terraform {
+  required_providers {
+    zendesk = {
+      source  = "nukosuke/zendesk"
+      version = ">= 0.0"
+    }
+  }
+}
 
 variable "ZENDESK_ACCOUNT" { type = string }
 variable "ZENDESK_EMAIL"   { type = string }

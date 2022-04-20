@@ -1,6 +1,3 @@
-# ticket_fields.tf
-#   Ticket Field example
-#
 # API reference:
 #   https://developer.zendesk.com/rest_api/docs/support/ticket_fields
 
