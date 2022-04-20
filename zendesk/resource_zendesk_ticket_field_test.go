@@ -64,7 +64,7 @@ func TestReadTicketField(t *testing.T) {
 	}
 
 	m.EXPECT().GetTicketField(Any(), Any()).Return(field, nil)
-	if err := readTicketField(gs, m); err != nil {
+	if diags := readTicketField(context.Background(), gs, m); len(diags) != 0 {
 		t.Fatal("readTicketField returned an error")
 	}
 
@@ -95,7 +95,7 @@ func TestDeleteTicketField(t *testing.T) {
 	}
 
 	m.EXPECT().DeleteTicketField(Any(), Eq(int64(12345))).Return(nil)
-	if err := deleteTicketField(i, m); err != nil {
+	if diags := deleteTicketField(context.Background(), i, m); len(diags) != 0 {
 		t.Fatal("readTicketField returned an error")
 	}
 }
@@ -111,7 +111,7 @@ func TestUpdateTicketField(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateTicketField(Any(), Eq(int64(12345)), Any()).Return(zendesk.TicketField{}, nil)
-	if err := updateTicketField(i, m); err != nil {
+	if diags := updateTicketField(context.Background(), i, m); len(diags) != 0 {
 		t.Fatal("readTicketField returned an error")
 	}
 }
@@ -130,7 +130,7 @@ func TestCreateTicketField(t *testing.T) {
 	}
 
 	m.EXPECT().CreateTicketField(Any(), Any()).Return(out, nil)
-	if err := createTicketField(i, m); err != nil {
+	if diags := createTicketField(context.Background(), i, m); len(diags) != 0 {
 		t.Fatal("create ticket field returned an error")
 	}
 

@@ -2,18 +2,18 @@ package zendesk
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nukosuke/go-zendesk/zendesk"
 )
 
 func dataSourceZendeskTicketField() *schema.Resource {
 	return &schema.Resource{
-		Read: func(data *schema.ResourceData, i interface{}) error {
+		ReadContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(*zendesk.Client)
-			return readTicketFieldDataSource(data, zd)
+			return readTicketFieldDataSource(ctx, data, zd)
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -135,12 +135,12 @@ func dataSourceZendeskTicketField() *schema.Resource {
 	}
 }
 
-func readTicketFieldDataSource(d identifiableGetterSetter, zd zendesk.TicketFieldAPI) error {
+func readTicketFieldDataSource(ctx context.Context, d identifiableGetterSetter, zd zendesk.TicketFieldAPI) diag.Diagnostics {
 	searchType := d.Get("type").(string)
 
 	ticketFields, _, err := zd.GetTicketFields(context.Background())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	var found *zendesk.TicketField
@@ -153,9 +153,9 @@ func readTicketFieldDataSource(d identifiableGetterSetter, zd zendesk.TicketFiel
 	}
 
 	if found == nil {
-		return fmt.Errorf("unable to locate any ticket field with title: %s", searchType)
+		return diag.Errorf("unable to locate any ticket field with title: %s", searchType)
 	}
 
 	d.SetId(strconv.Itoa(int(found.ID)))
-	return readTicketField(d, zd)
+	return readTicketField(ctx, d, zd)
 }

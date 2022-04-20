@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"testing"
@@ -39,9 +40,9 @@ func TestTicketFieldDataSourceRead(t *testing.T) {
 	c.EXPECT().GetTicketFields(gomock.Any()).Return([]zendesk.TicketField{out}, zendesk.Page{}, nil)
 	c.EXPECT().GetTicketField(gomock.Any(), gomock.Any()).Return(out, nil)
 
-	err = readTicketFieldDataSource(m, c)
-	if err != nil {
-		t.Fatalf("Read system field returned an error. %v", err)
+	diags := readTicketFieldDataSource(context.Background(), m, c)
+	if len(diags) != 0 {
+		t.Fatalf("Read system field returned an error. %v", diags)
 	}
 
 	if v, ok := strconv.Atoi(m.Id()); ok != nil || int64(v) != out.ID {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	client "github.com/nukosuke/go-zendesk/zendesk"
@@ -13,13 +14,13 @@ import (
 // https://developer.zendesk.com/rest_api/docs/core/ticket_fields
 func resourceZendeskTicketField() *schema.Resource {
 	return &schema.Resource{
-		Description: "Provides a ticket field resource.",
-		Create:      resourceZendeskTicketFieldCreate,
-		Read:        resourceZendeskTicketFieldRead,
-		Update:      resourceZendeskTicketFieldUpdate,
-		Delete:      resourceZendeskTicketFieldDelete,
+		Description:   "Provides a ticket field resource.",
+		CreateContext: resourceZendeskTicketFieldCreate,
+		ReadContext:   resourceZendeskTicketFieldRead,
+		UpdateContext: resourceZendeskTicketFieldUpdate,
+		DeleteContext: resourceZendeskTicketFieldDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -355,85 +356,110 @@ func unmarshalTicketField(d identifiableGetterSetter) (client.TicketField, error
 	return tf, nil
 }
 
-func resourceZendeskTicketFieldCreate(d *schema.ResourceData, meta interface{}) error {
+func resourceZendeskTicketFieldCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	zd := meta.(*client.Client)
-	return createTicketField(d, zd)
+	return createTicketField(ctx, d, zd)
 }
 
-func createTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
+func createTicketField(ctx context.Context, d identifiableGetterSetter, zd client.TicketFieldAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	tf, err := unmarshalTicketField(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Actual API request
-	ctx := context.Background()
 	tf, err = zd.CreateTicketField(ctx, tf)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", tf.ID))
-	return marshalTicketField(tf, d)
-}
 
-func resourceZendeskTicketFieldRead(d *schema.ResourceData, meta interface{}) error {
-	zd := meta.(*client.Client)
-	return readTicketField(d, zd)
-}
-
-func readTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
-	id, err := strconv.ParseInt(d.Id(), 10, 64)
+	err = marshalTicketField(tf, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func resourceZendeskTicketFieldRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	zd := meta.(*client.Client)
+	return readTicketField(ctx, d, zd)
+}
+
+func readTicketField(ctx context.Context, d identifiableGetterSetter, zd client.TicketFieldAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := strconv.ParseInt(d.Id(), 10, 64)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	field, err := zd.GetTicketField(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalTicketField(field, d)
+	err = marshalTicketField(field, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func resourceZendeskTicketFieldUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceZendeskTicketFieldUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	zd := meta.(*client.Client)
-	return updateTicketField(d, zd)
+	return updateTicketField(ctx, d, zd)
 }
 
-func updateTicketField(d identifiableGetterSetter, zd client.TicketFieldAPI) error {
+func updateTicketField(ctx context.Context, d identifiableGetterSetter, zd client.TicketFieldAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	tf, err := unmarshalTicketField(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	id, err := strconv.ParseInt(d.Id(), 10, 64)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Actual API request
-	ctx := context.Background()
 	tf, err = zd.UpdateTicketField(ctx, id, tf)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalTicketField(tf, d)
+	err = marshalTicketField(tf, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func resourceZendeskTicketFieldDelete(d *schema.ResourceData, meta interface{}) error {
+func resourceZendeskTicketFieldDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	zd := meta.(*client.Client)
-	return deleteTicketField(d, zd)
+	return deleteTicketField(ctx, d, zd)
 }
 
-func deleteTicketField(d identifiable, zd client.TicketFieldAPI) error {
+func deleteTicketField(ctx context.Context, d identifiable, zd client.TicketFieldAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := strconv.ParseInt(d.Id(), 10, 64)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteTicketField(ctx, id)
+	err = zd.DeleteTicketField(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
