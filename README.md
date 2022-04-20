@@ -8,18 +8,32 @@
 
 Terraform provider for Zendesk
 
-- [Available resources](https://github.com/nukosuke/terraform-provider-zendesk/wiki)
+- [Document](https://registry.terraform.io/providers/nukosuke/zendesk/latest/docs)
 
 ## Requirements
 
 - Terraform >= v0.12.7
 - Go >= v1.17 (only for build)
 
-## Installation
+## Usage
 
-Download latest version from [release page](https://github.com/nukosuke/terraform-provider-zendesk/releases)
-and locate the binary `terraform-provider-zendesk(.exe)` to executable path of your system.
+terraform-provider-zendesk is available on [Terraform Registry](https://registry.terraform.io). You don't need to download artifacts manually.  
+Instead configure provider as follow.
 
+```hcl
+terraform {
+  required_providers {
+    zendesk = {
+      source  = "nukosuke/zendesk"
+      version = ">= 0.0"
+    }
+  }
+}
+```
+
+and run `terraform init` in your Terraform resource directory.  
+
+## Development
 ### Build from source
 
 ```sh
