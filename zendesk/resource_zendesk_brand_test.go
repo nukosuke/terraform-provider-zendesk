@@ -53,9 +53,9 @@ func TestCreateBrand(t *testing.T) {
 	m.EXPECT().CreateBrand(Any(), Any()).Return(testBrand, nil)
 
 	i := newIdentifiableGetterSetter()
-	err := createBrand(i, m)
-	if err != nil {
-		t.Fatalf("Create brand returned an error %v", err)
+	diags := createBrand(context.Background(), i, m)
+	if len(diags) != 0 {
+		t.Fatalf("Create brand returned an error %v", diags)
 	}
 
 	if i.Id() != fmt.Sprintf("%d", testBrand.ID) {
@@ -76,9 +76,9 @@ func TestReadBrand(t *testing.T) {
 	i := newIdentifiableGetterSetter()
 	i.SetId(fmt.Sprintf("%d", testBrand.ID))
 
-	err := readBrand(i, m)
-	if err != nil {
-		t.Fatalf("readBrand returned an error: %v", err)
+	diags := readBrand(context.Background(), i, m)
+	if len(diags) != 0 {
+		t.Fatalf("readBrand returned an error: %v", diags)
 	}
 
 	if v := i.Get("subdomain"); v != testBrand.Subdomain {
@@ -99,9 +99,9 @@ func TestUpdateBrand(t *testing.T) {
 	m := mock.NewClient(ctrl)
 	m.EXPECT().UpdateBrand(Any(), testBrand.ID, Any()).Return(updatedBrand, nil)
 
-	err := updateBrand(i, m)
-	if err != nil {
-		t.Fatalf("update brand returned an error: %v", err)
+	diags := updateBrand(context.Background(), i, m)
+	if len(diags) != 0 {
+		t.Fatalf("update brand returned an error: %v", diags)
 	}
 
 	if v := i.Get("name"); v != updatedBrand.Name {
@@ -120,9 +120,9 @@ func TestDeleteBrand(t *testing.T) {
 	m := mock.NewClient(ctrl)
 	m.EXPECT().DeleteBrand(Any(), id).Return(nil)
 
-	err := deleteBrand(i, m)
-	if err != nil {
-		t.Fatalf("delete brand returned an error: %v", err)
+	diags := deleteBrand(context.Background(), i, m)
+	if len(diags) != 0 {
+		t.Fatalf("delete brand returned an error: %v", diags)
 	}
 }
 

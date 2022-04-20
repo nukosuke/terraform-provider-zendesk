@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
@@ -12,25 +13,25 @@ import (
 func resourceZendeskBrand() *schema.Resource {
 	return &schema.Resource{
 		Description: "Provides a brand resource.",
-		Create: func(d *schema.ResourceData, meta interface{}) error {
+		CreateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return createBrand(d, zd)
+			return createBrand(ctx, d, zd)
 		},
-		Read: func(d *schema.ResourceData, meta interface{}) error {
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return readBrand(d, zd)
+			return readBrand(ctx, d, zd)
 		},
-		Update: func(d *schema.ResourceData, meta interface{}) error {
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return updateBrand(d, zd)
+			return updateBrand(ctx, d, zd)
 		},
-		Delete: func(d *schema.ResourceData, meta interface{}) error {
+		DeleteContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return deleteBrand(d, zd)
+			return deleteBrand(ctx, d, zd)
 		},
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -185,63 +186,88 @@ func unmarshalBrand(d identifiableGetterSetter) (client.Brand, error) {
 	return brand, nil
 }
 
-func createBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
+func createBrand(ctx context.Context, d identifiableGetterSetter, zd client.BrandAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	brand, err := unmarshalBrand(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	brand, err = zd.CreateBrand(ctx, brand)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", brand.ID))
-	return marshalBrand(brand, d)
-}
 
-func readBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalBrand(brand, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readBrand(ctx context.Context, d identifiableGetterSetter, zd client.BrandAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	brand, err := zd.GetBrand(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalBrand(brand, d)
+	err = marshalBrand(brand, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
+func updateBrand(ctx context.Context, d identifiableGetterSetter, zd client.BrandAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	brand, err := unmarshalBrand(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	brand, err = zd.UpdateBrand(ctx, id, brand)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalBrand(brand, d)
+	err = marshalBrand(brand, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteBrand(d identifiableGetterSetter, zd client.BrandAPI) error {
+func deleteBrand(ctx context.Context, d identifiableGetterSetter, zd client.BrandAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteBrand(ctx, id)
+	err = zd.DeleteBrand(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
