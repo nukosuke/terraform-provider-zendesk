@@ -13,6 +13,7 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/triggers
 func resourceZendeskTrigger() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides a trigger resource.",
 		Create: func(d *schema.ResourceData, i interface{}) error {
 			zd := i.(client.TriggerAPI)
 			return createTrigger(d, zd)
@@ -35,23 +36,27 @@ func resourceZendeskTrigger() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"title": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The title of the trigger.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
+				Description: "Whether the trigger is active.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
 			},
 			"position": {
-				Type:     schema.TypeInt,
-				Computed: true,
+				Description: "Position of the trigger, determines the order they will execute in.",
+				Type:        schema.TypeInt,
+				Computed:    true,
 			},
 			// Both the "all" and "any" parameter are optional, but at least one of them must be supplied
-			"all": triggerConditionSchema(),
-			"any": triggerConditionSchema(),
+			"all": triggerConditionSchema("Logical AND. All the conditions must be met."),
+			"any": triggerConditionSchema("Logical OR. Any condition can be met."),
 			"action": {
-				Type: schema.TypeSet,
+				Description: "What the trigger will do.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"field": {
@@ -67,9 +72,10 @@ func resourceZendeskTrigger() *schema.Resource {
 				Required: true,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "",
+				Description: "The description of the trigger.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "",
 			},
 		},
 	}
@@ -283,22 +289,26 @@ func deleteTrigger(d identifiable, zd client.TriggerAPI) error {
 	return zd.DeleteTrigger(ctx, id)
 }
 
-func triggerConditionSchema() *schema.Schema {
+func triggerConditionSchema(desc string) *schema.Schema {
 	return &schema.Schema{
-		Type: schema.TypeSet,
+		Description: desc,
+		Type:        schema.TypeSet,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"field": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "The name of a ticket field.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 				"operator": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "A comparison operator.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 				"value": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "The value of a ticket field.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 			},
 		},

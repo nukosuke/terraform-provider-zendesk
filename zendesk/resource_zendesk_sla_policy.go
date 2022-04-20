@@ -8,9 +8,10 @@ import (
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
-// https://developer.zendesk.com/rest_api/docs/support/slaPolicies
+// https://developer.zendesk.com/api-reference/ticketing/business-rules/sla_policies/
 func resourceZendeskSLAPolicy() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides a SLA policy resource.",
 		Create: func(d *schema.ResourceData, i interface{}) error {
 			zd := i.(client.SLAPolicyAPI)
 			return createSLAPolicy(d, zd)
@@ -33,33 +34,39 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"title": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The title of the SLA policy.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
+			// ???: seems this field is not in API document. Should be removed?
 			"active": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
 			},
 			"position": {
-				Type:     schema.TypeInt,
-				Computed: true,
+				Description: "Position of the SLA policy that determines the order they will be matched. If not specified, the SLA policy is added as the last position.",
+				Type:        schema.TypeInt,
+				Computed:    true,
 			},
 			// Both the "all" and "any" parameter are optional, but at least one of them must be supplied
-			"all": slaPolicyFilterSchema(),
-			"any": slaPolicyFilterSchema(),
+			"all": slaPolicyFilterSchema("Logical AND. Tickets must fulfill all of the conditions to be considered matching."),
+			"any": slaPolicyFilterSchema("Logical OR. Tickets may satisfy any of the conditions to be considered matching."),
 
 			"policy_metrics": {
-				Type: schema.TypeSet,
+				Description: "The metric targets for each value of the priority field.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"priority": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "Priority that a ticket must match.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"metric": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "The definition of the time that is being measured.",
+							Type:        schema.TypeString,
+							Required:    true,
 							ValidateFunc: validation.StringInSlice([]string{
 								"agent_work_time",
 								"first_reply_time",
@@ -70,22 +77,25 @@ func resourceZendeskSLAPolicy() *schema.Resource {
 							}, false),
 						},
 						"target": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Description: "The time within which the end-state for a metric should be met.",
+							Type:        schema.TypeInt,
+							Required:    true,
 						},
 						"business_hours": {
-							Type:     schema.TypeBool,
-							Default:  false,
-							Optional: true,
+							Description: "Whether the metric targets are being measured in business hours or calendar hours.",
+							Type:        schema.TypeBool,
+							Default:     false,
+							Optional:    true,
 						},
 					},
 				},
 				Required: true,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "",
+				Description: "The description of the SLA policy.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Default:     "",
 			},
 		},
 	}
@@ -278,22 +288,26 @@ func deleteSLAPolicy(d identifiable, zd client.SLAPolicyAPI) error {
 	return zd.DeleteSLAPolicy(ctx, id)
 }
 
-func slaPolicyFilterSchema() *schema.Schema {
+func slaPolicyFilterSchema(desc string) *schema.Schema {
 	return &schema.Schema{
-		Type: schema.TypeSet,
+		Description: desc,
+		Type:        schema.TypeSet,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"field": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "The name of a ticket field.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 				"operator": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "A comparison operator.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 				"value": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "The value of a ticket field.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 			},
 		},

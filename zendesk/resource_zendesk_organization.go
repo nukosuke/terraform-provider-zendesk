@@ -11,6 +11,7 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/organizations
 func resourceZendeskOrganization() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides an organization resource.",
 		Create: func(d *schema.ResourceData, meta interface{}) error {
 			zd := meta.(*client.Client)
 			return createOrganization(d, zd)
@@ -34,34 +35,41 @@ func resourceZendeskOrganization() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: "The API url of this organization.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Organization name.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"domain_names": {
-				Type: schema.TypeSet,
+				Description: "A list of domain names associated with this organization.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 				Optional: true,
 			},
 			"group_id": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Description: "New tickets from users in this organization are automatically put in this group.",
+				Type:        schema.TypeInt,
+				Optional:    true,
 			},
 			"shared_tickets": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "Whether end users in this organization are able to see each other's tickets.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"shared_comments": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "End users in this organization are able to see each other's comments on tickets.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"tags": {
-				Type: schema.TypeSet,
+				Description: "The tags of the organization.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},

@@ -11,6 +11,7 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/ticket_forms
 func resourceZendeskTicketForm() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides a ticket form resource.",
 		Create: func(data *schema.ResourceData, i interface{}) error {
 			zd := i.(*client.Client)
 			return createTicketForm(data, zd)
@@ -33,48 +34,58 @@ func resourceZendeskTicketForm() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: "URL of the ticket form.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The name of the form.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"display_name": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "The name of the form that is displayed to an end user.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"position": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Description: "The position of this form among other forms in the account, i.e. dropdown.",
+				Type:        schema.TypeInt,
+				Optional:    true,
 			},
 			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
+				Description: "If the form is set as active.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
 			},
 			"end_user_visible": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "Is the form visible to the end user.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"default": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "Is the form the default form for this account.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"ticket_field_ids": {
-				Type: schema.TypeSet,
+				Description: "ids of all ticket fields which are in this ticket form. The products use the order of the ids to show the field values in the tickets.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
 				Optional: true,
 			},
 			"in_all_brands": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
+				Description: "Is the form available for use in all brands on this account.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
 			},
 			"restricted_brand_ids": {
-				Type: schema.TypeSet,
+				Description: "ids of all brands that this ticket form is restricted to.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},

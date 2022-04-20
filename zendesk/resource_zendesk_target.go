@@ -12,6 +12,7 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/targets
 func resourceZendeskTarget() *schema.Resource {
 	return &schema.Resource{
+		Description: `Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)`,
 		Create: func(d *schema.ResourceData, meta interface{}) error {
 			zd := meta.(*client.Client)
 			return createTarget(d, zd)
@@ -51,39 +52,45 @@ func resourceZendeskTarget() *schema.Resource {
 					//"pivotal_target",
 					//"twitter_target",
 					//"url_target",
-					"http_target",
-					"url_target_v2", // synonym of http_target
+					"http_target",   // DEPRECATED. will be removed in future.
+					"url_target_v2", // DEPRECATED. synonym of http_target
 					//"yammer_target",
 				}, false),
 			},
 			"title": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "A name for the target.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
+				Description: "Whether or not the target is activated.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
 			},
 
 			// email_target
 			"email": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: `Email address for "email_target"`,
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"subject": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: `Email subject for "email_target"`,
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 
 			// http_target
 			"target_url": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "The URL for the target. Some target types commonly use this field.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"method": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "HTTP method.",
+				Type:        schema.TypeString,
+				Optional:    true,
 				ValidateFunc: validation.StringInSlice([]string{
 					"get",
 					"patch",
@@ -93,16 +100,20 @@ func resourceZendeskTarget() *schema.Resource {
 				}, false),
 			},
 			"username": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Username of the account which the target recognize.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"password": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Password of the account which the target authenticate.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"content_type": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "Content-Type for http_target",
+				Deprecated:  "http_target is deprecated",
+				Type:        schema.TypeString,
+				Optional:    true,
 				ValidateFunc: validation.StringInSlice([]string{
 					"application/json",
 					"application/xml",

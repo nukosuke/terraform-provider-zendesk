@@ -18,6 +18,7 @@ type attachment struct {
 
 func resourceZendeskAttachment() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides an attachment resource.",
 		Create: func(data *schema.ResourceData, i interface{}) error {
 			zd := i.(zendesk.AttachmentAPI)
 			return createAttachment(data, zd)
@@ -44,58 +45,71 @@ func resourceZendeskAttachment() *schema.Resource {
 				ValidateFunc: isValidFile(),
 			},
 			"file_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "The name of the image file.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"file_hash": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Description: "SHA256 hash of the image file. Terraform built-in `filesha256()` is convenient to calculate it.",
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
 			},
 			"token": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: "The token of the uploaded attachment.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"content_url": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: "A full URL where the attachment image file can be downloaded. The file may be hosted externally so take care not to inadvertently send Zendesk authentication credentials.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"content_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: `The content type of the image. Example value: "image/png"`,
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"size": {
-				Type:     schema.TypeInt,
-				Computed: true,
+				Description: "The size of the image file in bytes.",
+				Type:        schema.TypeInt,
+				Computed:    true,
 			},
 			"inline": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Description: "If true, the attachment is excluded from the attachment list and the attachment's URL can be referenced within the comment of a ticket. Default is false.",
+				Type:        schema.TypeBool,
+				Computed:    true,
 			},
 			"thumbnails": {
-				Type: schema.TypeSet,
+				Description: "A list of attachments.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Description: "Attachment id.",
+							Type:        schema.TypeInt,
+							Required:    true,
 						},
 						"file_name": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "File name of the image",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"content_type": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "Content-Type of the image",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"size": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Description: "File size of the image.",
+							Type:        schema.TypeInt,
+							Required:    true,
 						},
 						"content_url": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "URL of the image.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 					},
 				},
