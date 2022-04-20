@@ -44,6 +44,6 @@ provider "zendesk" {
 
 ### Optional
 
-- `account` (String)
-- `email` (String)
-- `token` (String)
+- `account` (String) Account name of your Zendesk instance.
+- `email` (String) Email address of agent user who have permission to access the API.
+- `token` (String) [API token](https://developer.zendesk.com/rest_api/docs/support/introduction#api-token) for your Zendesk instance.

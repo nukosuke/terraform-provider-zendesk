@@ -17,16 +17,19 @@ func Provider() *schema.Provider {
 		// https://developer.zendesk.com/rest_api/docs/support/introduction#security-and-authentication
 		Schema: map[string]*schema.Schema{
 			"account": {
+				Description: "Account name of your Zendesk instance.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(accountVar, ""),
 			},
 			"email": {
+				Description: "Email address of agent user who have permission to access the API.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(emailVar, ""),
 			},
 			"token": {
+				Description: "[API token](https://developer.zendesk.com/rest_api/docs/support/introduction#api-token) for your Zendesk instance.",
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(tokenVar, ""),
