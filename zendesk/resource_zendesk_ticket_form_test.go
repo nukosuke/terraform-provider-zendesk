@@ -125,8 +125,8 @@ func testTicketFormDestroyed(s *terraform.State) error {
 
 func TestAccTicketFormExample(t *testing.T) {
 	configs := []string{
-		readExampleConfig(t, "ticket_fields.tf"),
-		readExampleConfig(t, "ticket_forms.tf"),
+		readExampleConfig(t, "resources/zendesk_ticket_field/resource.tf"),
+		readExampleConfig(t, "resources/zendesk_ticket_form/resource.tf"),
 	}
 
 	resource.Test(t, resource.TestCase{

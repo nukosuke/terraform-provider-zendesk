@@ -235,7 +235,7 @@ func TestAccTicketFieldExample(t *testing.T) {
 		CheckDestroy: testTicketFieldDestroyed,
 		Steps: []resource.TestStep{
 			{
-				Config: readExampleConfig(t, "ticket_fields.tf"),
+				Config: readExampleConfig(t, "resources/zendesk_ticket_field/resource.tf"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("zendesk_ticket_field.checkbox-field", "title", "Checkbox Field"),
 					resource.TestCheckResourceAttr("zendesk_ticket_field.date-field", "title", "Date Field"),
