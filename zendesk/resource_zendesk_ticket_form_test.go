@@ -24,7 +24,7 @@ func TestCreateTicketForm(t *testing.T) {
 	}
 
 	m.EXPECT().CreateTicketForm(Any(), Any()).Return(out, nil)
-	if err := createTicketForm(i, m); err != nil {
+	if diags := createTicketForm(context.Background(), i, m); len(diags) != 0 {
 		t.Fatal("create ticket field returned an error")
 	}
 
@@ -47,7 +47,7 @@ func TestDeleteTicketForm(t *testing.T) {
 
 	expectedID := int64(12345)
 	m.EXPECT().DeleteTicketForm(Any(), Eq(expectedID)).Return(nil)
-	if err := deleteTicketForm(i, m); err != nil {
+	if diags := deleteTicketForm(context.Background(), i, m); len(diags) != 0 {
 		t.Fatal("create ticket field returned an error")
 	}
 }
@@ -65,8 +65,8 @@ func TestReadTicketForm(t *testing.T) {
 		Position: int64(1),
 	}
 	m.EXPECT().GetTicketForm(Any(), Eq(int64(12345))).Return(expected, nil)
-	if err := readTicketForm(i, m); err != nil {
-		t.Fatalf("recieved an error when calling read ticket form: %v", err)
+	if diags := readTicketForm(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("recieved an error when calling read ticket form: %v", diags)
 	}
 }
 

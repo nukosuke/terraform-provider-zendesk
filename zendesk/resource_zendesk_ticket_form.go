@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
@@ -12,24 +13,24 @@ import (
 func resourceZendeskTicketForm() *schema.Resource {
 	return &schema.Resource{
 		Description: "Provides a ticket form resource.",
-		Create: func(data *schema.ResourceData, i interface{}) error {
+		CreateContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(*client.Client)
-			return createTicketForm(data, zd)
+			return createTicketForm(ctx, data, zd)
 		},
-		Read: func(data *schema.ResourceData, i interface{}) error {
+		ReadContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(*client.Client)
-			return readTicketForm(data, zd)
+			return readTicketForm(ctx, data, zd)
 		},
-		Update: func(data *schema.ResourceData, i interface{}) error {
+		UpdateContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(*client.Client)
-			return updateTicketForm(data, zd)
+			return updateTicketForm(ctx, data, zd)
 		},
-		Delete: func(data *schema.ResourceData, i interface{}) error {
+		DeleteContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(*client.Client)
-			return deleteTicketForm(data, zd)
+			return deleteTicketForm(ctx, data, zd)
 		},
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -181,60 +182,85 @@ func marshalTicketForm(f client.TicketForm, d identifiableGetterSetter) error {
 	return nil
 }
 
-func createTicketForm(d identifiableGetterSetter, zd client.TicketFormAPI) error {
+func createTicketForm(ctx context.Context, d identifiableGetterSetter, zd client.TicketFormAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	tf, err := unmarshalTicketForm(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Actual API request
-	ctx := context.Background()
 	tf, err = zd.CreateTicketForm(ctx, tf)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Patch from created resource
 	d.SetId(fmt.Sprintf("%d", tf.ID))
-	return marshalTicketForm(tf, d)
-}
 
-func readTicketForm(d identifiableGetterSetter, zd client.TicketFormAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalTicketForm(tf, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readTicketForm(ctx context.Context, d identifiableGetterSetter, zd client.TicketFormAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	tf, err := zd.GetTicketForm(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalTicketForm(tf, d)
+	err = marshalTicketForm(tf, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateTicketForm(d identifiableGetterSetter, zd client.TicketFormAPI) error {
+func updateTicketForm(ctx context.Context, d identifiableGetterSetter, zd client.TicketFormAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	tf, err := unmarshalTicketForm(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	tf, err = zd.UpdateTicketForm(ctx, tf.ID, tf)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalTicketForm(tf, d)
+	err = marshalTicketForm(tf, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteTicketForm(d identifiable, zd client.TicketFormAPI) error {
+func deleteTicketForm(ctx context.Context, d identifiable, zd client.TicketFormAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteTicketForm(ctx, id)
+	err = zd.DeleteTicketForm(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
