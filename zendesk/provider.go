@@ -1,14 +1,17 @@
 package zendesk
 
 import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
 const (
-	accountVar = "ZENDESK_ACCEPTANCE_TEST_ACCOUNT"
-	emailVar   = "ZENDESK_ACCEPTANCE_TEST_EMAIL"
-	tokenVar   = "ZENDESK_ACCEPTANCE_TEST_TOKEN"
+	accountVar = "ZENDESK_ACCOUNT"
+	emailVar   = "ZENDESK_EMAIL"
+	tokenVar   = "ZENDESK_TOKEN"
 )
 
 // Provider returns provider instance for Zendesk
@@ -53,11 +56,13 @@ func Provider() *schema.Provider {
 			"zendesk_ticket_field": dataSourceZendeskTicketField(),
 		},
 
-		ConfigureFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 	}
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
 	config := Config{
 		Account: d.Get("account").(string),
 		Email:   d.Get("email").(string),
@@ -67,13 +72,13 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	// Create & configure Zendesk API client
 	zd, err := client.NewClient(nil) // TODO: set UserAgent to terraform/version
 	if err != nil {
-		return nil, err
+		return nil, diag.FromErr(err)
 	}
 
 	if err = zd.SetSubdomain(config.Account); err != nil {
-		return nil, err
+		return nil, diag.FromErr(err)
 	}
 	zd.SetCredential(client.NewAPITokenCredential(config.Email, config.Token))
 
-	return zd, nil
+	return zd, diags
 }
