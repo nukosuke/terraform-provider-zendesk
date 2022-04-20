@@ -3,12 +3,12 @@
 page_title: "zendesk_attachment Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides an attachment resource.
 ---
 
 # zendesk_attachment (Resource)
 
-
+Provides an attachment resource.
 
 ## Example Usage
 
@@ -33,8 +33,8 @@ resource "zendesk_attachment" "logo" {
 
 ### Required
 
-- `file_hash` (String)
-- `file_name` (String)
+- `file_hash` (String) SHA256 hash of the image file. Terraform built-in `filesha256()` is convenient to calculate it.
+- `file_name` (String) The name of the image file.
 - `file_path` (String)
 
 ### Optional
@@ -43,12 +43,12 @@ resource "zendesk_attachment" "logo" {
 
 ### Read-Only
 
-- `content_type` (String)
-- `content_url` (String)
-- `inline` (Boolean)
-- `size` (Number)
-- `thumbnails` (Set of Object) (see [below for nested schema](#nestedatt--thumbnails))
-- `token` (String)
+- `content_type` (String) The content type of the image. Example value: "image/png"
+- `content_url` (String) A full URL where the attachment image file can be downloaded. The file may be hosted externally so take care not to inadvertently send Zendesk authentication credentials.
+- `inline` (Boolean) If true, the attachment is excluded from the attachment list and the attachment's URL can be referenced within the comment of a ticket. Default is false.
+- `size` (Number) The size of the image file in bytes.
+- `thumbnails` (Set of Object) A list of attachments. (see [below for nested schema](#nestedatt--thumbnails))
+- `token` (String) The token of the uploaded attachment.
 
 <a id="nestedatt--thumbnails"></a>
 ### Nested Schema for `thumbnails`

@@ -3,12 +3,12 @@
 page_title: "zendesk_sla_policy Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides a SLA policy resource.
 ---
 
 # zendesk_sla_policy (Resource)
 
-
+Provides a SLA policy resource.
 
 ## Example Usage
 
@@ -40,33 +40,33 @@ resource "zendesk_sla_policy" "incidents_sla_policy" {
 
 ### Required
 
-- `policy_metrics` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--policy_metrics))
-- `title` (String)
+- `policy_metrics` (Block Set, Min: 1) The metric targets for each value of the priority field. (see [below for nested schema](#nestedblock--policy_metrics))
+- `title` (String) The title of the SLA policy.
 
 ### Optional
 
 - `active` (Boolean)
-- `all` (Block Set) (see [below for nested schema](#nestedblock--all))
-- `any` (Block Set) (see [below for nested schema](#nestedblock--any))
-- `description` (String)
+- `all` (Block Set) Logical AND. Tickets must fulfill all of the conditions to be considered matching. (see [below for nested schema](#nestedblock--all))
+- `any` (Block Set) Logical OR. Tickets may satisfy any of the conditions to be considered matching. (see [below for nested schema](#nestedblock--any))
+- `description` (String) The description of the SLA policy.
 - `id` (String) The ID of this resource.
 
 ### Read-Only
 
-- `position` (Number)
+- `position` (Number) Position of the SLA policy that determines the order they will be matched. If not specified, the SLA policy is added as the last position.
 
 <a id="nestedblock--policy_metrics"></a>
 ### Nested Schema for `policy_metrics`
 
 Required:
 
-- `metric` (String)
-- `priority` (String)
-- `target` (Number)
+- `metric` (String) The definition of the time that is being measured.
+- `priority` (String) Priority that a ticket must match.
+- `target` (Number) The time within which the end-state for a metric should be met.
 
 Optional:
 
-- `business_hours` (Boolean)
+- `business_hours` (Boolean) Whether the metric targets are being measured in business hours or calendar hours.
 
 
 <a id="nestedblock--all"></a>
@@ -74,9 +74,9 @@ Optional:
 
 Required:
 
-- `field` (String)
-- `operator` (String)
-- `value` (String)
+- `field` (String) The name of a ticket field.
+- `operator` (String) A comparison operator.
+- `value` (String) The value of a ticket field.
 
 
 <a id="nestedblock--any"></a>
@@ -84,8 +84,8 @@ Required:
 
 Required:
 
-- `field` (String)
-- `operator` (String)
-- `value` (String)
+- `field` (String) The name of a ticket field.
+- `operator` (String) A comparison operator.
+- `value` (String) The value of a ticket field.
 
 

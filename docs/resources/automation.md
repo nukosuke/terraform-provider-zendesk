@@ -3,12 +3,12 @@
 page_title: "zendesk_automation Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides an automation resource.
 ---
 
 # zendesk_automation (Resource)
 
-
+Provides an automation resource.
 
 ## Example Usage
 
@@ -44,25 +44,24 @@ resource "zendesk_automation" "auto-close-automation" {
 
 ### Required
 
-- `action` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--action))
-- `title` (String)
+- `action` (Block Set, Min: 1) What the automation will do. (see [below for nested schema](#nestedblock--action))
+- `title` (String) The title of the automation.
 
 ### Optional
 
-- `active` (Boolean)
-- `all` (Block Set) (see [below for nested schema](#nestedblock--all))
-- `any` (Block Set) (see [below for nested schema](#nestedblock--any))
-- `description` (String)
+- `active` (Boolean) Whether the automation is active.
+- `all` (Block Set) Logical AND. All the conditions must be met. (see [below for nested schema](#nestedblock--all))
+- `any` (Block Set) Logical OR. Any condition can be met. (see [below for nested schema](#nestedblock--any))
 - `id` (String) The ID of this resource.
-- `position` (Number)
+- `position` (Number) The position of the automation which specifies the order it will be executed.
 
 <a id="nestedblock--action"></a>
 ### Nested Schema for `action`
 
 Required:
 
-- `field` (String)
-- `value` (String)
+- `field` (String) The name of a ticket field to modify.
+- `value` (String) The new value of the field.
 
 
 <a id="nestedblock--all"></a>
@@ -70,9 +69,9 @@ Required:
 
 Required:
 
-- `field` (String)
-- `operator` (String)
-- `value` (String)
+- `field` (String) The name of a ticket field.
+- `operator` (String) A comparison operator.
+- `value` (String) The value of a ticket field.
 
 
 <a id="nestedblock--any"></a>
@@ -80,8 +79,8 @@ Required:
 
 Required:
 
-- `field` (String)
-- `operator` (String)
-- `value` (String)
+- `field` (String) The name of a ticket field.
+- `operator` (String) A comparison operator.
+- `value` (String) The value of a ticket field.
 
 

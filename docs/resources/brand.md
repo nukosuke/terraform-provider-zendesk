@@ -3,12 +3,12 @@
 page_title: "zendesk_brand Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides a brand resource.
 ---
 
 # zendesk_brand (Resource)
 
-
+Provides a brand resource.
 
 ## Example Usage
 
@@ -35,24 +35,24 @@ resource "zendesk_brand" "T-1000" {
 
 ### Required
 
-- `name` (String)
-- `subdomain` (String)
+- `name` (String) The name of the brand.
+- `subdomain` (String) The subdomain of the brand.
 
 ### Optional
 
-- `active` (Boolean)
-- `default` (Boolean)
-- `host_mapping` (String)
+- `active` (Boolean) If the brand is set as active.
+- `default` (Boolean) Is the brand the default brand for this account.
+- `host_mapping` (String) The hostmapping to this brand, if any. Only admins view this property.
 - `id` (String) The ID of this resource.
-- `logo_attachment_id` (Number)
-- `signature_template` (String)
+- `logo_attachment_id` (Number) Logo attachment id for the brand.
+- `signature_template` (String) The signature template for a brand.
 
 ### Read-Only
 
-- `brand_url` (String)
-- `has_help_center` (Boolean)
-- `help_center_state` (String)
-- `ticket_form_ids` (Set of Number)
-- `url` (String)
+- `brand_url` (String) The url of the brand.
+- `has_help_center` (Boolean) If the brand has a Help Center.
+- `help_center_state` (String) The state of the Help Center. Allowed values are "enabled", "disabled", or "restricted".
+- `ticket_form_ids` (Set of Number) The ids of ticket forms that are available for use by a brand.
+- `url` (String) The API url of this brand.
 
 
