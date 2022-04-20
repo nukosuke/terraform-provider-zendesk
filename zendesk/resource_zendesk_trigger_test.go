@@ -85,7 +85,7 @@ func TestCreateTrigger(t *testing.T) {
 	}
 
 	m.EXPECT().CreateTrigger(gomock.Any(), gomock.Any()).Return(out, nil)
-	if err := createTrigger(i, m); err != nil {
+	if diags := createTrigger(context.Background(), i, m); len(diags) != 0 {
 		t.Fatal("CreateTrigger return an error")
 	}
 
@@ -111,8 +111,8 @@ func TestReadTrigger(t *testing.T) {
 		Active: true,
 	}
 	m.EXPECT().GetTrigger(gomock.Any(), gomock.Eq(int64(12345))).Return(expected, nil)
-	if err := readTrigger(i, m); err != nil {
-		t.Fatalf("GetTrigger received an error when calling: %v", err)
+	if diags := readTrigger(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("GetTrigger received an error when calling: %v", diags)
 	}
 }
 
@@ -127,8 +127,8 @@ func TestUpdateTrigger(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateTrigger(gomock.Any(), gomock.Eq(int64(12345)), gomock.Any()).Return(zendesk.Trigger{}, nil)
-	if err := updateTrigger(i, m); err != nil {
-		t.Fatalf("updateTrigger returned an error %v", err)
+	if diags := updateTrigger(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("updateTrigger returned an error %v", diags)
 	}
 }
 
@@ -142,9 +142,9 @@ func TestDeleteTrigger(t *testing.T) {
 	d.SetId("1234")
 
 	c.EXPECT().DeleteTrigger(gomock.Any(), gomock.Eq(int64(1234))).Return(nil)
-	err := deleteTrigger(d, c)
-	if err != nil {
-		t.Fatalf("Got error from resource delete: %v", err)
+	diags := deleteTrigger(context.Background(), d, c)
+	if len(diags) != 0 {
+		t.Fatalf("Got error from resource delete: %v", diags)
 	}
 }
 

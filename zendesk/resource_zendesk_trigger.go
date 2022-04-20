@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
@@ -14,24 +15,24 @@ import (
 func resourceZendeskTrigger() *schema.Resource {
 	return &schema.Resource{
 		Description: "Provides a trigger resource.",
-		Create: func(d *schema.ResourceData, i interface{}) error {
+		CreateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.TriggerAPI)
-			return createTrigger(d, zd)
+			return createTrigger(ctx, d, zd)
 		},
-		Read: func(d *schema.ResourceData, i interface{}) error {
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.TriggerAPI)
-			return readTrigger(d, zd)
+			return readTrigger(ctx, d, zd)
 		},
-		Update: func(d *schema.ResourceData, i interface{}) error {
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.TriggerAPI)
-			return updateTrigger(d, zd)
+			return updateTrigger(ctx, d, zd)
 		},
-		Delete: func(d *schema.ResourceData, i interface{}) error {
+		DeleteContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.TriggerAPI)
-			return deleteTrigger(d, zd)
+			return deleteTrigger(ctx, d, zd)
 		},
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -228,65 +229,90 @@ func unmarshalTrigger(d identifiableGetterSetter) (client.Trigger, error) {
 	return trg, nil
 }
 
-func createTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
+func createTrigger(ctx context.Context, d identifiableGetterSetter, zd client.TriggerAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	trg, err := unmarshalTrigger(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	trg, err = zd.CreateTrigger(ctx, trg)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", trg.ID))
-	return marshalTrigger(trg, d)
-}
 
-func readTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalTrigger(trg, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readTrigger(ctx context.Context, d identifiableGetterSetter, zd client.TriggerAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	trigger, err := zd.GetTrigger(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalTrigger(trigger, d)
+	err = marshalTrigger(trigger, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateTrigger(d identifiableGetterSetter, zd client.TriggerAPI) error {
+func updateTrigger(ctx context.Context, d identifiableGetterSetter, zd client.TriggerAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	trigger, err := unmarshalTrigger(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	trigger, err = zd.UpdateTrigger(ctx, id, trigger)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalTrigger(trigger, d)
+	err = marshalTrigger(trigger, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteTrigger(d identifiable, zd client.TriggerAPI) error {
+func deleteTrigger(ctx context.Context, d identifiable, zd client.TriggerAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteTrigger(ctx, id)
+	err = zd.DeleteTrigger(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
 func triggerConditionSchema(desc string) *schema.Schema {
