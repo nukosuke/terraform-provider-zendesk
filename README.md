@@ -8,7 +8,7 @@
 
 Terraform provider for Zendesk
 
-- [Available resources](https://github.com/nukosuke/terraform-provider-zendesk/wiki)
+- [Document](https://registry.terraform.io/providers/nukosuke/zendesk/latest/docs)
 
 ## Requirements
 
