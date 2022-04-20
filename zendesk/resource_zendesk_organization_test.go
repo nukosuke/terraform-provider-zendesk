@@ -1,7 +1,7 @@
 package zendesk
 
 import (
-	//"fmt"
+	"context"
 	"strconv"
 	"testing"
 
@@ -87,7 +87,7 @@ func TestReadOrganization(t *testing.T) {
 	}
 
 	m.EXPECT().GetOrganization(Any(), Any()).Return(field, nil)
-	if err := readOrganization(gs, m); err != nil {
+	if err := readOrganization(context.Background(), gs, m); err != nil {
 		t.Fatalf("readOrganization returned an error: %v", err)
 	}
 
@@ -114,7 +114,7 @@ func TestCreateOrganization(t *testing.T) {
 	}
 
 	m.EXPECT().CreateOrganization(Any(), Any()).Return(out, nil)
-	if err := createOrganization(i, m); err != nil {
+	if err := createOrganization(context.Background(), i, m); err != nil {
 		t.Fatalf("create organization returned an error: %v", err)
 	}
 
@@ -134,7 +134,7 @@ func TestUpdateOrganization(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateOrganization(Any(), Eq(int64(12345)), Any()).Return(zendesk.Organization{}, nil)
-	if err := updateOrganization(i, m); err != nil {
+	if err := updateOrganization(context.Background(), i, m); err != nil {
 		t.Fatalf("updateOrganization returned an error: %v", err)
 	}
 }
@@ -149,7 +149,7 @@ func TestDeleteOrganization(t *testing.T) {
 	}
 
 	m.EXPECT().DeleteOrganization(Any(), Eq(int64(12345))).Return(nil)
-	if err := deleteOrganization(i, m); err != nil {
+	if err := deleteOrganization(context.Background(), i, m); err != nil {
 		t.Fatalf("deleteOrganization returned an error: %v", err)
 	}
 }

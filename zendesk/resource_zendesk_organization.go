@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
@@ -12,25 +13,25 @@ import (
 func resourceZendeskOrganization() *schema.Resource {
 	return &schema.Resource{
 		Description: "Provides an organization resource.",
-		Create: func(d *schema.ResourceData, meta interface{}) error {
+		CreateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return createOrganization(d, zd)
+			return createOrganization(ctx, d, zd)
 		},
-		Read: func(d *schema.ResourceData, meta interface{}) error {
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return readOrganization(d, zd)
+			return readOrganization(ctx, d, zd)
 		},
-		Update: func(d *schema.ResourceData, meta interface{}) error {
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return updateOrganization(d, zd)
+			return updateOrganization(ctx, d, zd)
 		},
-		Delete: func(d *schema.ResourceData, meta interface{}) error {
+		DeleteContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return deleteOrganization(d, zd)
+			return deleteOrganization(ctx, d, zd)
 		},
 
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -141,63 +142,88 @@ func unmarshalOrganization(d identifiableGetterSetter) (client.Organization, err
 	return org, nil
 }
 
-func createOrganization(d identifiableGetterSetter, zd client.OrganizationAPI) error {
+func createOrganization(ctx context.Context, d identifiableGetterSetter, zd client.OrganizationAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	org, err := unmarshalOrganization(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	org, err = zd.CreateOrganization(ctx, org)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", org.ID))
-	return marshalOrganization(org, d)
-}
 
-func readOrganization(d identifiableGetterSetter, zd client.OrganizationAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalOrganization(org, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readOrganization(ctx context.Context, d identifiableGetterSetter, zd client.OrganizationAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	org, err := zd.GetOrganization(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalOrganization(org, d)
+	err = marshalOrganization(org, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateOrganization(d identifiableGetterSetter, zd client.OrganizationAPI) error {
+func updateOrganization(ctx context.Context, d identifiableGetterSetter, zd client.OrganizationAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	org, err := unmarshalOrganization(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	org, err = zd.UpdateOrganization(ctx, id, org)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalOrganization(org, d)
+	err = marshalOrganization(org, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteOrganization(d identifiableGetterSetter, zd client.OrganizationAPI) error {
+func deleteOrganization(ctx context.Context, d identifiableGetterSetter, zd client.OrganizationAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteOrganization(ctx, id)
+	err = zd.DeleteOrganization(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
