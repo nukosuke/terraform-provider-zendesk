@@ -193,7 +193,7 @@ func TestAccSLAPolicyExample(t *testing.T) {
 		CheckDestroy: testSLAPolicyDestroyed,
 		Steps: []resource.TestStep{
 			{
-				Config: readExampleConfig(t, "sla_policies.tf"),
+				Config: readExampleConfig(t, "resources/zendesk_sla_policy/resource.tf"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("zendesk_sla_policy.incidents_sla_policy", "title", "Incidents"),
 					resource.TestCheckResourceAttr("zendesk_sla_policy.incidents_sla_policy", "active", "true"),
