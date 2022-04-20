@@ -11,6 +11,7 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/groups
 func resourceZendeskGroup() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides a group resource.",
 		Create: func(d *schema.ResourceData, meta interface{}) error {
 			zd := meta.(*client.Client)
 			return createGroup(d, zd)
@@ -37,8 +38,9 @@ func resourceZendeskGroup() *schema.Resource {
 				Computed: true,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "Group name.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 		},
 	}

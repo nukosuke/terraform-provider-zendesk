@@ -3,12 +3,12 @@
 page_title: "zendesk_target Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)
 ---
 
 # zendesk_target (Resource)
 
-
+Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)
 
 ## Example Usage
 
@@ -33,20 +33,20 @@ resource "zendesk_target" "email-target" {
 
 ### Required
 
-- `title` (String)
+- `title` (String) A name for the target.
 - `type` (String)
 
 ### Optional
 
-- `active` (Boolean)
-- `content_type` (String)
-- `email` (String)
+- `active` (Boolean) Whether or not the target is activated.
+- `content_type` (String, Deprecated) Content-Type for http_target
+- `email` (String) Email address for "email_target"
 - `id` (String) The ID of this resource.
-- `method` (String)
-- `password` (String)
-- `subject` (String)
-- `target_url` (String)
-- `username` (String)
+- `method` (String) HTTP method.
+- `password` (String) Password of the account which the target authenticate.
+- `subject` (String) Email subject for "email_target"
+- `target_url` (String) The URL for the target. Some target types commonly use this field.
+- `username` (String) Username of the account which the target recognize.
 
 ### Read-Only
 

@@ -3,12 +3,12 @@
 page_title: "zendesk_organization Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides an organization resource.
 ---
 
 # zendesk_organization (Resource)
 
-
+Provides an organization resource.
 
 
 
@@ -17,19 +17,19 @@ description: |-
 
 ### Required
 
-- `name` (String)
+- `name` (String) Organization name.
 
 ### Optional
 
-- `domain_names` (Set of String)
-- `group_id` (Number)
+- `domain_names` (Set of String) A list of domain names associated with this organization.
+- `group_id` (Number) New tickets from users in this organization are automatically put in this group.
 - `id` (String) The ID of this resource.
-- `shared_comments` (Boolean)
-- `shared_tickets` (Boolean)
-- `tags` (Set of String)
+- `shared_comments` (Boolean) End users in this organization are able to see each other's comments on tickets.
+- `shared_tickets` (Boolean) Whether end users in this organization are able to see each other's tickets.
+- `tags` (Set of String) The tags of the organization.
 
 ### Read-Only
 
-- `url` (String)
+- `url` (String) The API url of this organization.
 
 

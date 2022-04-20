@@ -13,27 +13,32 @@ import (
 // https://developer.zendesk.com/rest_api/docs/core/ticket_fields
 func resourceZendeskTicketField() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceZendeskTicketFieldCreate,
-		Read:   resourceZendeskTicketFieldRead,
-		Update: resourceZendeskTicketFieldUpdate,
-		Delete: resourceZendeskTicketFieldDelete,
+		Description: "Provides a ticket field resource.",
+		Create:      resourceZendeskTicketFieldCreate,
+		Read:        resourceZendeskTicketFieldRead,
+		Update:      resourceZendeskTicketFieldUpdate,
+		Delete:      resourceZendeskTicketFieldDelete,
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: "The URL for this ticket field.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"type": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "System or custom field type. Editable for custom field types and only on creation.",
+				Type:        schema.TypeString,
+				Required:    true,
 				ValidateFunc: validation.StringInSlice([]string{
 					"checkbox",
 					"date",
 					"decimal",
 					"integer",
+					"multiselect",
+					"partialcreditcard",
 					"regexp",
 					"tagger",
 					"text",
@@ -41,95 +46,113 @@ func resourceZendeskTicketField() *schema.Resource {
 				}, false),
 			},
 			"title": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The title of the ticket field.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Description: "Describes the purpose of the ticket field to users.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
 			},
 			"position": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Description: "The relative position of the ticket field on a ticket. Note that for accounts with ticket forms, positions are controlled by the different forms.",
+				Type:        schema.TypeInt,
+				Optional:    true,
 				// positions 0 to 7 are reserved for system fields
 				ValidateFunc: validation.IntAtLeast(8),
 				Computed:     true,
 			},
 			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
+				Description: "Whether this field is available.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
 			},
 			"required": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "If true, agents must enter a value in the field to change the ticket status to solved.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"collapsed_for_agents": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "If true, the field is shown to agents by default. If false, the field is hidden alongside infrequently used fields. Classic interface only.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"regexp_for_validation": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Description: `For "regexp" fields only. The validation pattern for a field value to be deemed valid.`,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
 				// Regular expression field only
 				//TODO: validation
 			},
 			"title_in_portal": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
+				Description: "The title of the ticket field for end users in Help Center.",
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
 			},
 			"visible_in_portal": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "Whether this field is visible to end users in Help Center.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"editable_in_portal": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "Whether this field is editable by end users in Help Center.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"required_in_portal": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "If true, end users must enter a value in the field to create the request.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"tag": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: `For "checkbox" fields only. A tag added to tickets when the checkbox field is selected.`,
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"system_field_options": {
-				Type: schema.TypeSet,
+				Description: `Presented for a system ticket field of type "tickettype", "priority" or "status".`,
+				Type:        schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "System field option name.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 						"value": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Description: "System field option value.",
+							Type:        schema.TypeString,
+							Optional:    true,
 						},
 					},
 				},
 				Computed: true,
 			},
-			// Required only for "tagger" type
-			// https://developer.zendesk.com/rest_api/docs/support/ticket_fields#updating-drop-down-field-options
+			// https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_fields/#updating-drop-down-field-options
 			"custom_field_option": {
-				Type: schema.TypeSet,
+				Description: `Required and presented for a custom ticket field of type "multiselect" or "tagger".`,
+				Type:        schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "Custom field option name.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"value": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "Custom field option value.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"id": {
-							Type:     schema.TypeInt,
-							Computed: true,
+							Description: "Custom field option id.",
+							Type:        schema.TypeInt,
+							Computed:    true,
 						},
 					},
 				},
@@ -138,18 +161,21 @@ func resourceZendeskTicketField() *schema.Resource {
 			},
 			// "priority" and "status" fields only
 			"sub_type_id": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Description: `For system ticket fields of type "priority" and "status". Defaults to 0. A "priority" sub type of 1 removes the "Low" and "Urgent" options. A "status" sub type of 1 adds the "On-Hold" option.`,
+				Type:        schema.TypeInt,
+				Optional:    true,
 				//TODO: validation
 			},
-			//TODO: this is not necessary because it's only for system field
+			// NOTE: Maybe this is not necessary because it's only for system field
 			"removable": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Description: "If false, this field is a system field that must be present on all tickets.",
+				Type:        schema.TypeBool,
+				Computed:    true,
 			},
 			"agent_description": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "A description of the ticket field that only agents can see.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 		},
 	}

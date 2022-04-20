@@ -10,9 +10,10 @@ import (
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
-// https://developer.zendesk.com/rest_api/docs/support/automations
+// https://developer.zendesk.com/api-reference/ticketing/business-rules/automations/
 func resourceZendeskAutomation() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides an automation resource.",
 		Create: func(d *schema.ResourceData, i interface{}) error {
 			zd := i.(client.AutomationAPI)
 			return createAutomation(d, zd)
@@ -35,42 +36,43 @@ func resourceZendeskAutomation() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"title": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The title of the automation.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				Default:  true,
+				Description: "Whether the automation is active.",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
 			},
 			"position": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Computed: true,
+				Description: "The position of the automation which specifies the order it will be executed.",
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Computed:    true,
 			},
 			// Both the "all" and "any" parameter are optional, but at least one of them must be supplied
-			"all": automationConditionSchema(),
-			"any": automationConditionSchema(),
+			"all": automationConditionSchema("Logical AND. All the conditions must be met."),
+			"any": automationConditionSchema("Logical OR. Any condition can be met."),
 			"action": {
-				Type: schema.TypeSet,
+				Description: "What the automation will do.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"field": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "The name of a ticket field to modify.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"value": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "The new value of the field.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 					},
 				},
 				Required: true,
-			},
-			"description": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  "",
 			},
 		},
 	}
@@ -279,22 +281,26 @@ func deleteAutomation(d identifiable, zd client.AutomationAPI) error {
 	return zd.DeleteAutomation(ctx, id)
 }
 
-func automationConditionSchema() *schema.Schema {
+func automationConditionSchema(desc string) *schema.Schema {
 	return &schema.Schema{
-		Type: schema.TypeSet,
+		Description: desc,
+		Type:        schema.TypeSet,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"field": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "The name of a ticket field.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 				"operator": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "A comparison operator.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 				"value": {
-					Type:     schema.TypeString,
-					Required: true,
+					Description: "The value of a ticket field.",
+					Type:        schema.TypeString,
+					Required:    true,
 				},
 			},
 		},

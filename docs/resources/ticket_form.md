@@ -3,12 +3,12 @@
 page_title: "zendesk_ticket_form Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides a ticket form resource.
 ---
 
 # zendesk_ticket_form (Resource)
 
-
+Provides a ticket form resource.
 
 ## Example Usage
 
@@ -52,22 +52,22 @@ resource "zendesk_ticket_form" "form-2" {
 
 ### Required
 
-- `name` (String)
+- `name` (String) The name of the form.
 
 ### Optional
 
-- `active` (Boolean)
-- `default` (Boolean)
-- `display_name` (String)
-- `end_user_visible` (Boolean)
+- `active` (Boolean) If the form is set as active.
+- `default` (Boolean) Is the form the default form for this account.
+- `display_name` (String) The name of the form that is displayed to an end user.
+- `end_user_visible` (Boolean) Is the form visible to the end user.
 - `id` (String) The ID of this resource.
-- `in_all_brands` (Boolean)
-- `position` (Number)
-- `ticket_field_ids` (Set of Number)
+- `in_all_brands` (Boolean) Is the form available for use in all brands on this account.
+- `position` (Number) The position of this form among other forms in the account, i.e. dropdown.
+- `ticket_field_ids` (Set of Number) ids of all ticket fields which are in this ticket form. The products use the order of the ids to show the field values in the tickets.
 
 ### Read-Only
 
-- `restricted_brand_ids` (Set of Number)
-- `url` (String)
+- `restricted_brand_ids` (Set of Number) ids of all brands that this ticket form is restricted to.
+- `url` (String) URL of the ticket form.
 
 

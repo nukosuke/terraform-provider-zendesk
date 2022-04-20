@@ -8,9 +8,10 @@ import (
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
-// https://developer.zendesk.com/rest_api/docs/support/brands
+// https://developer.zendesk.com/api-reference/ticketing/account-configuration/brands/
 func resourceZendeskBrand() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides a brand resource.",
 		Create: func(d *schema.ResourceData, meta interface{}) error {
 			zd := meta.(*client.Client)
 			return createBrand(d, zd)
@@ -34,55 +35,67 @@ func resourceZendeskBrand() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"url": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: "The API url of this brand.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The name of the brand.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"brand_url": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: "The url of the brand.",
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"has_help_center": {
-				Type:     schema.TypeBool,
-				Computed: true,
+				Description: "If the brand has a Help Center.",
+				Type:        schema.TypeBool,
+				Computed:    true,
 			},
 			"help_center_state": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Description: `The state of the Help Center. Allowed values are "enabled", "disabled", or "restricted".`,
+				Type:        schema.TypeString,
+				Computed:    true,
 			},
 			"active": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "If the brand is set as active.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"default": {
-				Type:     schema.TypeBool,
-				Optional: true,
+				Description: "Is the brand the default brand for this account.",
+				Type:        schema.TypeBool,
+				Optional:    true,
 			},
 			"logo_attachment_id": {
-				Type:     schema.TypeInt,
-				Optional: true,
+				Description: "Logo attachment id for the brand.",
+				Type:        schema.TypeInt,
+				Optional:    true,
 			},
 			"ticket_form_ids": {
-				Type: schema.TypeSet,
+				Description: "The ids of ticket forms that are available for use by a brand.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
 				Computed: true,
 			},
 			"subdomain": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The subdomain of the brand.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"host_mapping": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "The hostmapping to this brand, if any. Only admins view this property.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 			"signature_template": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Description: "The signature template for a brand.",
+				Type:        schema.TypeString,
+				Optional:    true,
 			},
 		},
 	}

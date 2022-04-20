@@ -3,12 +3,12 @@
 page_title: "zendesk_group Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides a group resource.
 ---
 
 # zendesk_group (Resource)
 
-
+Provides a group resource.
 
 ## Example Usage
 
@@ -30,7 +30,7 @@ resource "zendesk_group" "developer-group" {
 
 ### Required
 
-- `name` (String)
+- `name` (String) Group name.
 
 ### Optional
 

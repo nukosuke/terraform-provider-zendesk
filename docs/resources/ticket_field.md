@@ -3,12 +3,12 @@
 page_title: "zendesk_ticket_field Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides a ticket field resource.
 ---
 
 # zendesk_ticket_field (Resource)
 
-
+Provides a ticket field resource.
 
 ## Example Usage
 
@@ -93,44 +93,44 @@ data "zendesk_ticket_field" "description" {
 
 ### Required
 
-- `title` (String)
-- `type` (String)
+- `title` (String) The title of the ticket field.
+- `type` (String) System or custom field type. Editable for custom field types and only on creation.
 
 ### Optional
 
-- `active` (Boolean)
-- `agent_description` (String)
-- `collapsed_for_agents` (Boolean)
-- `custom_field_option` (Block Set) (see [below for nested schema](#nestedblock--custom_field_option))
-- `description` (String)
-- `editable_in_portal` (Boolean)
+- `active` (Boolean) Whether this field is available.
+- `agent_description` (String) A description of the ticket field that only agents can see.
+- `collapsed_for_agents` (Boolean) If true, the field is shown to agents by default. If false, the field is hidden alongside infrequently used fields. Classic interface only.
+- `custom_field_option` (Block Set) Required and presented for a custom ticket field of type "multiselect" or "tagger". (see [below for nested schema](#nestedblock--custom_field_option))
+- `description` (String) Describes the purpose of the ticket field to users.
+- `editable_in_portal` (Boolean) Whether this field is editable by end users in Help Center.
 - `id` (String) The ID of this resource.
-- `position` (Number)
-- `regexp_for_validation` (String)
-- `required` (Boolean)
-- `required_in_portal` (Boolean)
-- `sub_type_id` (Number)
-- `tag` (String)
-- `title_in_portal` (String)
-- `visible_in_portal` (Boolean)
+- `position` (Number) The relative position of the ticket field on a ticket. Note that for accounts with ticket forms, positions are controlled by the different forms.
+- `regexp_for_validation` (String) For "regexp" fields only. The validation pattern for a field value to be deemed valid.
+- `required` (Boolean) If true, agents must enter a value in the field to change the ticket status to solved.
+- `required_in_portal` (Boolean) If true, end users must enter a value in the field to create the request.
+- `sub_type_id` (Number) For system ticket fields of type "priority" and "status". Defaults to 0. A "priority" sub type of 1 removes the "Low" and "Urgent" options. A "status" sub type of 1 adds the "On-Hold" option.
+- `tag` (String) For "checkbox" fields only. A tag added to tickets when the checkbox field is selected.
+- `title_in_portal` (String) The title of the ticket field for end users in Help Center.
+- `visible_in_portal` (Boolean) Whether this field is visible to end users in Help Center.
 
 ### Read-Only
 
-- `removable` (Boolean)
-- `system_field_options` (Set of Object) (see [below for nested schema](#nestedatt--system_field_options))
-- `url` (String)
+- `removable` (Boolean) If false, this field is a system field that must be present on all tickets.
+- `system_field_options` (Set of Object) Presented for a system ticket field of type "tickettype", "priority" or "status". (see [below for nested schema](#nestedatt--system_field_options))
+- `url` (String) The URL for this ticket field.
 
 <a id="nestedblock--custom_field_option"></a>
 ### Nested Schema for `custom_field_option`
 
 Required:
 
-- `name` (String)
-- `value` (String)
+- `name` (String) Custom field option name.
+- `value` (String) Custom field option value.
 
 Read-Only:
 
-- `id` (Number) The ID of this resource.
+- `id` (Number) Custom field option id.
 
 
 <a id="nestedatt--system_field_options"></a>

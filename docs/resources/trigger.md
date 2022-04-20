@@ -3,12 +3,12 @@
 page_title: "zendesk_trigger Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  
+  Provides a trigger resource.
 ---
 
 # zendesk_trigger (Resource)
 
-
+Provides a trigger resource.
 
 ## Example Usage
 
@@ -54,20 +54,20 @@ resource "zendesk_trigger" "auto-reply-trigger" {
 
 ### Required
 
-- `action` (Block Set, Min: 1) (see [below for nested schema](#nestedblock--action))
-- `title` (String)
+- `action` (Block Set, Min: 1) What the trigger will do. (see [below for nested schema](#nestedblock--action))
+- `title` (String) The title of the trigger.
 
 ### Optional
 
-- `active` (Boolean)
-- `all` (Block Set) (see [below for nested schema](#nestedblock--all))
-- `any` (Block Set) (see [below for nested schema](#nestedblock--any))
-- `description` (String)
+- `active` (Boolean) Whether the trigger is active.
+- `all` (Block Set) Logical AND. All the conditions must be met. (see [below for nested schema](#nestedblock--all))
+- `any` (Block Set) Logical OR. Any condition can be met. (see [below for nested schema](#nestedblock--any))
+- `description` (String) The description of the trigger.
 - `id` (String) The ID of this resource.
 
 ### Read-Only
 
-- `position` (Number)
+- `position` (Number) Position of the trigger, determines the order they will execute in.
 
 <a id="nestedblock--action"></a>
 ### Nested Schema for `action`
@@ -83,9 +83,9 @@ Required:
 
 Required:
 
-- `field` (String)
-- `operator` (String)
-- `value` (String)
+- `field` (String) The name of a ticket field.
+- `operator` (String) A comparison operator.
+- `value` (String) The value of a ticket field.
 
 
 <a id="nestedblock--any"></a>
@@ -93,8 +93,8 @@ Required:
 
 Required:
 
-- `field` (String)
-- `operator` (String)
-- `value` (String)
+- `field` (String) The name of a ticket field.
+- `operator` (String) A comparison operator.
+- `value` (String) The value of a ticket field.
 
 
