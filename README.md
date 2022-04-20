@@ -29,40 +29,7 @@ $ go mod download
 $ go build
 ```
 
-## Docker
-
-[Docker image](https://hub.docker.com/r/nukosuke/terraform-provider-zendesk) is available. You can execute Terraform commands without preparing Zendesk provider environment by your self.
-
-Mount your resource directory to `/terraform`.
-
-### `terraform init`
-
-```sh
-~/workspace/github.com/nukosuke/terraform-provider-zendesk
-
-⟩ docker run --rm -ti \
-  -e TF_VAR_ZENDESK_EMAIL=agent@example.com \
-  -e TF_VAR_ZENDESK_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
-  -e TF_VAR_ZENDESK_ACCOUNT=d3v-terraform-provider \
-  -v $(pwd)/examples:/terraform \
-  nukosuke/terraform-provider-zendesk init
-```
-
-### `terraform plan`
-
-```sh
-~/workspace/github.com/nukosuke/terraform-provider-zendesk
-
-⟩ docker run --rm -ti \
-  -e TF_VAR_ZENDESK_EMAIL=agent@example.com \
-  -e TF_VAR_ZENDESK_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
-  -e TF_VAR_ZENDESK_ACCOUNT=d3v-terraform-provider \
-  -v $(pwd)/examples:/terraform \
-  -v $(pwd)/zendesk/testdata:/zendesk/testdata
-  nukosuke/terraform-provider-zendesk plan
-```
-
-## Authors
+## Maintainers
 - [nukosuke](https://github.com/nukosuke)
 - [tamccall](https://github.com/tamccall)
 
