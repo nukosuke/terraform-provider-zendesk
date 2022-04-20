@@ -76,7 +76,7 @@ func TestCreateAutomation(t *testing.T) {
 	}
 
 	m.EXPECT().CreateAutomation(gomock.Any(), gomock.Any()).Return(out, nil)
-	if err := createAutomation(i, m); err != nil {
+	if diags := createAutomation(context.Background(), i, m); len(diags) != 0 {
 		t.Fatal("CreateAutomation return an error")
 	}
 
@@ -102,8 +102,8 @@ func TestReadAutomation(t *testing.T) {
 		Active: true,
 	}
 	m.EXPECT().GetAutomation(gomock.Any(), gomock.Eq(int64(12345))).Return(expected, nil)
-	if err := readAutomation(i, m); err != nil {
-		t.Fatalf("GetAutomation received an error when calling: %v", err)
+	if diags := readAutomation(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("GetAutomation received an error when calling: %v", diags)
 	}
 }
 
@@ -118,8 +118,8 @@ func TestUpdateAutomation(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateAutomation(gomock.Any(), gomock.Eq(int64(12345)), gomock.Any()).Return(zendesk.Automation{}, nil)
-	if err := updateAutomation(i, m); err != nil {
-		t.Fatalf("updateAutomation returned an error %v", err)
+	if diags := updateAutomation(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("updateAutomation returned an error %v", diags)
 	}
 }
 
@@ -133,9 +133,9 @@ func TestDeleteAutomation(t *testing.T) {
 	d.SetId("1234")
 
 	c.EXPECT().DeleteAutomation(gomock.Any(), gomock.Eq(int64(1234))).Return(nil)
-	err := deleteAutomation(d, c)
-	if err != nil {
-		t.Fatalf("Got error from resource delete: %v", err)
+	diags := deleteAutomation(context.Background(), d, c)
+	if len(diags) != 0 {
+		t.Fatalf("Got error from resource delete: %v", diags)
 	}
 }
 
