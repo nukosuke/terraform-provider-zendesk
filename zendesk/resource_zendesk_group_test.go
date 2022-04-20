@@ -88,8 +88,8 @@ func TestReadGroup(t *testing.T) {
 	}
 
 	m.EXPECT().GetGroup(Any(), Any()).Return(field, nil)
-	if err := readGroup(context.Background(), gs, m); err != nil {
-		t.Fatalf("readGroup returned an error: %v", err)
+	if diags := readGroup(context.Background(), gs, m); len(diags) != 0 {
+		t.Fatalf("readGroup returned an error: %v", diags)
 	}
 
 	if v := gs.mapGetterSetter["url"]; v != field.URL {
@@ -115,8 +115,8 @@ func TestCreateGroup(t *testing.T) {
 	}
 
 	m.EXPECT().CreateGroup(Any(), Any()).Return(out, nil)
-	if err := createGroup(context.Background(), i, m); err != nil {
-		t.Fatalf("create group returned an error: %v", err)
+	if diags := createGroup(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("create group returned an error: %v", diags)
 	}
 
 	if v := i.Id(); v != "12345" {
@@ -135,8 +135,8 @@ func TestUpdateGroup(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateGroup(Any(), Eq(int64(12345)), Any()).Return(zendesk.Group{}, nil)
-	if err := updateGroup(context.Background(), i, m); err != nil {
-		t.Fatalf("updateGroup returned an error: %v", err)
+	if diags := updateGroup(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("updateGroup returned an error: %v", diags)
 	}
 }
 
@@ -150,8 +150,8 @@ func TestDeleteGroup(t *testing.T) {
 	}
 
 	m.EXPECT().DeleteGroup(Any(), Eq(int64(12345))).Return(nil)
-	if err := deleteGroup(context.Background(), i, m); err != nil {
-		t.Fatalf("deleteGroup returned an error: %v", err)
+	if diags := deleteGroup(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("deleteGroup returned an error: %v", diags)
 	}
 }
 
