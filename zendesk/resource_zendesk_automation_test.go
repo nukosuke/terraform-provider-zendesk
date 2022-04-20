@@ -179,7 +179,7 @@ func TestAccAutomationExample(t *testing.T) {
 		CheckDestroy: testAutomationDestroyed,
 		Steps: []resource.TestStep{
 			{
-				Config: readExampleConfig(t, "automations.tf"),
+				Config: readExampleConfig(t, "resources/zendesk_automation/resource.tf"),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
 						"zendesk_automation.auto-close-automation",
