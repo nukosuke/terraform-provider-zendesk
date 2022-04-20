@@ -88,7 +88,7 @@ func TestReadGroup(t *testing.T) {
 	}
 
 	m.EXPECT().GetGroup(Any(), Any()).Return(field, nil)
-	if err := readGroup(gs, m); err != nil {
+	if err := readGroup(context.Background(), gs, m); err != nil {
 		t.Fatalf("readGroup returned an error: %v", err)
 	}
 
@@ -115,7 +115,7 @@ func TestCreateGroup(t *testing.T) {
 	}
 
 	m.EXPECT().CreateGroup(Any(), Any()).Return(out, nil)
-	if err := createGroup(i, m); err != nil {
+	if err := createGroup(context.Background(), i, m); err != nil {
 		t.Fatalf("create group returned an error: %v", err)
 	}
 
@@ -135,7 +135,7 @@ func TestUpdateGroup(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateGroup(Any(), Eq(int64(12345)), Any()).Return(zendesk.Group{}, nil)
-	if err := updateGroup(i, m); err != nil {
+	if err := updateGroup(context.Background(), i, m); err != nil {
 		t.Fatalf("updateGroup returned an error: %v", err)
 	}
 }
@@ -150,7 +150,7 @@ func TestDeleteGroup(t *testing.T) {
 	}
 
 	m.EXPECT().DeleteGroup(Any(), Eq(int64(12345))).Return(nil)
-	if err := deleteGroup(i, m); err != nil {
+	if err := deleteGroup(context.Background(), i, m); err != nil {
 		t.Fatalf("deleteGroup returned an error: %v", err)
 	}
 }

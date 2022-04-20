@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
@@ -12,24 +13,24 @@ import (
 func resourceZendeskGroup() *schema.Resource {
 	return &schema.Resource{
 		Description: "Provides a group resource.",
-		Create: func(d *schema.ResourceData, meta interface{}) error {
+		CreateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return createGroup(d, zd)
+			return createGroup(ctx, d, zd)
 		},
-		Read: func(d *schema.ResourceData, meta interface{}) error {
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return readGroup(d, zd)
+			return readGroup(ctx, d, zd)
 		},
-		Update: func(d *schema.ResourceData, meta interface{}) error {
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return updateGroup(d, zd)
+			return updateGroup(ctx, d, zd)
 		},
-		Delete: func(d *schema.ResourceData, meta interface{}) error {
+		DeleteContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return deleteGroup(d, zd)
+			return deleteGroup(ctx, d, zd)
 		},
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -82,65 +83,90 @@ func unmarshalGroup(d identifiableGetterSetter) (client.Group, error) {
 	return group, nil
 }
 
-func createGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
+func createGroup(ctx context.Context, d identifiableGetterSetter, zd client.GroupAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	group, err := unmarshalGroup(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Actual API request
-	ctx := context.Background()
 	group, err = zd.CreateGroup(ctx, group)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", group.ID))
-	return marshalGroup(group, d)
-}
 
-func readGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalGroup(group, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readGroup(ctx context.Context, d identifiableGetterSetter, zd client.GroupAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	group, err := zd.GetGroup(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalGroup(group, d)
+	err = marshalGroup(group, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateGroup(d identifiableGetterSetter, zd client.GroupAPI) error {
+func updateGroup(ctx context.Context, d identifiableGetterSetter, zd client.GroupAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	group, err := unmarshalGroup(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// ActualAPI request
-	ctx := context.Background()
 	group, err = zd.UpdateGroup(ctx, id, group)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalGroup(group, d)
+	err = marshalGroup(group, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteGroup(d identifiable, zd client.GroupAPI) error {
+func deleteGroup(ctx context.Context, d identifiable, zd client.GroupAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteGroup(ctx, id)
+	err = zd.DeleteGroup(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
