@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	client "github.com/nukosuke/go-zendesk/zendesk"
@@ -13,24 +14,24 @@ import (
 func resourceZendeskTarget() *schema.Resource {
 	return &schema.Resource{
 		Description: `Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)`,
-		Create: func(d *schema.ResourceData, meta interface{}) error {
+		CreateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return createTarget(d, zd)
+			return createTarget(ctx, d, zd)
 		},
-		Read: func(d *schema.ResourceData, meta interface{}) error {
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return readTarget(d, zd)
+			return readTarget(ctx, d, zd)
 		},
-		Update: func(d *schema.ResourceData, meta interface{}) error {
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return updateTarget(d, zd)
+			return updateTarget(ctx, d, zd)
 		},
-		Delete: func(d *schema.ResourceData, meta interface{}) error {
+		DeleteContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
-			return deleteTarget(d, zd)
+			return deleteTarget(ctx, d, zd)
 		},
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -211,65 +212,90 @@ func unmarshalTarget(d identifiableGetterSetter) (client.Target, error) {
 	return target, nil
 }
 
-func createTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
+func createTarget(ctx context.Context, d identifiableGetterSetter, zd client.TargetAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	target, err := unmarshalTarget(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// Actual API request
-	ctx := context.Background()
 	target, err = zd.CreateTarget(ctx, target)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", target.ID))
-	return marshalTarget(target, d)
-}
 
-func readTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalTarget(target, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readTarget(ctx context.Context, d identifiableGetterSetter, zd client.TargetAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	target, err := zd.GetTarget(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalTarget(target, d)
+	err = marshalTarget(target, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateTarget(d identifiableGetterSetter, zd client.TargetAPI) error {
+func updateTarget(ctx context.Context, d identifiableGetterSetter, zd client.TargetAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	target, err := unmarshalTarget(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	// ActualAPI request
-	ctx := context.Background()
 	target, err = zd.UpdateTarget(ctx, id, target)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalTarget(target, d)
+	err = marshalTarget(target, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteTarget(d identifiable, zd client.TargetAPI) error {
+func deleteTarget(ctx context.Context, d identifiable, zd client.TargetAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteTarget(ctx, id)
+	err = zd.DeleteTarget(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }

@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"context"
 	"strconv"
 	"testing"
 
@@ -132,8 +133,8 @@ func TestReadTarget(t *testing.T) {
 	}
 
 	m.EXPECT().GetTarget(Any(), Any()).Return(field, nil)
-	if err := readTarget(gs, m); err != nil {
-		t.Fatalf("readTarget returned an error: %v", err)
+	if diags := readTarget(context.Background(), gs, m); len(diags) != 0 {
+		t.Fatalf("readTarget returned an error: %v", diags)
 	}
 
 	if v := gs.mapGetterSetter["url"]; v != field.URL {
@@ -171,8 +172,8 @@ func TestCreateTarget(t *testing.T) {
 	}
 
 	m.EXPECT().CreateTarget(Any(), Any()).Return(out, nil)
-	if err := createTarget(i, m); err != nil {
-		t.Fatalf("create target returned an error: %v", err)
+	if diags := createTarget(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("create target returned an error: %v", diags)
 	}
 
 	if v := i.Id(); v != "12345" {
@@ -191,8 +192,8 @@ func TestUpdateTarget(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateTarget(Any(), Eq(int64(12345)), Any()).Return(zendesk.Target{}, nil)
-	if err := updateTarget(i, m); err != nil {
-		t.Fatalf("updateTarget returned an error: %v", err)
+	if diags := updateTarget(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("updateTarget returned an error: %v", diags)
 	}
 }
 
@@ -206,7 +207,7 @@ func TestDeleteTarget(t *testing.T) {
 	}
 
 	m.EXPECT().DeleteTarget(Any(), Eq(int64(12345))).Return(nil)
-	if err := deleteTarget(i, m); err != nil {
-		t.Fatalf("deleteTarget returned an error: %v", err)
+	if diags := deleteTarget(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("deleteTarget returned an error: %v", diags)
 	}
 }
