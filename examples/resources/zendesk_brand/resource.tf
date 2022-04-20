@@ -1,6 +1,3 @@
-# brands.tf
-#   Brand example
-#
 # API reference:
 #   https://developer.zendesk.com/rest_api/docs/support/brands
 
