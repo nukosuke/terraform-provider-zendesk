@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/nukosuke/go-zendesk/zendesk"
 )
@@ -19,24 +20,24 @@ type attachment struct {
 func resourceZendeskAttachment() *schema.Resource {
 	return &schema.Resource{
 		Description: "Provides an attachment resource.",
-		Create: func(data *schema.ResourceData, i interface{}) error {
+		CreateContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(zendesk.AttachmentAPI)
-			return createAttachment(data, zd)
+			return createAttachment(ctx, data, zd)
 		},
-		Read: func(data *schema.ResourceData, i interface{}) error {
+		ReadContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(zendesk.AttachmentAPI)
-			return readAttachment(data, zd)
+			return readAttachment(ctx, data, zd)
 		},
-		Delete: func(data *schema.ResourceData, i interface{}) error {
+		DeleteContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(zendesk.AttachmentAPI)
-			return deleteAttachment(data, zd)
+			return deleteAttachment(ctx, data, zd)
 		},
-		Update: func(data *schema.ResourceData, i interface{}) error {
+		UpdateContext: func(ctx context.Context, data *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(zendesk.AttachmentAPI)
-			return readAttachment(data, zd)
+			return readAttachment(ctx, data, zd)
 		},
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"file_path": {
@@ -119,33 +120,34 @@ func resourceZendeskAttachment() *schema.Resource {
 	}
 }
 
-func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
+func createAttachment(ctx context.Context, d identifiableGetterSetter, zd zendesk.AttachmentAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	filePath := d.Get("file_path").(string)
 	file, err := os.Open(filePath)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 	defer file.Close()
 
 	fileName := d.Get("file_name").(string)
-	ctx := context.Background()
 	w := zd.UploadAttachment(ctx, fileName, "")
 
 	_, err = io.Copy(w, file)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	result, err := w.Close()
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	a := result.Attachment
 	d.SetId(strconv.FormatInt(a.ID, 10))
 	err = d.Set("token", result.Token)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	out := attachment{
@@ -153,20 +155,35 @@ func createAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) erro
 		FilePath:   filePath,
 		Hash:       d.Get("file_hash").(string),
 	}
-	return marshalAttachment(d, out)
+
+	err = marshalAttachment(d, out)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
+func deleteAttachment(ctx context.Context, d identifiableGetterSetter, zd zendesk.AttachmentAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	v, ok := d.GetOk("token")
 	if !ok {
+		// token is optional. so, nil is fine.
 		return nil
 	}
 
-	ctx := context.Background()
-	return zd.DeleteUpload(ctx, v.(string))
+	err := zd.DeleteUpload(ctx, v.(string))
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error {
+func readAttachment(ctx context.Context, d identifiableGetterSetter, zd zendesk.AttachmentAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	out := attachment{}
 
 	if v, ok := d.GetOk("file_path"); ok {
@@ -179,18 +196,22 @@ func readAttachment(d identifiableGetterSetter, zd zendesk.AttachmentAPI) error 
 
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	a, err := zd.GetAttachment(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	out.Attachment = a
 
-	return marshalAttachment(d, out)
+	err = marshalAttachment(d, out)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
 func marshalAttachment(d identifiableGetterSetter, a attachment) error {
