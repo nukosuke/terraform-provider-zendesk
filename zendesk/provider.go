@@ -36,6 +36,7 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc(tokenVar, ""),
+				Sensitive:   true,
 			},
 		},
 
