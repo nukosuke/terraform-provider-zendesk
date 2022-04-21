@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
@@ -17,50 +18,56 @@ func init() {
 // https://developer.zendesk.com/api-reference/ticketing/ticket-management/dynamic_content/
 func resourceZendeskDynamicContentItem() *schema.Resource {
 	return &schema.Resource{
-		Create: func(d *schema.ResourceData, meta interface{}) error {
+		CreateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(client.DynamicContentAPI)
-			return createDynamicContentItem(d, zd)
+			return createDynamicContentItem(ctx, d, zd)
 		},
-		Read: func(d *schema.ResourceData, i interface{}) error {
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.DynamicContentAPI)
-			return readDynamicContentItem(d, zd)
+			return readDynamicContentItem(ctx, d, zd)
 		},
-		Update: func(d *schema.ResourceData, i interface{}) error {
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.DynamicContentAPI)
-			return updateDynamicContentItem(d, zd)
+			return updateDynamicContentItem(ctx, d, zd)
 		},
-		Delete: func(d *schema.ResourceData, i interface{}) error {
+		DeleteContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.DynamicContentAPI)
-			return deleteDynamicContentItem(d, zd)
+			return deleteDynamicContentItem(ctx, d, zd)
 		},
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The unique name of the item.",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"default_locale": {
-				Type:     schema.TypeString,
-				Required: true,
+				Description: "The default locale for the item. Must be one of the [locales the account has active](https://developer.zendesk.com/api-reference/ticketing/account-configuration/locales/#list-locales).",
+				Type:        schema.TypeString,
+				Required:    true,
 			},
 			"variant": {
-				Type: schema.TypeSet,
+				Description: "Variant within this item.",
+				Type:        schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"active": {
-							Type:     schema.TypeBool,
-							Optional: true,
-							Default:  true,
+							Description: "If the variant is active and useable.",
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     true,
 						},
 						"content": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "The content of the variant.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 						"locale": {
-							Type:     schema.TypeString,
-							Required: true,
+							Description: "The locale of the variant.",
+							Type:        schema.TypeString,
+							Required:    true,
 						},
 					},
 				},
@@ -129,65 +136,90 @@ func unmarshalDynamicContentItem(d identifiableGetterSetter) (client.DynamicCont
 	return item, nil
 }
 
-func createDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
+func createDynamicContentItem(ctx context.Context, d identifiableGetterSetter, zd client.DynamicContentAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	item, err := unmarshalDynamicContentItem(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	item, err = zd.CreateDynamicContentItem(ctx, item)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", item.ID))
-	return marshalDynamicContentItem(item, d)
-}
 
-func readDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalDynamicContentItem(item, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readDynamicContentItem(ctx context.Context, d identifiableGetterSetter, zd client.DynamicContentAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	item, err := zd.GetDynamicContentItem(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalDynamicContentItem(item, d)
+	err = marshalDynamicContentItem(item, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
+func updateDynamicContentItem(ctx context.Context, d identifiableGetterSetter, zd client.DynamicContentAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	item, err := unmarshalDynamicContentItem(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	item, err = zd.UpdateDynamicContentItem(ctx, id, item)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalDynamicContentItem(item, d)
+	err = marshalDynamicContentItem(item, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteDynamicContentItem(d identifiableGetterSetter, zd client.DynamicContentAPI) error {
+func deleteDynamicContentItem(ctx context.Context, d identifiableGetterSetter, zd client.DynamicContentAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteDynamicContentItem(ctx, id)
+	err = zd.DeleteDynamicContentItem(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
 func reverseLocaleTypes() map[string]int64 {
