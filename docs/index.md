@@ -28,14 +28,18 @@ terraform {
   }
 }
 
-variable "ZENDESK_ACCOUNT" { type = string }
-variable "ZENDESK_EMAIL"   { type = string }
-variable "ZENDESK_TOKEN"   { type = string }
-
 provider "zendesk" {
-  account = var.ZENDESK_ACCOUNT
-  email   = var.ZENDESK_EMAIL
-  token   = var.ZENDESK_TOKEN
+  # example.zendesk.com
+  account = "example"
+  email   = "john.doe@example.com"
+  token   = "xxxxxxxxxx"
+
+  # or configure from enviroment variables
+  # if you don't want to hardcode the credentials.
+  #
+  # export ZENDESK_ACCOUNT="example"
+  # export ZENDESK_EMAIL="john.doe@example.com"
+  # export ZENDESK_TOKEN="xxxxxxxxxx"
 }
 ```
 
