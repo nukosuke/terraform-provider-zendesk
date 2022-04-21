@@ -1,0 +1,3 @@
+export ZENDESK_ACCOUNT=example
+export ZENDESK_EMAIL=john.doe@example.com
+export ZENDESK_TOKEN=xxxxxxxxxx

@@ -35,3 +35,6 @@ build/
 
 # concated resources and data-sources
 main.tf
+
+# direnv config
+.envrc
