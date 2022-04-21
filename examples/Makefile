@@ -1,7 +1,7 @@
 VERSION := 0.0.4
 
-concat: provider/provider.tf resources/**/resource.tf
-	cat provider/provider.tf resources/**/resource.tf > main.tf
+concat: provider/dev_provider.tf resources/**/resource.tf
+	cat provider/dev_provider.tf resources/**/resource.tf > main.tf
 install: ../main.go ../zendesk/*.go
 	mkdir -p build
 	go build -o build/terraform-provider-zendesk_v$(VERSION) ../.
