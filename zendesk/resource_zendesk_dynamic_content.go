@@ -6,14 +6,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
-
-var reversedLocaleTypes map[string]int64
-
-func init() {
-	reversedLocaleTypes = reverseLocaleTypes()
-}
 
 // https://developer.zendesk.com/api-reference/ticketing/ticket-management/dynamic_content/
 func resourceZendeskDynamicContentItem() *schema.Resource {
@@ -45,20 +40,21 @@ func resourceZendeskDynamicContentItem() *schema.Resource {
 				Required:    true,
 			},
 			"default_locale": {
-				Description: "The default locale for the item. Must be one of the [locales the account has active](https://developer.zendesk.com/api-reference/ticketing/account-configuration/locales/#list-locales).",
-				Type:        schema.TypeString,
-				Required:    true,
+				Description:  "The default locale for the item. Must be one of the [locales the account has active](https://developer.zendesk.com/api-reference/ticketing/account-configuration/locales/#list-locales).",
+				Type:         schema.TypeString,
+				Required:     true,
+				ValidateFunc: validation.StringInSlice(localeTexts, false),
 			},
 			"variant": {
 				Description: "Variant within this item.",
 				Type:        schema.TypeSet,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"active": {
-							Description: "If the variant is active and useable.",
+						"default": {
+							Description: "If the variant is the default for the item it belongs to.",
 							Type:        schema.TypeBool,
 							Optional:    true,
-							Default:     true,
+							Default:     false,
 						},
 						"content": {
 							Description: "The content of the variant.",
@@ -66,9 +62,10 @@ func resourceZendeskDynamicContentItem() *schema.Resource {
 							Required:    true,
 						},
 						"locale": {
-							Description: "The locale of the variant.",
-							Type:        schema.TypeString,
-							Required:    true,
+							Description:  "The locale of the variant.",
+							Type:         schema.TypeString,
+							Required:     true,
+							ValidateFunc: validation.StringInSlice(localeTexts, false),
 						},
 					},
 				},
@@ -81,15 +78,15 @@ func resourceZendeskDynamicContentItem() *schema.Resource {
 func marshalDynamicContentItem(item client.DynamicContentItem, d identifiableGetterSetter) error {
 	fields := map[string]interface{}{
 		"name":           item.Name,
-		"default_locale": item.DefaultLocaleID,
+		"default_locale": client.LocaleTypeText(int(item.DefaultLocaleID)),
 	}
 
 	var variants []map[string]interface{}
 	for _, v := range item.Variants {
 		m := map[string]interface{}{
-			"active":  v.Active,
+			"default": v.Default,
 			"content": v.Content,
-			"locale":  v.LocaleID,
+			"locale":  client.LocaleTypeText(int(v.LocaleID)),
 		}
 		variants = append(variants, m)
 	}
@@ -127,7 +124,7 @@ func unmarshalDynamicContentItem(d identifiableGetterSetter) (client.DynamicCont
 				return item, fmt.Errorf("could not parse 'variant' for dynamic content item %v", item)
 			}
 			variants = append(variants, client.DynamicContentVariant{
-				Active:   variant["active"].(bool),
+				Default:  variant["default"].(bool),
 				Content:  variant["content"].(string),
 				LocaleID: reversedLocaleTypes[variant["locale"].(string)],
 			})
@@ -222,15 +219,4 @@ func deleteDynamicContentItem(ctx context.Context, d identifiableGetterSetter, z
 	}
 
 	return diags
-}
-
-func reverseLocaleTypes() map[string]int64 {
-	rlocs := map[string]int64{}
-	for i := client.LocaleENUS; i <= client.LocaleENPH; i++ {
-		loctxt := client.LocaleTypeText(i)
-		if loctxt != "" {
-			rlocs[loctxt] = int64(i)
-		}
-	}
-	return rlocs
 }
