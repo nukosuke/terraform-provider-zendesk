@@ -18,6 +18,7 @@ func init() {
 // https://developer.zendesk.com/api-reference/ticketing/ticket-management/dynamic_content/
 func resourceZendeskDynamicContentItem() *schema.Resource {
 	return &schema.Resource{
+		Description: "Provides a dynamic content item resource.",
 		CreateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(client.DynamicContentAPI)
 			return createDynamicContentItem(ctx, d, zd)
@@ -71,6 +72,7 @@ func resourceZendeskDynamicContentItem() *schema.Resource {
 						},
 					},
 				},
+				Required: true,
 			},
 		},
 	}

@@ -1,6 +1,3 @@
-# dynamic_content_items.tf
-#   Dynamic content item example
-#
 # API reference:
 #   https://developer.zendesk.com/api-reference/ticketing/ticket-management/dynamic_content/
 
