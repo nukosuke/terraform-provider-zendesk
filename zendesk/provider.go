@@ -5,6 +5,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
 
@@ -20,23 +21,26 @@ func Provider() *schema.Provider {
 		// https://developer.zendesk.com/rest_api/docs/support/introduction#security-and-authentication
 		Schema: map[string]*schema.Schema{
 			"account": {
-				Description: "Account name of your Zendesk instance.",
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc(accountVar, ""),
+				Description:  "Account name of your Zendesk instance.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				DefaultFunc:  schema.EnvDefaultFunc(accountVar, ""),
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 			"email": {
-				Description: "Email address of agent user who have permission to access the API.",
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc(emailVar, ""),
+				Description:  "Email address of agent user who have permission to access the API.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				DefaultFunc:  schema.EnvDefaultFunc(emailVar, ""),
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 			"token": {
-				Description: "[API token](https://developer.zendesk.com/rest_api/docs/support/introduction#api-token) for your Zendesk instance.",
-				Type:        schema.TypeString,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc(tokenVar, ""),
-				Sensitive:   true,
+				Description:  "[API token](https://developer.zendesk.com/rest_api/docs/support/introduction#api-token) for your Zendesk instance.",
+				Type:         schema.TypeString,
+				Optional:     true,
+				DefaultFunc:  schema.EnvDefaultFunc(tokenVar, ""),
+				Sensitive:    true,
+				ValidateFunc: validation.StringIsNotEmpty,
 			},
 		},
 
