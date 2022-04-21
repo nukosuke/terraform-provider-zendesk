@@ -1,7 +1,7 @@
 package zendesk
 
 import (
-	//"fmt"
+	"context"
 	"strconv"
 	"testing"
 
@@ -87,8 +87,8 @@ func TestReadOrganization(t *testing.T) {
 	}
 
 	m.EXPECT().GetOrganization(Any(), Any()).Return(field, nil)
-	if err := readOrganization(gs, m); err != nil {
-		t.Fatalf("readOrganization returned an error: %v", err)
+	if diags := readOrganization(context.Background(), gs, m); len(diags) != 0 {
+		t.Fatalf("readOrganization returned an error: %v", diags)
 	}
 
 	if v := gs.mapGetterSetter["url"]; v != field.URL {
@@ -114,8 +114,8 @@ func TestCreateOrganization(t *testing.T) {
 	}
 
 	m.EXPECT().CreateOrganization(Any(), Any()).Return(out, nil)
-	if err := createOrganization(i, m); err != nil {
-		t.Fatalf("create organization returned an error: %v", err)
+	if diags := createOrganization(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("create organization returned an error: %v", diags)
 	}
 
 	if v := i.Id(); v != "12345" {
@@ -134,8 +134,8 @@ func TestUpdateOrganization(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateOrganization(Any(), Eq(int64(12345)), Any()).Return(zendesk.Organization{}, nil)
-	if err := updateOrganization(i, m); err != nil {
-		t.Fatalf("updateOrganization returned an error: %v", err)
+	if diags := updateOrganization(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("updateOrganization returned an error: %v", diags)
 	}
 }
 
@@ -149,7 +149,7 @@ func TestDeleteOrganization(t *testing.T) {
 	}
 
 	m.EXPECT().DeleteOrganization(Any(), Eq(int64(12345))).Return(nil)
-	if err := deleteOrganization(i, m); err != nil {
-		t.Fatalf("deleteOrganization returned an error: %v", err)
+	if diags := deleteOrganization(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("deleteOrganization returned an error: %v", diags)
 	}
 }

@@ -85,7 +85,7 @@ func TestCreateSLAPolicy(t *testing.T) {
 	}
 
 	m.EXPECT().CreateSLAPolicy(gomock.Any(), gomock.Any()).Return(out, nil)
-	if err := createSLAPolicy(i, m); err != nil {
+	if diags := createSLAPolicy(context.Background(), i, m); len(diags) != 0 {
 		t.Fatal("CreateSLAPolicy return an error")
 	}
 
@@ -111,8 +111,8 @@ func TestReadSLAPolicy(t *testing.T) {
 		Active: true,
 	}
 	m.EXPECT().GetSLAPolicy(gomock.Any(), gomock.Eq(int64(12345))).Return(expected, nil)
-	if err := readSLAPolicy(i, m); err != nil {
-		t.Fatalf("GetSLAPolicy received an error when calling: %v", err)
+	if diags := readSLAPolicy(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("GetSLAPolicy received an error when calling: %v", diags)
 	}
 
 	active := i.Get("active").(bool)
@@ -132,8 +132,8 @@ func TestUpdateSLAPolicy(t *testing.T) {
 	}
 
 	m.EXPECT().UpdateSLAPolicy(gomock.Any(), gomock.Eq(int64(12345)), gomock.Any()).Return(zendesk.SLAPolicy{}, nil)
-	if err := updateSLAPolicy(i, m); err != nil {
-		t.Fatalf("updateSLAPolicy returned an error %v", err)
+	if diags := updateSLAPolicy(context.Background(), i, m); len(diags) != 0 {
+		t.Fatalf("updateSLAPolicy returned an error %v", diags)
 	}
 }
 
@@ -147,9 +147,9 @@ func TestDeleteSLAPolicy(t *testing.T) {
 	d.SetId("1234")
 
 	c.EXPECT().DeleteSLAPolicy(gomock.Any(), gomock.Eq(int64(1234))).Return(nil)
-	err := deleteSLAPolicy(d, c)
-	if err != nil {
-		t.Fatalf("Got error from resource delete: %v", err)
+	diags := deleteSLAPolicy(context.Background(), d, c)
+	if len(diags) != 0 {
+		t.Fatalf("Got error from resource delete: %v", diags)
 	}
 }
 

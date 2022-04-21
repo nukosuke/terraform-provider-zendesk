@@ -71,9 +71,9 @@ func TestCreateZendeskAttachment(t *testing.T) {
 		},
 	}
 
-	err := createAttachment(d, m)
-	if err != nil {
-		t.Fatalf("Create attachment returned an error %v", err)
+	diags := createAttachment(context.Background(), d, m)
+	if len(diags) != 0 {
+		t.Fatalf("Create attachment returned an error %v", diags)
 	}
 
 	if v := d.Id(); v != "1234" {
@@ -95,9 +95,9 @@ func TestDeleteZendeskAttachmentCallsWhenTokenIsSet(t *testing.T) {
 		},
 	}
 
-	err := deleteAttachment(d, m)
-	if err != nil {
-		t.Fatalf("delete attachment returned an error %v", err)
+	diags := deleteAttachment(context.Background(), d, m)
+	if len(diags) != 0 {
+		t.Fatalf("delete attachment returned an error %v", diags)
 	}
 }
 
@@ -109,9 +109,9 @@ func TestDeleteZendeskAttachmentDoesNotCallWhenTokenIsNotSet(t *testing.T) {
 
 	d := newIdentifiableGetterSetter()
 
-	err := deleteAttachment(d, m)
-	if err != nil {
-		t.Fatalf("delete attachment returned an error %v", err)
+	diags := deleteAttachment(context.Background(), d, m)
+	if len(diags) != 0 {
+		t.Fatalf("delete attachment returned an error %v", diags)
 	}
 }
 

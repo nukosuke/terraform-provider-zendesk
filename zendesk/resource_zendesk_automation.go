@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/nukosuke/go-zendesk/zendesk"
 )
@@ -14,24 +15,24 @@ import (
 func resourceZendeskAutomation() *schema.Resource {
 	return &schema.Resource{
 		Description: "Provides an automation resource.",
-		Create: func(d *schema.ResourceData, i interface{}) error {
+		CreateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.AutomationAPI)
-			return createAutomation(d, zd)
+			return createAutomation(ctx, d, zd)
 		},
-		Read: func(d *schema.ResourceData, i interface{}) error {
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.AutomationAPI)
-			return readAutomation(d, zd)
+			return readAutomation(ctx, d, zd)
 		},
-		Update: func(d *schema.ResourceData, i interface{}) error {
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.AutomationAPI)
-			return updateAutomation(d, zd)
+			return updateAutomation(ctx, d, zd)
 		},
-		Delete: func(d *schema.ResourceData, i interface{}) error {
+		DeleteContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.AutomationAPI)
-			return deleteAutomation(d, zd)
+			return deleteAutomation(ctx, d, zd)
 		},
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -220,65 +221,90 @@ func unmarshalAutomation(d identifiableGetterSetter) (client.Automation, error) 
 	return automation, nil
 }
 
-func createAutomation(d identifiableGetterSetter, zd client.AutomationAPI) error {
+func createAutomation(ctx context.Context, d identifiableGetterSetter, zd client.AutomationAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	automation, err := unmarshalAutomation(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	automation, err = zd.CreateAutomation(ctx, automation)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", automation.ID))
-	return marshalAutomation(automation, d)
-}
 
-func readAutomation(d identifiableGetterSetter, zd client.AutomationAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalAutomation(automation, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readAutomation(ctx context.Context, d identifiableGetterSetter, zd client.AutomationAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	automation, err := zd.GetAutomation(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalAutomation(automation, d)
+	err = marshalAutomation(automation, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateAutomation(d identifiableGetterSetter, zd client.AutomationAPI) error {
+func updateAutomation(ctx context.Context, d identifiableGetterSetter, zd client.AutomationAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	automation, err := unmarshalAutomation(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	automation, err = zd.UpdateAutomation(ctx, id, automation)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalAutomation(automation, d)
+	err = marshalAutomation(automation, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteAutomation(d identifiable, zd client.AutomationAPI) error {
+func deleteAutomation(ctx context.Context, d identifiable, zd client.AutomationAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteAutomation(ctx, id)
+	err = zd.DeleteAutomation(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
 func automationConditionSchema(desc string) *schema.Schema {

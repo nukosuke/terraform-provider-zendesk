@@ -3,6 +3,8 @@ package zendesk
 import (
 	"context"
 	"fmt"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	client "github.com/nukosuke/go-zendesk/zendesk"
@@ -12,24 +14,24 @@ import (
 func resourceZendeskSLAPolicy() *schema.Resource {
 	return &schema.Resource{
 		Description: "Provides a SLA policy resource.",
-		Create: func(d *schema.ResourceData, i interface{}) error {
+		CreateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.SLAPolicyAPI)
-			return createSLAPolicy(d, zd)
+			return createSLAPolicy(ctx, d, zd)
 		},
-		Read: func(d *schema.ResourceData, i interface{}) error {
+		ReadContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.SLAPolicyAPI)
-			return readSLAPolicy(d, zd)
+			return readSLAPolicy(ctx, d, zd)
 		},
-		Update: func(d *schema.ResourceData, i interface{}) error {
+		UpdateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.SLAPolicyAPI)
-			return updateSLAPolicy(d, zd)
+			return updateSLAPolicy(ctx, d, zd)
 		},
-		Delete: func(d *schema.ResourceData, i interface{}) error {
+		DeleteContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.SLAPolicyAPI)
-			return deleteSLAPolicy(d, zd)
+			return deleteSLAPolicy(ctx, d, zd)
 		},
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
@@ -227,65 +229,90 @@ func unmarshalSLAPolicy(d identifiableGetterSetter) (client.SLAPolicy, error) {
 	return sla, nil
 }
 
-func createSLAPolicy(d identifiableGetterSetter, zd client.SLAPolicyAPI) error {
+func createSLAPolicy(ctx context.Context, d identifiableGetterSetter, zd client.SLAPolicyAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	sla, err := unmarshalSLAPolicy(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	sla, err = zd.CreateSLAPolicy(ctx, sla)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(fmt.Sprintf("%d", sla.ID))
-	return marshalSLAPolicy(sla, d)
-}
 
-func readSLAPolicy(d identifiableGetterSetter, zd client.SLAPolicyAPI) error {
-	id, err := atoi64(d.Id())
+	err = marshalSLAPolicy(sla, d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
+	return diags
+}
+
+func readSLAPolicy(ctx context.Context, d identifiableGetterSetter, zd client.SLAPolicyAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	id, err := atoi64(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	slaPolicy, err := zd.GetSLAPolicy(ctx, id)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalSLAPolicy(slaPolicy, d)
+	err = marshalSLAPolicy(slaPolicy, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func updateSLAPolicy(d identifiableGetterSetter, zd client.SLAPolicyAPI) error {
+func updateSLAPolicy(ctx context.Context, d identifiableGetterSetter, zd client.SLAPolicyAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	slaPolicy, err := unmarshalSLAPolicy(d)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
 	slaPolicy, err = zd.UpdateSLAPolicy(ctx, id, slaPolicy)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	return marshalSLAPolicy(slaPolicy, d)
+	err = marshalSLAPolicy(slaPolicy, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
-func deleteSLAPolicy(d identifiable, zd client.SLAPolicyAPI) error {
+func deleteSLAPolicy(ctx context.Context, d identifiable, zd client.SLAPolicyAPI) diag.Diagnostics {
+	var diags diag.Diagnostics
+
 	id, err := atoi64(d.Id())
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
-	ctx := context.Background()
-	return zd.DeleteSLAPolicy(ctx, id)
+	err = zd.DeleteSLAPolicy(ctx, id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
 }
 
 func slaPolicyFilterSchema(desc string) *schema.Schema {
