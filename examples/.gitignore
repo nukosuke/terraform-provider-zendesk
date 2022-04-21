@@ -29,3 +29,9 @@ override.tf.json
 
 # provider's lockfile
 .terraform.lock.hcl
+
+# provider binary for development
+build/
+
+# concated resources and data-sources
+main.tf
