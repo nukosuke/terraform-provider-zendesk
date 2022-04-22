@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-#
+
 # Generate reversed_locale_types.go from public locale list from API
 
 require 'json'
