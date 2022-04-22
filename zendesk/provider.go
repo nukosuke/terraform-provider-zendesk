@@ -45,16 +45,17 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"zendesk_automation":   resourceZendeskAutomation(),
-			"zendesk_brand":        resourceZendeskBrand(),
-			"zendesk_group":        resourceZendeskGroup(),
-			"zendesk_ticket_field": resourceZendeskTicketField(),
-			"zendesk_ticket_form":  resourceZendeskTicketForm(),
-			"zendesk_trigger":      resourceZendeskTrigger(),
-			"zendesk_target":       resourceZendeskTarget(),
-			"zendesk_attachment":   resourceZendeskAttachment(),
-			"zendesk_organization": resourceZendeskOrganization(),
-			"zendesk_sla_policy":   resourceZendeskSLAPolicy(),
+			"zendesk_automation":           resourceZendeskAutomation(),
+			"zendesk_brand":                resourceZendeskBrand(),
+			"zendesk_dynamic_content_item": resourceZendeskDynamicContentItem(),
+			"zendesk_group":                resourceZendeskGroup(),
+			"zendesk_ticket_field":         resourceZendeskTicketField(),
+			"zendesk_ticket_form":          resourceZendeskTicketForm(),
+			"zendesk_trigger":              resourceZendeskTrigger(),
+			"zendesk_target":               resourceZendeskTarget(),
+			"zendesk_attachment":           resourceZendeskAttachment(),
+			"zendesk_organization":         resourceZendeskOrganization(),
+			"zendesk_sla_policy":           resourceZendeskSLAPolicy(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
