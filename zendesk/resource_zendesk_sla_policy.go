@@ -13,7 +13,7 @@ import (
 // https://developer.zendesk.com/api-reference/ticketing/business-rules/sla_policies/
 func resourceZendeskSLAPolicy() *schema.Resource {
 	return &schema.Resource{
-		Description: "Provides a SLA policy resource.",
+		Description: "[Experimental] Provides a SLA policy resource. This feature is still experimental and has not been fully tested. Do not use in production environments.",
 		CreateContext: func(ctx context.Context, d *schema.ResourceData, i interface{}) diag.Diagnostics {
 			zd := i.(client.SLAPolicyAPI)
 			return createSLAPolicy(ctx, d, zd)

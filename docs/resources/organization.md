@@ -3,12 +3,12 @@
 page_title: "zendesk_organization Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  Provides an organization resource.
+  [Beta] Provides an organization resource.
 ---
 
 # zendesk_organization (Resource)
 
-Provides an organization resource.
+[Beta] Provides an organization resource.
 
 
 

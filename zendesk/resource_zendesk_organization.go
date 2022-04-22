@@ -12,7 +12,7 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/organizations
 func resourceZendeskOrganization() *schema.Resource {
 	return &schema.Resource{
-		Description: "Provides an organization resource.",
+		Description: "[Beta] Provides an organization resource.",
 		CreateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
 			return createOrganization(ctx, d, zd)
