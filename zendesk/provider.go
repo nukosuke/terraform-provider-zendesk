@@ -56,6 +56,7 @@ func Provider() *schema.Provider {
 			"zendesk_attachment":           resourceZendeskAttachment(),
 			"zendesk_organization":         resourceZendeskOrganization(),
 			"zendesk_sla_policy":           resourceZendeskSLAPolicy(),
+			"zendesk_webhook":              resourceZendeskWebhook(),
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
