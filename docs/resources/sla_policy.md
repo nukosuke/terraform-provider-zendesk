@@ -3,12 +3,12 @@
 page_title: "zendesk_sla_policy Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  Provides a SLA policy resource.
+  [Experimental] Provides a SLA policy resource. This feature is still experimental and has not been fully tested. Do not use in production environments.
 ---
 
 # zendesk_sla_policy (Resource)
 
-Provides a SLA policy resource.
+[Experimental] Provides a SLA policy resource. This feature is still experimental and has not been fully tested. Do not use in production environments.
 
 ## Example Usage
 

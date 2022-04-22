@@ -17,21 +17,21 @@ Provides a dynamic content item resource.
 #   https://developer.zendesk.com/api-reference/ticketing/ticket-management/dynamic_content/
 
 resource "zendesk_dynamic_content_item" "loc-lang" {
-  name            = "language"
-  default_locale  = "en-us"
+  name           = "language"
+  default_locale = "en-US"
 
   variant {
-    locale  = "en-us"
+    locale  = "en-US"
     content = "English (US)"
   }
 
   variant {
     locale  = "ja"
     content = "日本語"
+    default = true
   }
 
   variant {
-    active  = false
     locale  = "zh-tw"
     content = "繁體中文"
   }
@@ -45,11 +45,11 @@ resource "zendesk_dynamic_content_item" "loc-lang" {
 
 - `default_locale` (String) The default locale for the item. Must be one of the [locales the account has active](https://developer.zendesk.com/api-reference/ticketing/account-configuration/locales/#list-locales).
 - `name` (String) The unique name of the item.
+- `variant` (Block Set, Min: 1) Variant within this item. (see [below for nested schema](#nestedblock--variant))
 
 ### Optional
 
 - `id` (String) The ID of this resource.
-- `variant` (Block Set) Variant within this item. (see [below for nested schema](#nestedblock--variant))
 
 <a id="nestedblock--variant"></a>
 ### Nested Schema for `variant`
@@ -61,6 +61,6 @@ Required:
 
 Optional:
 
-- `active` (Boolean) If the variant is active and useable.
+- `default` (Boolean) If the variant is the default for the item it belongs to.
 
 

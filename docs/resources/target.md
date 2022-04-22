@@ -3,12 +3,12 @@
 page_title: "zendesk_target Resource - terraform-provider-zendesk"
 subcategory: ""
 description: |-
-  Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)
+  [Beta] Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)
 ---
 
 # zendesk_target (Resource)
 
-Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)
+[Beta] Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)
 
 ## Example Usage
 

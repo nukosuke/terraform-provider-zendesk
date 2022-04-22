@@ -13,7 +13,7 @@ import (
 // https://developer.zendesk.com/rest_api/docs/support/targets
 func resourceZendeskTarget() *schema.Resource {
 	return &schema.Resource{
-		Description: `Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)`,
+		Description: `[Beta] Provides a target resource. (HTTP target is deprecated. See https://support.zendesk.com/hc/en-us/articles/4408826284698 for details.)`,
 		CreateContext: func(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 			zd := meta.(*client.Client)
 			return createTarget(ctx, d, zd)
