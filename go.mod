@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.20.0
-	github.com/nukosuke/go-zendesk v0.13.0
+	github.com/nukosuke/go-zendesk v0.13.1
 )
 
 require (
