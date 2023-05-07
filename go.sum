@@ -166,8 +166,8 @@ github.com/mitchellh/reflectwalk v1.0.0/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx
 github.com/mitchellh/reflectwalk v1.0.2 h1:G2LzWKi524PWgd3mLHV8Y5k7s6XUvT0Gef6zxSIeXaQ=
 github.com/mitchellh/reflectwalk v1.0.2/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
-github.com/nukosuke/go-zendesk v0.14.2 h1:hEuBR7xvwhcHmMC5Db1Q5nIkJ7nqygZmRzpyFpl8C/o=
-github.com/nukosuke/go-zendesk v0.14.2/go.mod h1:Aa2kI/WpEFXxrhOMgUsRynQOmMtJk6iDaZIke1+1sSY=
+github.com/nukosuke/go-zendesk v0.15.0 h1:DFP7Sm9li6LDFkhuzrdqfFbpN7klR4ergp6g6yEr02M=
+github.com/nukosuke/go-zendesk v0.15.0/go.mod h1:Aa2kI/WpEFXxrhOMgUsRynQOmMtJk6iDaZIke1+1sSY=
 github.com/oklog/run v1.0.0 h1:Ru7dDtJNOyC66gQ5dQmaCa0qIsAUFY3sFpK1Xk8igrw=
 github.com/oklog/run v1.0.0/go.mod h1:dlhp/R75TPv97u0XWUtDeV/lRKWPKSdTuV0TZvrmrQA=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
