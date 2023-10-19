@@ -60,6 +60,7 @@ func Provider() *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"zendesk_ticket_field": dataSourceZendeskTicketField(),
+			"zendesk_webhook":      dataSourceZendeskWebhook(),
 		},
 
 		ConfigureContextFunc: providerConfigure,
